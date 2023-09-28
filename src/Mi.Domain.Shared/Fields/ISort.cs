@@ -1,4 +1,4 @@
-﻿namespace Mi.Domain.Entities.Field
+﻿namespace Mi.Domain.Shared.Fields
 {
     public interface ISort
     {

@@ -1,9 +1,8 @@
-﻿using Mi.Domain.Shared.Fields;
+﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Mi.Domain.Entities.System
+namespace Mi.Application.Contracts.System.Models.Result
 {
-    [Table("SysDict")]
-    public class SysDict : EntityBase, IParentId<long>, ISort, IRemark
+    public class SysDictFull
     {
         /// <summary>
         /// 字典名称

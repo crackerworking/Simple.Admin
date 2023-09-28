@@ -1,24 +1,16 @@
-﻿using Mi.Domain.Entities.System.Enum;
-using Mi.Domain.Shared.Fields;
+﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Mi.Domain.Entities.System
+namespace Mi.Application.Contracts.System.Models.Result
 {
-    /// <summary>
-    /// 功能
-    /// </summary>
-    [Table("SysFunction")]
-    public class SysFunction : EntityBase, ISort, IParentId<long>, IChildren<string>
+    public class FunctionItem : IChildren<IList<FunctionItem>>
     {
+        public long Id { get; set; }
+
         /// <summary>
         /// 功能名称
         /// </summary>
         [NotNull]
         public string? FunctionName { get; set; }
-
-        /// <summary>
-        /// 树节点
-        /// </summary>
-        public EnumTreeNode Node { get; set; }
 
         /// <summary>
         /// 图标
@@ -33,12 +25,7 @@ namespace Mi.Domain.Entities.System
         /// <summary>
         /// 功能类型
         /// </summary>
-        public EnumFunctionType FunctionType { get; set; }
-
-        /// <summary>
-        /// 子集，存SysFunction.Id，多个以','隔开
-        /// </summary>
-        public string? Children { get; set; }
+        public int FunctionType { get; set; }
 
         /// <summary>
         /// 授权码
@@ -47,5 +34,6 @@ namespace Mi.Domain.Entities.System
 
         public long ParentId { get; set; }
         public int Sort { get; set; }
+        public IList<FunctionItem>? Children { get; set; }
     }
 }

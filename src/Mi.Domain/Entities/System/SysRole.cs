@@ -1,4 +1,6 @@
-﻿namespace Mi.Domain.Entities.System
+﻿using Mi.Domain.Shared.Fields;
+
+namespace Mi.Domain.Entities.System
 {
     /// <summary>
     /// 角色

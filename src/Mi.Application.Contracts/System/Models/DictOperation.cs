@@ -1,10 +1,11 @@
-﻿using Mi.Domain.Shared.Fields;
+﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Mi.Domain.Entities.System
+namespace Mi.Application.Contracts.System.Models
 {
-    [Table("SysDict")]
-    public class SysDict : EntityBase, IParentId<long>, ISort, IRemark
+    public class DictOperation
     {
+        public long Id { get; set; }
+
         /// <summary>
         /// 字典名称
         /// </summary>
@@ -22,13 +23,8 @@ namespace Mi.Domain.Entities.System
         /// </summary>
         public string? Value { get; set; }
 
-        /// <summary>
-        /// 父级Key
-        /// </summary>
-        public string? ParentKey { get; set; }
-
-        public int Sort { get; set; }
         public long ParentId { get; set; }
         public string? Remark { get; set; }
+        public int Sort { get; set; }
     }
 }
