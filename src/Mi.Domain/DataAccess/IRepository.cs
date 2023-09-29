@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 
 using Mi.Domain.Entities;
+using Mi.Domain.Shared.Models;
 
 namespace Mi.Domain.DataAccess
 {
@@ -27,5 +28,7 @@ namespace Mi.Domain.DataAccess
         Task<int> CountAsync(Expression<Func<T, bool>>? expression = default);
 
         Task<bool> AnyAsync(Expression<Func<T, bool>>? expression = default);
+
+        Task<PagingModel<T>> GetPagedAsync(Expression<Func<T, bool>> expression, int page, int size, IEnumerable<QuerySortField>? querySortFields = default);
     }
 }

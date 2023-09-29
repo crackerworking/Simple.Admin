@@ -1,60 +1,80 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+
+using Mi.Domain.Extension;
+
+using Microsoft.AspNetCore.Http;
 
 namespace Mi.Application.System.Impl
 {
     public class LogService : ILogService, IScoped
     {
         private readonly HttpContext httpContext;
-        private readonly CreatorFactory _creator;
         private readonly MiHeader _header;
         private readonly ICurrentUser _miUser;
+        private readonly IDapperRepository _dapperRepository;
+        private readonly IRepository<SysLog> _logRepo;
+        private readonly IRepository<SysLoginLog> _loginLogRepo;
+        private readonly IMapper _mapper;
 
-        public LogService(IHttpContextAccessor httpContextAccessor, CreatorFactory creator, MiHeader header, ICurrentUser miUser)
+        public LogService(IHttpContextAccessor httpContextAccessor, MiHeader header, ICurrentUser miUser
+            , IDapperRepository dapperRepository, IRepository<SysLog> logRepo, IRepository<SysLoginLog> loginLogRepo
+            , IMapper mapper)
         {
             httpContext = httpContextAccessor.HttpContext;
-            _creator = creator;
             _header = header;
             _miUser = miUser;
+            _dapperRepository = dapperRepository;
+            _logRepo = logRepo;
+            _loginLogRepo = loginLogRepo;
+            _mapper = mapper;
         }
 
-        public async Task<ResponseStructure<PagingModel<SysLoginLog>>> GetLoginLogListAsync(LoginLogSearch search)
+        public async Task<ResponseStructure<PagingModel<SysLoginLogFull>>> GetLoginLogListAsync(LoginLogSearch search)
         {
-            var repo = ServiceManager.Get<IRepositoryBase<SysLoginLog>>();
-            var exp = ExpressionCreator.New<SysLoginLog>()
+            var exp = PredicateBuilder.Instance.Create<SysLoginLog>()
                 .AndIf(!string.IsNullOrEmpty(search.UserName), x => x.UserName.Contains(search.UserName!))
                 .AndIf(search.Succeed == 1, x => x.Status == 1)
                 .AndIf(search.Succeed == 2, x => x.Status == 0);
-            var list = await repo.QueryPageAsync(search.Page, search.Size, x => x.CreatedOn, exp, false);
-            return new ResponseStructure<PagingModel<SysLoginLog>>(list);
+            var model = await _loginLogRepo.GetPagedAsync(exp, search.Page, search.Size);
+            var clonedModel = new PagingModel<SysLoginLogFull>
+            {
+                Total = model.Total,
+                Rows = _mapper.Map<IEnumerable<SysLoginLogFull>>(model.Rows)
+            };
+
+            return new ResponseStructure<PagingModel<SysLoginLogFull>>(clonedModel);
         }
 
-        public async Task<ResponseStructure<PagingModel<SysLog>>> GetLogListAsync(LogSearch search)
+        public async Task<ResponseStructure<PagingModel<SysLogFull>>> GetLogListAsync(LogSearch search)
         {
-            var repo = ServiceManager.Get<IRepositoryBase<SysLog>>();
-            var exp = ExpressionCreator.New<SysLog>()
+            var exp = PredicateBuilder.Instance.Create<SysLog>()
                 .AndIf(!string.IsNullOrEmpty(search.UserName), x => x.UserName.Contains(search.UserName!))
                 .AndIf(search.UserId.HasValue && search.UserId > 0, x => x.UserId == search.UserId.GetValueOrDefault())
                 .AndIf(search.Succeed == 1, x => x.Succeed == 1)
                 .AndIf(search.Succeed == 2, x => x.Succeed == 0)
                 .AndIf(search.CreatedOn != null && search.CreatedOn.Length == 2, x => x.CreatedOn >= search.CreatedOn![0].Date && x.CreatedOn <= search.CreatedOn![1].Date.AddDays(1).AddSeconds(-1));
-            var list = await repo.QueryPageAsync(search.Page, search.Size, x => x.CreatedOn, exp, false);
-            return new ResponseStructure<PagingModel<SysLog>>(list);
+            var model = await _logRepo.GetPagedAsync(exp, search.Page, search.Size);
+            var clonedModel = new PagingModel<SysLogFull>
+            {
+                Total = model.Total,
+                Rows = _mapper.Map<IEnumerable<SysLogFull>>(model.Rows)
+            };
+
+            return new ResponseStructure<PagingModel<SysLogFull>>(clonedModel);
         }
 
         public async Task<bool> SetExceptionAsync(string uniqueId, string errorMsg)
         {
-            var repo = ServiceManager.Get<IRepositoryBase<SysLog>>();
-            var log = await repo.GetAsync(x => x.UniqueId == uniqueId);
+            var log = await _logRepo.GetAsync(x => x.UniqueId == uniqueId);
             if (log == null) return false;
             log.Exception = errorMsg;
             log.Succeed = 0;
-            return await repo.UpdateAsync(log);
+            return await _logRepo.UpdateAsync(log) > 0;
         }
 
         public async Task<bool> WriteLogAsync(string url, string? param, string? actionFullName, string? uniqueId = default, string? contentType = null, bool succeed = true, string? exception = null)
         {
-            var repo = ServiceManager.Get<IRepositoryBase<SysLog>>();
-            var log = _creator.NewEntity<SysLog>();
+            var log = new SysLog();
             log.RequestUrl = url;
             log.RequestParams = param;
             log.ActionFullName = actionFullName;
@@ -64,13 +84,12 @@ namespace Mi.Application.System.Impl
             log.UserId = _miUser.UserId;
             log.UserName = _miUser.UserName;
             log.UniqueId = uniqueId;
-            return await repo.AddAsync(log);
+            return await _logRepo.AddAsync(log) > 0;
         }
 
         public async Task<bool> WriteLoginLogAsync(string userName, bool succeed, string operationInfo)
         {
-            var model = _creator.NewEntity<SysLoginLog>();
-            var repo = ServiceManager.Get<IRepositoryBase<SysLoginLog>>();
+            var model = new SysLoginLog();
             model.UserName = userName;
             model.OperationInfo = operationInfo;
             model.Status = succeed ? 1 : 0;
@@ -78,7 +97,7 @@ namespace Mi.Application.System.Impl
             model.RegionInfo = _header.Region;
             model.Browser = _header.Browser;
             model.System = _header.System;
-            return await repo.AddAsync(model);
+            return await _loginLogRepo.AddAsync(model) > 0;
         }
     }
 }

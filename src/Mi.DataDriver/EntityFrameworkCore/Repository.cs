@@ -2,6 +2,7 @@
 
 using Mi.Domain.DataAccess;
 using Mi.Domain.Entities;
+using Mi.Domain.Shared.Models;
 using Mi.Domain.User;
 
 using Microsoft.EntityFrameworkCore;
@@ -115,6 +116,15 @@ namespace Mi.DataDriver.EntityFrameworkCore
                 model.CreatedBy = _currentUser.UserId;
             if (model.CreatedOn.Equals(new DateTime()))
                 model.CreatedOn = DateTime.Now;
+        }
+
+        public async Task<PagingModel<T>> GetPagedAsync(Expression<Func<T, bool>> expression, int page, int size, IEnumerable<QuerySortField>? querySortFields = null)
+        {
+            var model = new PagingModel<T>();
+            model.Total = await _dbContext.Set<T>().CountAsync(expression);
+            model.Rows = _dbContext.Set<T>().Where(expression).Skip((page - 1) * size).Take(size).ToList();
+
+            return model;
         }
     }
 }
