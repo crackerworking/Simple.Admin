@@ -1,37 +1,33 @@
 ﻿using System.Data;
 using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 
 using AutoMapper;
-using Mi.Core.API;
-using Mi.Core.Factory;
-using Mi.Core.GlobalVar;
-using Mi.Core.Helper;
-using Mi.Entity.System.Enum;
-using Mi.IService.System.Models.Result;
 
-namespace Mi.Application.System
+using Mi.Domain.Entities.System.Enum;
+using Mi.Domain.Extension;
+
+namespace Mi.Application.System.Impl
 {
     public class FunctionService : IFunctionService, IScoped
     {
         private readonly IMapper _mapper;
         private readonly ResponseStructure _message;
-        private readonly IMiUser _miUser;
-        private readonly IFunctionRepository _functionRepository;
-        private readonly MemoryCacheFactory _cache;
+        private readonly ICurrentUser _miUser;
+        private readonly IRepository<SysFunction> _functionRepo;
+        private readonly IMemoryCache _cache;
 
-        public FunctionService(IMapper mapper, ResponseStructure message, IMiUser miUser
-            , IFunctionRepository functionRepository
-            , MemoryCacheFactory cache)
+        public FunctionService(IMapper mapper, ResponseStructure message, ICurrentUser miUser
+            , IRepository<SysFunction> functionRepo
+            , IMemoryCache cache)
         {
             _mapper = mapper;
             _message = message;
             _miUser = miUser;
-            _functionRepository = functionRepository;
+            _functionRepo = functionRepo;
             _cache = cache;
         }
 
-        private IList<SysFunction> _allFunctions => GetFunctionsCache();
+        private IList<SysFunctionFull> _allFunctions => GetFunctionsCacheAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
         public async Task<ResponseStructure> AddOrUpdateFunctionAsync(FunctionOperation operation)
         {
@@ -43,18 +39,18 @@ namespace Mi.Application.System
             {
                 var func = _mapper.Map<SysFunction>(operation);
                 func.CreatedBy = _miUser.UserId;
-                func.CreatedOn = TimeHelper.LocalTime();
-                func.Id = IdHelper.SnowflakeId();
-                func.Node = CheckFunctionNode(func);
+                func.CreatedOn = DateTime.Now;
+                func.Id = SnowflakeIdHelper.NextId();
+                func.Node = (EnumTreeNode)CheckFunctionNode(_mapper.Map<SysFunctionFull>(func));
                 if (func.ParentId > 0)
                 {
                     await UpdateParentNodeAsync(func.ParentId, func.Id);
                 }
-                await _functionRepository.AddAsync(func);
+                await _functionRepo.AddAsync(func);
             }
             else
             {
-                var func = _functionRepository.Get(operation.Id);
+                var func = _mapper.Map<SysFunction>(operation);
                 func.Icon = operation.Icon;
                 if (operation.ParentId > 0 && operation.ParentId != func.ParentId)
                 {
@@ -66,70 +62,65 @@ namespace Mi.Application.System
                 func.ParentId = operation.ParentId;
                 func.Sort = operation.Sort;
                 func.FunctionType = (EnumFunctionType)operation.FunctionType;
-                func.ModifiedBy = _miUser.UserId;
-                func.ModifiedOn = TimeHelper.LocalTime();
-                func.Node = CheckFunctionNode(func);
-                await _functionRepository.UpdateAsync(func);
+                func.Node = (EnumTreeNode)CheckFunctionNode(_mapper.Map<SysFunctionFull>(func));
+                await _functionRepo.UpdateAsync(func);
             }
             RemoveCache();
 
-            return _message.Success();
+            return ResponseHelper.Success();
         }
 
         private async Task UpdateParentNodeAsync(long parentId, long childId, long rawParentId = default)
         {
-            var parent = await _functionRepository.GetAsync(parentId);
+            var parent = await _functionRepo.GetAsync(x => x.Id == parentId);
             parent.Children += "," + childId;
-            parent.Node = CheckFunctionNode(parent);
+            parent.Node = (EnumTreeNode)CheckFunctionNode(_mapper.Map<SysFunctionFull>(parent));
             parent.Children = parent.Children.Trim(',');
-            parent.ModifiedBy = _miUser.UserId;
-            parent.ModifiedOn = TimeHelper.LocalTime();
             if (rawParentId > 0)
             {
-                var raw = await _functionRepository.GetAsync(rawParentId);
+                var raw = await _functionRepo.GetAsync(x => x.Id == rawParentId);
                 raw.Children = (raw.Children ?? "").Replace(childId.ToString(), "").Trim(',');
-                raw.Node = CheckFunctionNode(raw);
-                raw.ModifiedBy = _miUser.UserId;
-                raw.ModifiedOn = TimeHelper.LocalTime();
-                await _functionRepository.UpdateAsync(raw);
+                raw.Node = (EnumTreeNode)CheckFunctionNode(_mapper.Map<SysFunctionFull>(raw));
+                await _functionRepo.UpdateAsync(raw);
             }
 
-            await _functionRepository.UpdateAsync(parent);
+            await _functionRepo.UpdateAsync(parent);
         }
 
-        public EnumTreeNode CheckFunctionNode(SysFunction node)
+        public int CheckFunctionNode(SysFunctionFull node)
         {
             var hasChildren = !string.IsNullOrEmpty(node.Children) && node.Children.Split(",").Length > 0;
             var hasParent = node.ParentId > 0;
 
             if (hasParent && hasChildren)
-                return EnumTreeNode.ChildNode;
+                return (int)EnumTreeNode.ChildNode;
             else if (hasParent && !hasChildren)
-                return EnumTreeNode.LeafNode;
+                return (int)EnumTreeNode.LeafNode;
 
-            return EnumTreeNode.RootNode;
+            return (int)EnumTreeNode.RootNode;
         }
 
-        public Task<SysFunction> GetAsync(long id)
+        public async Task<SysFunctionFull> GetAsync(long id)
         {
-            return _functionRepository.GetAsync(id);
+            var model = await _functionRepo.GetAsync(x => x.Id == id);
+            return _mapper.Map<SysFunctionFull>(model);
         }
 
         public async Task<ResponseStructure<IList<FunctionItem>>> GetFunctionListAsync(FunctionSearch search)
         {
-            var exp = ExpressionCreator.New<SysFunction>()
+            var exp = PredicateBuilder.Instance.Create<SysFunctionFull>()
                 .AndIf(!string.IsNullOrEmpty(search.FunctionName), x => x.FunctionName.Contains(search.FunctionName!))
                 .AndIf(!string.IsNullOrEmpty(search.Url), x => x.Url != null && x.Url.Contains(search.Url!));
 
             var searchList = _allFunctions.Where(exp.Compile()).OrderBy(x => x.Sort);
             var flag = exp.Body.NodeType == ExpressionType.AndAlso;
-            var topLevel = flag ? searchList : _allFunctions.Where(x => x.Node == EnumTreeNode.RootNode).OrderBy(x => x.Sort);
+            var topLevel = flag ? searchList : _allFunctions.Where(x => x.Node == (int)EnumTreeNode.RootNode).OrderBy(x => x.Sort);
             var list = topLevel.Select(x => new FunctionItem
             {
                 FunctionName = x.FunctionName,
                 Icon = x.Icon,
                 Url = x.Url,
-                FunctionType = x.FunctionType,
+                FunctionType = (int)x.FunctionType,
                 AuthorizationCode = x.AuthorizationCode,
                 ParentId = x.ParentId,
                 Sort = x.Sort,
@@ -142,7 +133,7 @@ namespace Mi.Application.System
 
         private IList<FunctionItem> GetFuncChildNode(long id)
         {
-            var children = _allFunctions.Where(x => x.Node != EnumTreeNode.RootNode && x.ParentId == id).OrderBy(x => x.Sort);
+            var children = _allFunctions.Where(x => x.Node != (int)EnumTreeNode.RootNode && x.ParentId == id).OrderBy(x => x.Sort);
             return children.Select(x => new FunctionItem
             {
                 FunctionName = x.FunctionName,
@@ -159,7 +150,7 @@ namespace Mi.Application.System
 
         public IList<TreeOption> GetFunctionTree()
         {
-            var topLevels = _allFunctions.Where(x => x.Node == EnumTreeNode.RootNode).OrderBy(x => x.Sort);
+            var topLevels = _allFunctions.Where(x => x.Node == (int)EnumTreeNode.RootNode).OrderBy(x => x.Sort);
             return topLevels.Select(x => new TreeOption
             {
                 Name = x.FunctionName,
@@ -170,7 +161,7 @@ namespace Mi.Application.System
 
         private IList<TreeOption> GetFunctionChildNode(long id)
         {
-            var children = _allFunctions.Where(x => x.Node != EnumTreeNode.RootNode && x.ParentId == id).OrderBy(x => x.Sort);
+            var children = _allFunctions.Where(x => x.Node != (int)EnumTreeNode.RootNode && x.ParentId == id).OrderBy(x => x.Sort);
             return children.Select(x => new TreeOption
             {
                 Name = x.FunctionName,
@@ -181,43 +172,36 @@ namespace Mi.Application.System
 
         public async Task<ResponseStructure> RemoveFunctionAsync(IList<long> ids)
         {
-            if (ids.Count <= 0) return _message.Fail("id不能为空");
+            if (ids.Count <= 0) return ResponseHelper.Fail("id不能为空");
 
-            var funcs = await _functionRepository.GetAllAsync(x => ids.Contains(x.Id));
+            var funcs = await _functionRepo.GetListAsync(x => ids.Contains(x.Id));
             foreach (var item in funcs)
             {
                 item.IsDeleted = 1;
-                item.ModifiedBy = _miUser.UserId;
-                item.ModifiedOn = TimeHelper.LocalTime();
             }
-            await _functionRepository.UpdateManyAsync(funcs);
+            await _functionRepo.UpdateRangeAsync(funcs);
             RemoveCache();
 
-            return _message.Success();
+            return ResponseHelper.Success();
         }
 
-        public IList<SysFunction> GetFunctionsCache()
+        public async Task<IList<SysFunctionFull>> GetFunctionsCacheAsync()
         {
-            var data = _cache.Get<List<SysFunction>>(CacheConst.FUNCTION);
-            if (data == null)
+            return await _cache.GetOrCreate(CacheConst.FUNCTION, async (entry) =>
             {
-                var list = _functionRepository.GetAll();
+                var list = await _functionRepo.GetListAsync();
                 _cache.Set(CacheConst.FUNCTION, list.ToList(), CacheConst.Week);
-                return list;
-            }
-            return data;
+                return _mapper.Map<IList<SysFunctionFull>>(list);
+            })!;
         }
 
         private void RemoveCache()
         {
-            var keys = _cache.GetCacheKeys().Where(x => Regex.IsMatch(x, StringHelper.UserCachePattern()) || x.Contains(StringHelper.UserKey("", AuthorizationConst.SUPER_ADMIN))).ToList();
-            keys.Add(CacheConst.FUNCTION);
-            _cache.RemoveAll(keys);
         }
 
-        public IList<string> GetAllIds()
+        public async Task<IList<string>> GetAllIdsAsync()
         {
-            return GetFunctionsCache().Select(x=>x.Id.ToString()).ToList();
+            return (await GetFunctionsCacheAsync()).Select(x => x.Id.ToString()).ToList();
         }
     }
 }

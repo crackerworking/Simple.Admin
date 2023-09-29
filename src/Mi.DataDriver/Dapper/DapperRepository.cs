@@ -1,9 +1,12 @@
-﻿using Mi.DataDriver.EntityFrameworkCore;
-using System.Data;
+﻿using System.Data;
 
-using Mi.Domain.DataAccess;
-using Microsoft.EntityFrameworkCore;
 using Dapper;
+
+using Mi.DataDriver.EntityFrameworkCore;
+using Mi.Domain.DataAccess;
+using Mi.Domain.Shared.Models;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Mi.DataDriver.Dapper
 {
@@ -34,6 +37,25 @@ namespace Mi.DataDriver.Dapper
         public Task<T> QueryFirstOrDefaultAsync<T>(string sql, object? param = null)
         {
             return _conn.QueryFirstOrDefaultAsync<T>(sql, param);
+        }
+
+        public async Task<PagingModel<T>> QueryPagedAsync<T>(string sql, int page, int size, string? orderBy = null, object? param = null) where T : class, new()
+        {
+            var querySql = $"select * from ({sql}) as m ";
+            var total = await ExecuteScalarAsync<int>($"select count(*) from ({sql}) m ");
+            if (!string.IsNullOrWhiteSpace(orderBy))
+            {
+                querySql += $" order by {orderBy} ";
+            }
+            if (page > 0 && size > 0)
+            {
+                querySql += $" limit {(page - 1) * size},{size} ";
+            }
+
+            var model = new PagingModel<T> { Total = total };
+            model.Rows = await QueryAsync<T>(querySql);
+
+            return model;
         }
     }
 }

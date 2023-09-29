@@ -4,6 +4,8 @@ namespace Mi.Application.Contracts.System.Models.Result
 {
     public class SysFunctionFull
     {
+        public long Id { get; set; }
+
         /// <summary>
         /// 功能名称
         /// </summary>

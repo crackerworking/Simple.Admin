@@ -2,7 +2,7 @@
 {
     public class PagingModel<T> where T : new()
     {
-        public IList<T>? Rows { get; set; }
+        public IEnumerable<T>? Rows { get; set; }
 
         public int Total { get; set; }
 

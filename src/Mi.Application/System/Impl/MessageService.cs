@@ -4,14 +4,14 @@ using Mi.Core.Helper;
 using Mi.IRepository.BASE;
 using Mi.IService.System.Models.Result;
 
-namespace Mi.Application.System
+namespace Mi.Application.System.Impl
 {
     public class MessageService : IMessageService, IScoped
     {
         private readonly IRepositoryBase<SysMessage> _messageRepository;
-        private readonly IMiUser _miUser;
+        private readonly ICurrentUser _miUser;
         private readonly ResponseStructure _msg;
-        public MessageService(IRepositoryBase<SysMessage> messageRepository, IMiUser miUser, ResponseStructure msg)
+        public MessageService(IRepositoryBase<SysMessage> messageRepository, ICurrentUser miUser, ResponseStructure msg)
         {
             _messageRepository = messageRepository;
             _miUser = miUser;
@@ -41,7 +41,7 @@ namespace Mi.Application.System
         private string ShowContent(string? content)
         {
             if (string.IsNullOrEmpty(content)) return "无内容";
-            else if (content.Length >= 10) return content.Substring(0,10) + "...";
+            else if (content.Length >= 10) return content.Substring(0, 10) + "...";
             else return content;
         }
 
@@ -59,18 +59,18 @@ namespace Mi.Application.System
         {
             var sql = "select * from SysMessage where IsDeleted=0 and ReceiveUser=@userId";
             var parameter = new DynamicParameters();
-            parameter.Add("userId",_miUser.UserId);
+            parameter.Add("userId", _miUser.UserId);
             if (!string.IsNullOrEmpty(search.Vague))
             {
                 sql += " and (Title like @vague or Content like @vague) ";
                 parameter.Add("vague", "%" + search.Vague + "%");
             }
-            if(search.No.HasValue && search.No.Value > 0)
+            if (search.No.HasValue && search.No.Value > 0)
             {
                 sql += " and Id=@id";
                 parameter.Add("id", search.No.GetValueOrDefault());
             }
-            if(search.Readed.HasValue && search.Readed >= 0)
+            if (search.Readed.HasValue && search.Readed >= 0)
             {
                 sql += " and Readed=@readed";
                 parameter.Add("readed", search.Readed.GetValueOrDefault());
@@ -79,7 +79,7 @@ namespace Mi.Application.System
             {
                 var v1 = DateTime.TryParse(search.WriteTime.Split("~")[0], out var start);
                 var v2 = DateTime.TryParse(search.WriteTime.Split("~")[1], out var end);
-                if(v1 && v2)
+                if (v1 && v2)
                 {
                     sql += " and CreatedOn >= @start and CreatedOn <= @end";
                     parameter.Add("start", start.Date.ToString("yyyy-MM-dd"));
@@ -87,7 +87,7 @@ namespace Mi.Application.System
                 }
             }
 
-            var result = await _messageRepository.QueryPageAsync(search.Page, search.Size, sql,parameter, " Readed asc,CreatedOn desc ");
+            var result = await _messageRepository.QueryPageAsync(search.Page, search.Size, sql, parameter, " Readed asc,CreatedOn desc ");
             return new ResponseStructure<PagingModel<SysMessage>>(result);
         }
 

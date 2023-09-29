@@ -18,8 +18,8 @@ namespace Mi.Application.Contracts.System
 
         Task<ResponseStructure> RemoveFunctionAsync(IList<long> ids);
 
-        IList<SysFunctionFull> GetFunctionsCache();
+        Task<IList<SysFunctionFull>> GetFunctionsCacheAsync();
 
-        IList<string> GetAllIds();
+        Task<IList<string>> GetAllIdsAsync();
     }
 }

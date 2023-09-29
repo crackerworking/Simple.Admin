@@ -4,6 +4,8 @@ namespace Mi.Application.Contracts.System.Models.Result
 {
     public class SysDictFull
     {
+        public long Id { get; set; }
+
         /// <summary>
         /// 字典名称
         /// </summary>

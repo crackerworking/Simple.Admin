@@ -1,9 +1,9 @@
 ﻿using System.Data;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+
 using Mi.Core.API;
 using Mi.Core.Factory;
-using Mi.Core.GlobalVar;
 using Mi.Core.Helper;
 using Mi.Core.Models.UI;
 using Mi.Core.Service;
@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 
-namespace Mi.Application.System
+namespace Mi.Application.System.Impl
 {
     public class PermissionService : IPermissionService, IScoped
     {
@@ -28,8 +28,8 @@ namespace Mi.Application.System
         private readonly CreatorFactory _creatorFactory;
         private readonly CaptchaFactory _captchaFactory;
         private readonly HttpContext _context;
-        private readonly MemoryCacheFactory _cache;
-        private readonly IMiUser _miUser;
+        private readonly IMemoryCache _cache;
+        private readonly ICurrentUser _miUser;
         private readonly IUserService _userService;
         private readonly IPublicService _publicService;
 
@@ -41,8 +41,8 @@ namespace Mi.Application.System
             , CreatorFactory creatorFactory
             , CaptchaFactory captchaFactory
             , IHttpContextAccessor httpContextAccessor
-            , MemoryCacheFactory cache
-            , IMiUser miUser
+            , IMemoryCache cache
+            , ICurrentUser miUser
             , IUserService userService
             , IPublicService publicService)
         {
@@ -194,8 +194,8 @@ namespace Mi.Application.System
                     UserName = user.UserName,
                     IsSuperAdmin = user.IsSuperAdmin == 1
                 };
-                var roleFuncRepo = DotNetService.Get<IRepositoryBase<SysRoleFunction>>();
-                var userRoleRepo = DotNetService.Get<IRepositoryBase<SysUserRole>>();
+                var roleFuncRepo = ServiceManager.Get<IRepositoryBase<SysRoleFullFunction>>();
+                var userRoleRepo = ServiceManager.Get<IRepositoryBase<SysUserRole>>();
 
                 var exp = ExpressionCreator.New<SysFunction>();
                 if (userModel.IsSuperAdmin)
@@ -229,13 +229,13 @@ namespace Mi.Application.System
             var role = _roleRepository.Get(id);
             if (role == null || role.Id <= 0) return _message.Fail("角色不存在");
 
-            var repo = DotNetService.Get<IRepositoryBase<SysRoleFunction>>();
-            await repo.ExecuteAsync("delete from SysRoleFunction where RoleId=@id", new { id });
+            var repo = ServiceManager.Get<IRepositoryBase<SysRoleFullFunction>>();
+            await repo.ExecuteAsync("delete from SysRoleFullFunction where RoleId=@id", new { id });
 
-            var powers = new List<SysRoleFunction>();
+            var powers = new List<SysRoleFullFunction>();
             foreach (var item in funcIds)
             {
-                var temp = _creatorFactory.NewEntity<SysRoleFunction>();
+                var temp = _creatorFactory.NewEntity<SysRoleFullFunction>();
                 temp.RoleId = id;
                 temp.FunctionId = item;
                 powers.Add(temp);
@@ -256,7 +256,7 @@ namespace Mi.Application.System
 
         public async Task<ResponseStructure<IList<long>>> GetRoleFunctionIdsAsync(long id)
         {
-            var roleFuncRepo = DotNetService.Get<IRepositoryBase<SysRoleFunction>>();
+            var roleFuncRepo = ServiceManager.Get<IRepositoryBase<SysRoleFullFunction>>();
             var ids = (await roleFuncRepo.GetAllAsync(x => x.RoleId == id)).Select(x => x.FunctionId).ToList();
 
             return new ResponseStructure<IList<long>>(ids);

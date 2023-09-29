@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Mi.Domain.PipelineConfiguration
 {
-    public abstract class PipelineConfigurationBase
+    public abstract class StartupBase
     {
         public abstract void ConfigureService(IServiceCollection services);
 

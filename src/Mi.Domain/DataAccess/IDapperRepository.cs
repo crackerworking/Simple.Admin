@@ -1,4 +1,6 @@
-﻿namespace Mi.Domain.DataAccess
+﻿using Mi.Domain.Shared.Models;
+
+namespace Mi.Domain.DataAccess
 {
     public interface IDapperRepository
     {
@@ -9,5 +11,7 @@
         Task<T> ExecuteScalarAsync<T>(string sql, object? param = default);
 
         Task<int> ExecuteAsync(string sql, object? param = default);
+
+        Task<PagingModel<T>> QueryPagedAsync<T>(string sql, int page, int size, string? orderBy = default, object? param = default) where T : class, new();
     }
 }

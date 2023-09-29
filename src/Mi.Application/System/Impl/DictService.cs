@@ -4,40 +4,34 @@ using System.Text;
 using AutoMapper;
 
 using Dapper;
-using Mi.Core.API;
-using Mi.Core.Factory;
-using Mi.Core.GlobalVar;
-using Mi.Core.Helper;
-using Mi.Core.Service;
-using Mi.IService.System.Models.Result;
-using Mi.Repository.BASE;
 
-namespace Mi.Application.System
+using Microsoft.Extensions.Caching.Memory;
+
+namespace Mi.Application.System.Impl
 {
     public class DictService : IDictService, IScoped
     {
-        private readonly IDictRepository _dictRepository;
-        private readonly MemoryCacheFactory _cache;
-        private readonly IMiUser _miUser;
+        private readonly IRepository<SysDict> _dictRepo;
+        private readonly IMemoryCache _cache;
+        private readonly ICurrentUser _miUser;
         private readonly IMapper _mapper;
-        private readonly ResponseStructure _message;
+        private readonly IDapperRepository _dapperRepository;
 
-        public DictService(IDictRepository dictRepository, MemoryCacheFactory cache, IMiUser miUser, IMapper mapper
-            , ResponseStructure message)
+        public DictService(IRepository<SysDict> dictRepo, IMemoryCache cache, ICurrentUser miUser, IMapper mapper
+            , IDapperRepository dapperRepository)
         {
-            _dictRepository = dictRepository;
+            _dictRepo = dictRepo;
             _cache = cache;
             _miUser = miUser;
             _mapper = mapper;
-            _message = message;
+            _dapperRepository = dapperRepository;
         }
 
         #region Admin_UI
 
         public async Task<ResponseStructure<PagingModel<DictItem>>> GetDictListAsync(DictSearch search)
         {
-            var repo = DotNetService.Get<Repository<DictItem>>();
-            var sql = new StringBuilder(@"select d.*,(select count(*) from SysDict where id = d.ParentId) ChildCount,(select name from SysDict where id=d.ParentId) ParentName from SysDict d where d.IsDeleted = 0 ");
+            var sql = new StringBuilder(@"select d.*,(select count(*) from SysDictFull where id = d.ParentId) ChildCount,(select name from SysDictFull where id=d.ParentId) ParentName from SysDictFull d where d.IsDeleted = 0 ");
             var parameters = new DynamicParameters();
             if (!string.IsNullOrEmpty(search.Vague))
             {
@@ -58,7 +52,9 @@ namespace Mi.Application.System
             }
             sql.AppendFormat(" order by {0} CreatedOn desc ", orderBy);
 
-            return new ResponseStructure<PagingModel<DictItem>>(true, await repo.GetPagingAsync(search, sql.ToString(), parameters));
+            var model = await _dapperRepository.QueryPagedAsync<DictItem>(sql.ToString(), search.Page, search.Size, param: parameters);
+
+            return new ResponseStructure<PagingModel<DictItem>>(true, model);
         }
 
         public async Task<ResponseStructure> AddOrUpdateDictAsync(DictOperation operation, bool addEnabled = true)
@@ -66,66 +62,60 @@ namespace Mi.Application.System
             if (operation.Id <= 0 && addEnabled)
             {
                 var dict = _mapper.Map<SysDict>(operation);
-                dict.Id = IdHelper.SnowflakeId();
-                dict.CreatedBy = _miUser.UserId;
-                dict.CreatedOn = TimeHelper.LocalTime();
+                dict.Id = SnowflakeIdHelper.NextId();
                 if (dict.ParentId > 0)
                 {
-                    dict.ParentKey = _dictRepository.Get(dict.ParentId).Key;
+                    dict.ParentKey = (await _dictRepo.GetAsync(x => x.Id == dict.ParentId))?.Key;
                 }
-                await _dictRepository.AddAsync(dict);
+                await _dictRepo.AddAsync(dict);
             }
             else
             {
-                var dict = await _dictRepository.GetAsync(operation.Id);
+                var dict = _mapper.Map<SysDict>(operation);
                 if (operation.ParentId > 0 && operation.ParentId != dict.ParentId)
                 {
-                    dict.ParentKey = _dictRepository.Get(dict.ParentId).Key;
+                    dict.ParentKey = (await _dictRepo.GetAsync(x => x.Id == dict.ParentId))?.Key;
                 }
-                operation.CopyTo(dict, "Id");
-                await _dictRepository.UpdateAsync(dict);
+                await _dictRepo.UpdateAsync(dict);
             }
 
             _cache.Remove(CacheConst.DICT);
 
-            return _message.Success();
+            return ResponseHelper.Success();
         }
 
         public async Task<ResponseStructure> RemoveDictAsync(IList<string> ids)
         {
-            var list = await _dictRepository.GetAllAsync(x => ids.Contains(x.Id.ToString()));
-            var now = TimeHelper.LocalTime();
+            var list = await _dictRepo.GetListAsync(x => ids.Contains(x.Id.ToString()));
             foreach (var item in list)
             {
-                item.ModifiedBy = _miUser.UserId;
-                item.ModifiedOn = now;
                 item.IsDeleted = 1;
             }
 
-            var flag = await _dictRepository.UpdateManyAsync(list);
+            var rows = await _dictRepo.UpdateRangeAsync(list);
 
-            if (flag)
+            if (rows > 0)
             {
                 _cache.Remove(CacheConst.DICT);
             }
-            return _message.SuccessOrFail(flag);
+            return ResponseHelper.SuccessOrFail(rows > 0);
         }
 
-        public async Task<ResponseStructure<SysDict>> GetAsync(long id)
+        public async Task<ResponseStructure<SysDictFull>> GetAsync(long id)
         {
-            var dict = await _dictRepository.GetAsync(id);
+            var dict = await _dictRepo.GetAsync(x => x.Id == id);
+            var model = _mapper.Map<SysDictFull>(dict);
 
-            return new ResponseStructure<SysDict>(dict);
+            return new ResponseStructure<SysDictFull>(model);
         }
 
-        public List<SysDict> GetAll() => _dictRepository.GetAll().ToList();
+        public List<SysDict> GetAll() => _dictRepo.GetListAsync().Result;
 
         public async Task<List<Option>> GetParentListAsync()
         {
-            var sql = "select Name,Id AS Value from SysDict where IsDeleted = 0 and Id in (select ParentId from SysDict where IsDeleted = 0) ";
-            var repo = DotNetService.Get<Repository<Option>>();
+            var sql = "select Name,Id AS Value from SysDictFull where IsDeleted = 0 and Id in (select ParentId from SysDictFull where IsDeleted = 0) ";
 
-            return await repo.GetListAsync(sql);
+            return await _dapperRepository.QueryAsync<Option>(sql);
         }
 
         #endregion Admin_UI
@@ -136,12 +126,12 @@ namespace Mi.Application.System
         {
             var model = Get<T>(parentKey);
 
-            return Task.FromResult(model);
+            return model;
         }
 
-        public T Get<T>(string parentKey) where T : class, new()
+        public async Task<T> Get<T>(string parentKey) where T : class, new()
         {
-            var dict = GetDictionaryCache().Where(x => x.ParentKey == parentKey);
+            var dict = (await GetDictionaryCacheAsync()).Where(x => x.ParentKey == parentKey);
             var model = Activator.CreateInstance<T>();
 
             foreach (PropertyInfo prop in typeof(T).GetProperties())
@@ -159,7 +149,7 @@ namespace Mi.Application.System
         public async Task<bool> SetAsync<T>(T model) where T : class, new()
         {
             var dict = new List<SysDict>();
-            var list = GetDictionaryCache();
+            var list = await GetDictionaryCacheAsync();
             foreach (PropertyInfo prop in typeof(T).GetProperties())
             {
                 var item = list.FirstOrDefault(x => x.Key == prop.Name);
@@ -170,20 +160,20 @@ namespace Mi.Application.System
                 }
             }
 
-            var flag = await _dictRepository.UpdateManyAsync(dict);
+            var rows = await _dictRepo.UpdateRangeAsync(dict);
             _cache.Remove(CacheConst.FUNCTION);
-            return flag;
+            return rows > 0;
         }
 
-        public Task<string> GetStringAsync(string key)
+        public async Task<string> GetStringAsync(string key)
         {
-            var str = GetDictionaryCache().FirstOrDefault(x => x.Key == key)?.Value ?? "";
-            return Task.FromResult(str);
+            var str = (await GetDictionaryCacheAsync()).FirstOrDefault(x => x.Key == key)?.Value ?? "";
+            return str;
         }
 
         public async Task<bool> SetAsync(string key, string value, bool autoCreate = true)
         {
-            var dict = await _dictRepository.GetAsync(x => x.Key == key);
+            var dict = await _dictRepo.GetAsync(x => x.Key == key);
             var operation = new DictOperation
             {
                 Key = key,
@@ -192,21 +182,23 @@ namespace Mi.Application.System
             };
             var result = await AddOrUpdateDictAsync(operation, autoCreate);
 
-            return result.EnsureSuccess();
+            return result.IsSucceed();
         }
 
-        private List<SysDict> GetDictionaryCache()
+        private async Task<List<SysDict>> GetDictionaryCacheAsync()
         {
-            if (_cache.Exists(CacheConst.DICT)) return _cache.Get<List<SysDict>>(CacheConst.DICT) ?? new List<SysDict>();
+            var result = await _cache.GetOrCreate(CacheConst.DICT, async (entry) =>
+            {
+                var list = await _dictRepo.GetListAsync();
+                return list;
+            });
 
-            var list = _dictRepository.GetAll().ToList();
-            _cache.Set(CacheConst.DICT, list, CacheConst.Week);
-            return list;
+            return result;
         }
 
         public async Task<IList<Option>> GetOptionsAsync(string parentKey)
         {
-            var dict = GetDictionaryCache().Where(x => x.ParentKey == parentKey).Select(x => new Option
+            var dict = (await GetDictionaryCacheAsync()).Where(x => x.ParentKey == parentKey).Select(x => new Option
             {
                 Name = x.Name,
                 Value = x.Value
@@ -214,9 +206,9 @@ namespace Mi.Application.System
             return await Task.FromResult(dict);
         }
 
-        public IList<Option> GetOptions(string parentKey)
+        public async Task<IList<Option>> GetOptions(string parentKey)
         {
-            var dict = GetDictionaryCache().Where(x => x.ParentKey == parentKey).Select(x => new Option
+            var dict = (await GetDictionaryCacheAsync()).Where(x => x.ParentKey == parentKey).Select(x => new Option
             {
                 Name = x.Name,
                 Value = x.Value
@@ -227,21 +219,36 @@ namespace Mi.Application.System
         public async Task<ResponseStructure> SetAsync(Dictionary<string, string> dict)
         {
             var updateList = new List<SysDict>();
-            var list = GetDictionaryCache();
+            var list = await GetDictionaryCacheAsync();
             foreach (var item in dict)
             {
                 var model = list.FirstOrDefault(x => x.Key == item.Key);
-                if(model != null)
+                if (model != null)
                 {
                     model.Value = item.Value;
                     updateList.Add(model);
                 }
             }
-            if(updateList.Count > 0) await _dictRepository.UpdateManyAsync(updateList);
+            if (updateList.Count > 0) await _dictRepo.UpdateRangeAsync(updateList);
             _cache.Remove(CacheConst.FUNCTION);
-            return _message.Success();
+            return ResponseHelper.Success();
         }
 
-        #endregion
+        List<SysDictFull> IDictService.GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        T IDictService.Get<T>(string parentKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        IList<Option> IDictService.GetOptions(string parentKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion 公共读写方法，带缓存
     }
 }

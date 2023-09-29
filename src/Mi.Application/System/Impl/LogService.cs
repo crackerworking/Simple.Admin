@@ -1,20 +1,15 @@
-﻿using Mi.Core.API;
-using Mi.Core.Factory;
-using Mi.Core.Service;
-using Mi.IRepository.BASE;
+﻿using Microsoft.AspNetCore.Http;
 
-using Microsoft.AspNetCore.Http;
-
-namespace Mi.Application.System
+namespace Mi.Application.System.Impl
 {
     public class LogService : ILogService, IScoped
     {
         private readonly HttpContext httpContext;
         private readonly CreatorFactory _creator;
         private readonly MiHeader _header;
-        private readonly IMiUser _miUser;
+        private readonly ICurrentUser _miUser;
 
-        public LogService(IHttpContextAccessor httpContextAccessor, CreatorFactory creator, MiHeader header, IMiUser miUser)
+        public LogService(IHttpContextAccessor httpContextAccessor, CreatorFactory creator, MiHeader header, ICurrentUser miUser)
         {
             httpContext = httpContextAccessor.HttpContext;
             _creator = creator;
@@ -24,7 +19,7 @@ namespace Mi.Application.System
 
         public async Task<ResponseStructure<PagingModel<SysLoginLog>>> GetLoginLogListAsync(LoginLogSearch search)
         {
-            var repo = DotNetService.Get<IRepositoryBase<SysLoginLog>>();
+            var repo = ServiceManager.Get<IRepositoryBase<SysLoginLog>>();
             var exp = ExpressionCreator.New<SysLoginLog>()
                 .AndIf(!string.IsNullOrEmpty(search.UserName), x => x.UserName.Contains(search.UserName!))
                 .AndIf(search.Succeed == 1, x => x.Status == 1)
@@ -35,7 +30,7 @@ namespace Mi.Application.System
 
         public async Task<ResponseStructure<PagingModel<SysLog>>> GetLogListAsync(LogSearch search)
         {
-            var repo = DotNetService.Get<IRepositoryBase<SysLog>>();
+            var repo = ServiceManager.Get<IRepositoryBase<SysLog>>();
             var exp = ExpressionCreator.New<SysLog>()
                 .AndIf(!string.IsNullOrEmpty(search.UserName), x => x.UserName.Contains(search.UserName!))
                 .AndIf(search.UserId.HasValue && search.UserId > 0, x => x.UserId == search.UserId.GetValueOrDefault())
@@ -48,7 +43,7 @@ namespace Mi.Application.System
 
         public async Task<bool> SetExceptionAsync(string uniqueId, string errorMsg)
         {
-            var repo = DotNetService.Get<IRepositoryBase<SysLog>>();
+            var repo = ServiceManager.Get<IRepositoryBase<SysLog>>();
             var log = await repo.GetAsync(x => x.UniqueId == uniqueId);
             if (log == null) return false;
             log.Exception = errorMsg;
@@ -58,7 +53,7 @@ namespace Mi.Application.System
 
         public async Task<bool> WriteLogAsync(string url, string? param, string? actionFullName, string? uniqueId = default, string? contentType = null, bool succeed = true, string? exception = null)
         {
-            var repo = DotNetService.Get<IRepositoryBase<SysLog>>();
+            var repo = ServiceManager.Get<IRepositoryBase<SysLog>>();
             var log = _creator.NewEntity<SysLog>();
             log.RequestUrl = url;
             log.RequestParams = param;
@@ -75,7 +70,7 @@ namespace Mi.Application.System
         public async Task<bool> WriteLoginLogAsync(string userName, bool succeed, string operationInfo)
         {
             var model = _creator.NewEntity<SysLoginLog>();
-            var repo = DotNetService.Get<IRepositoryBase<SysLoginLog>>();
+            var repo = ServiceManager.Get<IRepositoryBase<SysLoginLog>>();
             model.UserName = userName;
             model.OperationInfo = operationInfo;
             model.Status = succeed ? 1 : 0;

@@ -21,10 +21,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
 
         public async Task<int> AddAsync(T model)
         {
-            if (model.CreatedBy == 0)
-                model.CreatedBy = _currentUser.UserId;
-            if (model.CreatedOn.Equals(new DateTime()))
-                model.CreatedOn = DateTime.Now;
+            WithCreatedFields(model);
 
             _dbContext.Add(model);
             return await _dbContext.SaveChangesAsync();
@@ -32,6 +29,11 @@ namespace Mi.DataDriver.EntityFrameworkCore
 
         public async Task<int> AddRangeAsync(IEnumerable<T> models)
         {
+            foreach (var model in models)
+            {
+                WithCreatedFields(model);
+            }
+
             await _dbContext.AddRangeAsync(models);
             return await _dbContext.SaveChangesAsync();
         }
@@ -82,10 +84,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
 
         public Task<int> UpdateAsync(T model)
         {
-            if (model.ModifiedBy.GetValueOrDefault() == 0)
-                model.ModifiedBy = _currentUser.UserId;
-            if (!model.ModifiedOn.HasValue)
-                model.ModifiedOn = DateTime.Now;
+            WithModifiedFields(model);
 
             _dbContext.Update(model);
             return _dbContext.SaveChangesAsync();
@@ -93,8 +92,29 @@ namespace Mi.DataDriver.EntityFrameworkCore
 
         public Task<int> UpdateRangeAsync(IEnumerable<T> models)
         {
+            foreach (var model in models)
+            {
+                WithModifiedFields(model);
+            }
+
             _dbContext.UpdateRange(models);
             return _dbContext.SaveChangesAsync();
+        }
+
+        private void WithModifiedFields(T model)
+        {
+            if (model.ModifiedBy.GetValueOrDefault() == 0)
+                model.ModifiedBy = _currentUser.UserId;
+            if (!model.ModifiedOn.HasValue)
+                model.ModifiedOn = DateTime.Now;
+        }
+
+        private void WithCreatedFields(T model)
+        {
+            if (model.CreatedBy == 0)
+                model.CreatedBy = _currentUser.UserId;
+            if (model.CreatedOn.Equals(new DateTime()))
+                model.CreatedOn = DateTime.Now;
         }
     }
 }

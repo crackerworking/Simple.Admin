@@ -1,23 +1,26 @@
 ﻿using System.Text;
+
 using Mi.Core.API;
-using Mi.Core.GlobalVar;
 using Mi.Core.Helper;
 using Mi.Core.Service;
+using Mi.Domain.Entities.System;
+using Mi.Domain.Helper;
+using Mi.Domain.PipelineConfiguration;
 using Mi.Repository.BASE;
 
 using Microsoft.AspNetCore.Http;
 
-namespace Mi.Application.System
+namespace Mi.Application.System.Impl
 {
     public class UserService : IUserService, IScoped
     {
         private readonly IUserRepository _userRepository;
         private readonly ResponseStructure _message;
-        private readonly IMiUser _miUser;
-        private readonly Repository<SysRole> testRepo;
+        private readonly ICurrentUser _miUser;
+        private readonly Repository<SysRoleFull> testRepo;
 
         public UserService(IUserRepository userRepository, ResponseStructure message
-            , IMiUser miUser, Repository<SysRole> testRepo)
+            , ICurrentUser miUser, Repository<SysRoleFull> testRepo)
         {
             _userRepository = userRepository;
             _message = message;
@@ -48,10 +51,10 @@ namespace Mi.Application.System
             return new ResponseStructure<string>(flag, flag ? "操作成功" : "操作失败", password);
         }
 
-        public async Task<IList<SysRole>> GetRolesAsync(long id)
+        public async Task<IList<SysRoleFull>> GetRolesAsync(long id)
         {
-            var roleRepo = DotNetService.Get<Repository<SysRole>>();
-            var sql = new StringBuilder("select r.* from SysRole r,SysRoleFunction rf,SysUserRole ur where r.Id=rf.RoleId ");
+            var roleRepo = ServiceManager.Get<Repository<SysRoleFull>>();
+            var sql = new StringBuilder("select r.* from SysRoleFull r,SysRoleFullFunction rf,SysUserRole ur where r.Id=rf.RoleId ");
             sql.Append(" and ur.RoleId=r.Id and r.IsDeleted=0 and ur.UserId=@id group by r.Id");
             return await roleRepo.GetListAsync(sql.ToString(), new { id });
         }
@@ -114,7 +117,7 @@ namespace Mi.Application.System
             user.PasswordSalt = EncryptionHelper.GetPasswordSalt();
             user.Password = EncryptionHelper.GenEncodingPassword(password, user.PasswordSalt);
             await _userRepository.UpdateAsync(user);
-            var context = DotNetService.Get<IHttpContextAccessor>().HttpContext;
+            var context = ServiceManager.Get<IHttpContextAccessor>().HttpContext;
             //await context.SignOutAsync();
 
             return _message.Success("修改成功，下次登录时请使用新密码");
