@@ -36,5 +36,11 @@ namespace Mi.Domain.Helper
         {
             return new ResponseStructure<T>(model.Code, model.Message ?? "", result);
         }
+
+        public static ResponseStructure ParameterError(string? message = default)
+        {
+            message ??= "Parameter error.";
+            return new ResponseStructure(response_type.ParameterError, message);
+        }
     }
 }

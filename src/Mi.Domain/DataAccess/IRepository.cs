@@ -11,6 +11,8 @@ namespace Mi.Domain.DataAccess
 
         Task<int> UpdateAsync(T model);
 
+        Task<int> UpdateAsync(long id, Func<Updatable<T>, Updatable<T>> updatable);
+
         Task<int> DeleteAsync(long id);
 
         Task<int> DeleteAsync(T model);

@@ -2,10 +2,13 @@
 
 using Mi.Domain.DataAccess;
 using Mi.Domain.Entities;
+using Mi.Domain.Helper;
 using Mi.Domain.Shared.Models;
 using Mi.Domain.User;
 
 using Microsoft.EntityFrameworkCore;
+
+using Nito.AsyncEx;
 
 namespace Mi.DataDriver.EntityFrameworkCore
 {
@@ -13,6 +16,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
     {
         private readonly MiDbContext _dbContext;
         private readonly ICurrentUser _currentUser;
+        private readonly AsyncLock _mutex = new AsyncLock();
 
         internal Repository(MiDbContext dbContext, ICurrentUser currentUser)
         {
@@ -116,6 +120,8 @@ namespace Mi.DataDriver.EntityFrameworkCore
                 model.CreatedBy = _currentUser.UserId;
             if (model.CreatedOn.Equals(new DateTime()))
                 model.CreatedOn = DateTime.Now;
+            if (model.Id == 0)
+                model.Id = SnowflakeIdHelper.NextId();
         }
 
         public async Task<PagingModel<T>> GetPagedAsync(Expression<Func<T, bool>> expression, int page, int size, IEnumerable<QuerySortField>? querySortFields = null)
@@ -125,6 +131,29 @@ namespace Mi.DataDriver.EntityFrameworkCore
             model.Rows = _dbContext.Set<T>().Where(expression).Skip((page - 1) * size).Take(size).ToList();
 
             return model;
+        }
+
+        public async Task<int> UpdateAsync(long id, Func<Updatable<T>, Updatable<T>> updatable)
+        {
+            using (await _mutex.LockAsync())
+            {
+                var updator = Activator.CreateInstance<Updatable<T>>();
+                updator = updatable(updator);
+
+                var model = await _dbContext.Set<T>().AsNoTracking().FirstAsync(x => x.Id == id);
+                if (model == null) return 0;
+
+                Type type = typeof(T);
+                var props = type.GetProperties();
+                foreach (var keyValue in updator.KeyValuePairs)
+                {
+                    System.Reflection.FieldInfo? fieldInfo = type.GetField(keyValue.Key);
+                    if (fieldInfo == null) continue;
+                    fieldInfo.SetValue(model, keyValue.Value);
+                }
+
+                return await UpdateAsync(model);
+            }
         }
     }
 }

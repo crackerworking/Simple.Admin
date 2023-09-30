@@ -1,6 +1,7 @@
 ﻿global using Mi.Domain.DataAccess;
 global using Mi.Domain.Entities.System;
 global using Mi.Domain.Exceptions;
+global using Mi.Domain.Extension;
 global using Mi.Domain.Helper;
 global using Mi.Domain.PipelineConfiguration;
 global using Mi.Domain.Shared.GlobalVars;

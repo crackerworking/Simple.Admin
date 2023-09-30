@@ -1,50 +1,55 @@
-﻿using Dapper;
-using Mi.Core.API;
-using Mi.Core.Helper;
+﻿using AutoMapper;
+
+using Dapper;
 
 namespace Mi.Application.System.Impl
 {
     public class RoleService : IRoleService, IScoped
     {
-        private readonly IRoleRepository _roleRepository;
+        private readonly IRepository<SysRole> _roleRepository;
         private readonly ICurrentUser _miUser;
         private readonly ResponseStructure _message;
+        private readonly IDapperRepository _dapperRepository;
+        private readonly IMapper _mapper;
+        private readonly IRepository<SysUserRole> _userRoleRepo;
 
-        public RoleService(IRoleRepository roleRepository, ICurrentUser miUser, ResponseStructure message)
+        public RoleService(IRepository<SysRole> roleRepository, ICurrentUser miUser, ResponseStructure message, IDapperRepository dapperRepository
+            , IMapper mapper, IRepository<SysUserRole> userRoleRepo)
         {
             _roleRepository = roleRepository;
             _miUser = miUser;
             _message = message;
+            _dapperRepository = dapperRepository;
+            _mapper = mapper;
+            _userRoleRepo = userRoleRepo;
         }
 
         public async Task<ResponseStructure> AddRoleAsync(string name, string? remark)
         {
-            var isExist = (await _roleRepository.GetAllAsync(x => x.RoleName.ToLower() == name.ToLower())).Count > 0;
-            if (isExist) return _message.Fail("角色名已存在");
+            var isExist = await _roleRepository.AnyAsync(x => x.RoleName.ToLower() == name.ToLower());
+            if (isExist) return ResponseHelper.Fail("角色名已存在");
 
-            var role = new SysRoleFull
+            var role = new SysRole
             {
-                Id = IdHelper.SnowflakeId(),
                 RoleName = name,
-                Remark = remark,
-                CreatedBy = _miUser.UserId,
-                CreatedOn = TimeHelper.LocalTime()
+                Remark = remark
             };
             await _roleRepository.AddAsync(role);
 
-            return _message.Success();
+            return ResponseHelper.Success();
         }
 
         public async Task<ResponseStructure<SysRoleFull>> GetRoleAsync(long id)
         {
-            var role = await _roleRepository.GetAsync(id);
+            var role = await _roleRepository.GetAsync(x => x.Id == id);
+            var model = _mapper.Map<SysRoleFull>(role);
 
-            return new ResponseStructure<SysRoleFull>(true, role);
+            return new ResponseStructure<SysRoleFull>(true, model);
         }
 
         public async Task<ResponseStructure<PagingModel<SysRoleFull>>> GetRoleListAsync(RoleSearch search)
         {
-            var sql = "select * from SysRoleFull where IsDeleted=0 ";
+            var sql = "select * from SysRole where IsDeleted=0 ";
             var parameter = new DynamicParameters();
             if (!string.IsNullOrEmpty(search.RoleName))
             {
@@ -52,36 +57,36 @@ namespace Mi.Application.System.Impl
                 parameter.Add("name", "%" + search.RoleName + "%");
             }
 
-            var pageModel = await _roleRepository.QueryPageAsync(search.Page, search.Size, sql, parameter, "CreatedOn desc");
+            var pageModel = await _dapperRepository.QueryPagedAsync<SysRoleFull>(sql, search.Page, search.Size, "CreatedOn desc", parameter);
 
             return new ResponseStructure<PagingModel<SysRoleFull>>(true, "查询成功", pageModel);
         }
 
         public async Task<ResponseStructure> RemoveRoleAsync(long id)
         {
-            var count = await _roleRepository.UsedRoleCountAsync(id);
-            if (count > 0) return _message.Fail("角色正在使用，请先移除角色下用户");
+            var count = await _userRoleRepo.CountAsync(x => x.RoleId == id);
+            if (count > 0) return ResponseHelper.Fail("角色正在使用，请先移除角色下用户");
 
-            await _roleRepository.UpdateAsync(id, node => node.MarkDeleted()
-                .ModifiedUser(_miUser.UserId).ModifiedTime());
+            await _roleRepository.UpdateAsync(id, node => node.
+                SetColumn(x => x.IsDeleted, 1));
             //移除角色下功能
-            await _roleRepository.ExecuteAsync("delete from SysRoleFullFunction where RoleId=@id", new { id });
+            await _dapperRepository.ExecuteAsync("delete from SysRoleFunction where RoleId=@id", new { id });
 
-            return _message.Success();
+            return ResponseHelper.Success();
         }
 
         public async Task<ResponseStructure> UpdateRoleAsync(long id, string name, string remark)
         {
-            var isExist = (await _roleRepository.GetAllAsync(x => x.RoleName.ToLower() == name.ToLower())).Count > 0;
-            var role = await _roleRepository.GetAsync(id);
-            if (isExist && role.RoleName != name) return _message.Fail("角色名已存在");
+            var isExist = await _roleRepository.AnyAsync(x => x.RoleName.ToLower() == name.ToLower());
+            var role = await _roleRepository.GetAsync(x => x.Id == id);
+            if (role == null) return ResponseHelper.NonExist();
+            if (isExist && role.RoleName != name) return ResponseHelper.Fail("角色名已存在");
 
-            await _roleRepository.UpdateAsync(id, node => node.Set(x => x.RoleName, name)
-                .ModifiedTime()
-                .Set(x => x.Remark, remark)
-                .ModifiedUser(_miUser.UserId));
+            await _roleRepository.UpdateAsync(id, node => node
+                .SetColumn(x => x.RoleName, name)
+                .SetColumn(x => x.Remark, remark));
 
-            return _message.Success();
+            return ResponseHelper.Success();
         }
     }
 }

@@ -1,26 +1,26 @@
 ﻿using Dapper;
-using Mi.Core.API;
-using Mi.Core.Helper;
-using Mi.IRepository.BASE;
-using Mi.IService.System.Models.Result;
 
 namespace Mi.Application.System.Impl
 {
     public class MessageService : IMessageService, IScoped
     {
-        private readonly IRepositoryBase<SysMessage> _messageRepository;
+        private readonly IRepository<SysMessage> _messageRepository;
         private readonly ICurrentUser _miUser;
         private readonly ResponseStructure _msg;
-        public MessageService(IRepositoryBase<SysMessage> messageRepository, ICurrentUser miUser, ResponseStructure msg)
+        private readonly IDapperRepository _dapperRepository;
+
+        public MessageService(IRepository<SysMessage> messageRepository, ICurrentUser miUser, ResponseStructure msg
+            , IDapperRepository dapperRepository)
         {
             _messageRepository = messageRepository;
             _miUser = miUser;
             _msg = msg;
+            _dapperRepository = dapperRepository;
         }
 
         public async Task<IList<HeaderMsg>> GetHeaderMsgAsync()
         {
-            var list = (await _messageRepository.GetAllAsync(x => x.Readed == 0 && x.ReceiveUser == _miUser.UserId)).OrderByDescending(x => x.CreatedOn);
+            var list = (await _messageRepository.GetListAsync(x => x.Readed == 0 && x.ReceiveUser == _miUser.UserId)).OrderByDescending(x => x.CreatedOn);
             var result = new List<HeaderMsg>();
             var msg = new HeaderMsg
             {
@@ -47,7 +47,7 @@ namespace Mi.Application.System.Impl
 
         private string ShowTime(DateTime time)
         {
-            var now = TimeHelper.LocalTime();
+            var now = DateTime.Now;
             var val = now.Subtract(time);
             if (val.TotalSeconds <= 60) return "刚刚";
             else if (val.TotalHours < 1) return $"{Math.Ceiling(val.TotalMinutes)}分钟前";
@@ -55,7 +55,7 @@ namespace Mi.Application.System.Impl
             else return $"{Math.Ceiling(val.TotalDays)}天前";
         }
 
-        public async Task<ResponseStructure<PagingModel<SysMessage>>> GetMessageListAsync(MessageSearch search)
+        public async Task<ResponseStructure<PagingModel<SysMessageFull>>> GetMessageListAsync(MessageSearch search)
         {
             var sql = "select * from SysMessage where IsDeleted=0 and ReceiveUser=@userId";
             var parameter = new DynamicParameters();
@@ -87,15 +87,15 @@ namespace Mi.Application.System.Impl
                 }
             }
 
-            var result = await _messageRepository.QueryPageAsync(search.Page, search.Size, sql, parameter, " Readed asc,CreatedOn desc ");
-            return new ResponseStructure<PagingModel<SysMessage>>(result);
+            var result = await _dapperRepository.QueryPagedAsync<SysMessageFull>(sql, search.Page, search.Size, " Readed asc,CreatedOn desc ", parameter);
+            return new ResponseStructure<PagingModel<SysMessageFull>>(result);
         }
 
         public async Task<ResponseStructure> ReadedAsync(IList<long> msgIds)
         {
-            if (msgIds.Count == 0) return _msg.ParameterError(nameof(msgIds));
+            if (msgIds.Count == 0) return ResponseHelper.ParameterError(nameof(msgIds));
             await _messageRepository.ExecuteAsync("update SysMessage set ModifiedOn=@time,ModifiedBy=@user,Readed=1 where Id in @ids", new { time = TimeHelper.LocalTime(), user = _miUser.UserId, ids = msgIds });
-            return _msg.Success();
+            return ResponseHelper.Success();
         }
     }
 }

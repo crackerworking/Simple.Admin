@@ -1,5 +1,4 @@
-﻿using Mi.Application.Contracts.System.Models;
-using Mi.Application.Contracts.System.Models.Result;
+﻿using Mi.Application.Contracts.System.Models.Result;
 using Mi.Application.Contracts.System.Models.User;
 
 namespace Mi.Application.Contracts.System
@@ -18,7 +17,7 @@ namespace Mi.Application.Contracts.System
 
         Task<ResponseStructure> PassedUserAsync(long id);
 
-        Task<IList<SysUserFull>> GetRolesAsync(long id);
+        Task<IList<SysRoleFull>> GetRolesAsync(long id);
 
         Task<ResponseStructure<UserBaseInfo>> GetUserBaseInfoAsync();
 
