@@ -5,17 +5,17 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mi.Web.Host", "Mi.Web.Host\Mi.Web.Host.csproj", "{37640B89-91C4-4221-80B9-621787AFC3AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mi.RazorLibrary", "Mi.RazorLibrary\Mi.RazorLibrary.csproj", "{7B953DB4-1B3B-461A-AF2E-E0892BFB6EE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mi.RazorLibrary", "Mi.RazorLibrary\Mi.RazorLibrary.csproj", "{7B953DB4-1B3B-461A-AF2E-E0892BFB6EE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mi.Application.Contracts", "Mi.Application.Contracts\Mi.Application.Contracts.csproj", "{54DB1230-1095-4CB5-91C6-5AB9D775773D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mi.Application.Contracts", "Mi.Application.Contracts\Mi.Application.Contracts.csproj", "{54DB1230-1095-4CB5-91C6-5AB9D775773D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mi.Domain", "Mi.Domain\Mi.Domain.csproj", "{41D47AD5-7539-415D-A151-BC3A1938CADF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mi.Domain", "Mi.Domain\Mi.Domain.csproj", "{41D47AD5-7539-415D-A151-BC3A1938CADF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mi.Application", "Mi.Application\Mi.Application.csproj", "{18A7DF93-3152-410D-8208-C44612C3DFF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mi.Domain.Shared", "Mi.Domain.Shared\Mi.Domain.Shared.csproj", "{EB1CFD53-3C75-4431-868D-3DDDACB99151}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mi.Domain.Shared", "Mi.Domain.Shared\Mi.Domain.Shared.csproj", "{EB1CFD53-3C75-4431-868D-3DDDACB99151}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mi.DataDriver", "Mi.DataDriver\Mi.DataDriver.csproj", "{DED28D0A-C1F6-46FD-9245-7E49D755B7F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mi.DataDriver", "Mi.DataDriver\Mi.DataDriver.csproj", "{DED28D0A-C1F6-46FD-9245-7E49D755B7F6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D8069979-F535-4850-A8C2-40266E38E0D6}"
 	ProjectSection(SolutionItems) = preProject

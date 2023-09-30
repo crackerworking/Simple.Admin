@@ -13,7 +13,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-		<PackageReference Include="DapperParameters" Version="1.0.4" />
+		<PackageReference Include="DapperParameters.Core" Version="1.0.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0-rc.1.23419.4" />
 	</ItemGroup>
