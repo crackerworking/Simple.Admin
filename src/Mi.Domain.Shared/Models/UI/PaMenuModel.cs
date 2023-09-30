@@ -8,7 +8,7 @@
         /// <summary>
         /// 唯一Id
         /// </summary>
-        public Guid Id { get; set; }
+        public long Id { get; set; }
 
         /// <summary>
         /// 标题
@@ -46,7 +46,7 @@
 
         public PaMenuModel(int type, string? title, string? href)
         {
-            Id = Guid.NewGuid();
+            Id = 0;
             Type = type;
             Title = title;
             Href = href;
@@ -55,7 +55,7 @@
 
         public PaMenuModel(int type, string? title, string? href, List<PaMenuModel> children)
         {
-            Id = Guid.NewGuid();
+            Id = 0;
             Type = type;
             Title = title;
             Href = href;
@@ -63,7 +63,7 @@
             Children = children;
         }
 
-        public PaMenuModel(Guid id, int type, string? title, string? href, List<PaMenuModel> children)
+        public PaMenuModel(long id, int type, string? title, string? href, List<PaMenuModel> children)
         {
             Id = id;
             Type = type;
@@ -73,7 +73,7 @@
             Children = children;
         }
 
-        public PaMenuModel(Guid id, int type, string? title, string? href, string? icon, List<PaMenuModel> children)
+        public PaMenuModel(long id, int type, string? title, string? href, string? icon, List<PaMenuModel> children)
         {
             Id = id;
             Type = type;

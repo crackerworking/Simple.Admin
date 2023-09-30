@@ -11,6 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Mi.Application\Mi.Application.csproj" />
+    <ProjectReference Include="..\Mi.DataDriver\Mi.DataDriver.csproj" />
     <ProjectReference Include="..\Mi.RazorLibrary\Mi.RazorLibrary.csproj" />
   </ItemGroup>
 
