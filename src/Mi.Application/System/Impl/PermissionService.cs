@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Security.Claims;
-using System.Text.RegularExpressions;
 
 using Mi.Application.Contracts.Public;
 using Mi.Domain.Entities.System.Enum;
@@ -58,7 +57,13 @@ namespace Mi.Application.System.Impl
         {
             var topLevels = (await _functionService.GetFunctionsCacheAsync())
                 .Where(x => _miUser.FuncIds.Contains(x.Id) && x.Node == (int)EnumTreeNode.RootNode && x.FunctionType == (int)EnumFunctionType.Menu).OrderBy(x => x.Sort);
-            var list = topLevels.Select(x => new PaMenuModel(x.Id, 0, x.FunctionName, x.Url, x.Icon, null)).ToList();
+            var list = new List<PaMenuModel>();
+            foreach (var x in topLevels)
+            {
+                var children = (await GetPaChildrenAsync(x.Id)).ToList();
+                var temp = new PaMenuModel(x.Id, 0, x.FunctionName, x.Url, x.Icon, children);
+                list.Add(temp);
+            }
 
             return list;
         }
@@ -66,7 +71,14 @@ namespace Mi.Application.System.Impl
         private async Task<IList<PaMenuModel>> GetPaChildrenAsync(long id)
         {
             var children = (await _functionService.GetFunctionsCacheAsync()).Where(x => _miUser.FuncIds.Contains(x.Id) && x.Node != (int)EnumTreeNode.RootNode && x.FunctionType == (int)EnumFunctionType.Menu && x.ParentId == id).OrderBy(x => x.Sort);
-            return children.Select(x => new PaMenuModel(x.Id, 0, x.FunctionName, x.Url, x.Icon, null)).ToList();
+            var list = new List<PaMenuModel>();
+            foreach (var x in children)
+            {
+                var temp = (await GetPaChildrenAsync(x.Id)).ToList();
+                var menu = new PaMenuModel(x.Id, 0, x.FunctionName, x.Url, x.Icon, temp);
+                list.Add(menu);
+            }
+            return list;
         }
 
         /// <summary>
@@ -100,7 +112,7 @@ namespace Mi.Application.System.Impl
 
         public async Task<ResponseStructure> SetUserRoleAsync(long userId, List<long> roleIds)
         {
-            var user = await _userRepository.GetAsync(x=>x.Id == userId);
+            var user = await _userRepository.GetAsync(x => x.Id == userId);
             if (user == null) return ResponseHelper.Fail("用户不存在");
 
             await _dapperRepository.ExecuteAsync("delete from SysUserRole where UserId=@id", new { id = userId });
@@ -135,16 +147,17 @@ namespace Mi.Application.System.Impl
             await _userRepository.AddAsync(user);
 
             var result = ResponseHelper.Success("注册成功，请等待管理员审核！");
-            var ids = new List<long>();
-            //var ids = await _permissionRepository.GetUserIdInAuthorizationCodesAsync(new string[] { "System:User:Passed" });
+            var ids = await _dapperRepository.QueryAsync<long>(@"select ur.UserId from SysFunction s
+                inner join SysRoleFunction sr on s.id=sr.FunctionId
+                inner join SysUserRole ur on sr.RoleId=ur.RoleId
+                where s.IsDeleted=0 and s.AuthorizationCode = 'System:User:Passed'");
             await _publicService.WriteMessageAsync("审核", $"系统有新用户('{userName}')注册，需要您及时审核！", ids);
             return result;
         }
 
         public async Task<ResponseStructure> LoginAsync(string userName, string password, string verifyCode)
         {
-            var mac = StringHelper.GetMacAddress();
-            var validateFlag = await _captcha.ValidateAsync(mac, verifyCode);
+            var validateFlag = await _captcha.ValidateAsync("", verifyCode);
             if (!validateFlag) return ResponseHelper.Fail("验证码错误");
 
             var user = await _userRepository.GetAsync(x => x.UserName.ToLower() == userName.ToLower());
@@ -219,7 +232,7 @@ namespace Mi.Application.System.Impl
 
         public async Task<ResponseStructure> SetRoleFunctionsAsync(long id, IList<long> funcIds)
         {
-            var role = _roleRepository.GetAsync(x=>x.Id == id);
+            var role = _roleRepository.GetAsync(x => x.Id == id);
             if (role == null || role.Id <= 0) return ResponseHelper.Fail("角色不存在");
 
             await _dapperRepository.ExecuteAsync("delete from SysRoleFullFunction where RoleId=@id", new { id });

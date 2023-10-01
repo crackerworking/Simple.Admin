@@ -6,6 +6,7 @@ using Mi.Domain.Shared.Models.UI;
 namespace Mi.ControllerLibrary.System
 {
     [ApiRoute]
+    [Authorize]
     public class PersonalController : ControllerBase
     {
         private readonly IPermissionService _permissionService;

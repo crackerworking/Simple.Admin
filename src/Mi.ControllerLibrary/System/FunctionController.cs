@@ -4,6 +4,7 @@ using Mi.Application.Contracts.System.Models;
 namespace Mi.ControllerLibrary.System
 {
     [ApiRoute]
+    [Authorize]
     public class FunctionController : ControllerBase
     {
         private readonly IFunctionService _functionService;

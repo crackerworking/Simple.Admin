@@ -19,7 +19,7 @@ namespace Mi.Domain.PipelineConfiguration
             _types = GetAllTypes();
         }
 
-        public void ConfigureService(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             foreach (var type in _types)
             {

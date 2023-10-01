@@ -17,7 +17,7 @@ namespace Mi.Domain.Service
         public Task<byte[]> CreateAsync(string cacheKey, string verifyCode, int width, int height)
         {
             var bytes = DrawingHelper.CreateByteByImgVerifyCode(verifyCode, width, height);
-            _memoryCache.Set(cacheKey, verifyCode);
+            _memoryCache.Set(cacheKey, verifyCode, TimeSpan.FromMinutes(1));
             return Task.FromResult(bytes);
         }
 

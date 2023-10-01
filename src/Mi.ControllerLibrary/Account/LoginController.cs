@@ -1,12 +1,10 @@
 ﻿using Mi.Application.Contracts.System;
-using Mi.Domain.Shared.Response;
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Mi.ControllerLibrary.Account
 {
-    [Route("/api/[controller]/[action]")]
+    [ApiRoute]
     public class LoginController : ControllerBase
     {
         private readonly IPermissionService _permissionService;

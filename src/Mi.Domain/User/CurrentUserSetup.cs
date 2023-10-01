@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Mi.Domain.User
 {
@@ -6,9 +7,14 @@ namespace Mi.Domain.User
     {
         public static void AddCurrentUser(this IServiceCollection services)
         {
-            //TODO:
             services.AddSingleton<ICurrentUser>(sp =>
             {
+                IHttpContextAccessor httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+                var httpContext = httpContextAccessor.HttpContext;
+                if (httpContext != null)
+                {
+                    return httpContext.Features.Get<CurrentUser>() ?? new CurrentUser();
+                }
                 return new CurrentUser();
             });
         }

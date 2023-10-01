@@ -1,11 +1,10 @@
 ﻿using Mi.Application.Contracts.System;
 using Mi.Application.Contracts.System.Models;
 
-using Microsoft.AspNetCore.Authorization;
-
 namespace Mi.ControllerLibrary.System
 {
     [ApiRoute]
+    [Authorize]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService _roleService;

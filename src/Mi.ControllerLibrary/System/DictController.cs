@@ -5,6 +5,7 @@ using Mi.Application.Contracts.System.Models.Result;
 namespace Mi.ControllerLibrary.System
 {
     [ApiRoute]
+    [Authorize]
     public class DictController : ControllerBase
     {
         private readonly IDictService _dictService;

@@ -6,6 +6,7 @@ using Mi.Application.Contracts.System.Models;
 namespace Mi.ControllerLibrary.System
 {
     [ApiRoute]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

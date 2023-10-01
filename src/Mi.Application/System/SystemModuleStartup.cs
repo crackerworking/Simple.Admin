@@ -15,6 +15,9 @@ namespace Mi.Application.System
         {
             services.AddAutoMapper(conf =>
             {
+                conf.CreateMap<SysFunctionFull, SysFunction>();
+                conf.CreateMap<SysFunction, SysFunctionFull>();
+                conf.CreateMap<SysFunction, FunctionOperation>();
             });
         }
     }

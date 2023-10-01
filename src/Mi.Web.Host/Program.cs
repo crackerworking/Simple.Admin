@@ -3,6 +3,7 @@ using Mi.DataDriver.EntityFrameworkCore;
 using Mi.Domain.PipelineConfiguration;
 using Mi.Domain.Shared;
 using Mi.Domain.Shared.Models;
+using Mi.Domain.Shared.Models.UI;
 using Mi.Domain.User;
 
 namespace Mi.Web.Host
@@ -17,7 +18,7 @@ namespace Mi.Web.Host
             builder.Services.AddControllers();
             builder.Services.AddHttpContextAccessor();
 
-            PipelineStartup.Instance.ConfigureService(builder.Services);
+            PipelineStartup.Instance.ConfigureServices(builder.Services);
             ConfigureService(builder.Services, builder.Configuration);
 
             var app = builder.Build();
@@ -52,6 +53,10 @@ namespace Mi.Web.Host
             services.AddAutomaticInjection();
 
             services.AddScoped<MiHeader>();
+
+            // UI Config
+            var uiConfig = configuration.GetSection("AdminUI");
+            services.Configure<PaConfigModel>(uiConfig);
         }
     }
 }

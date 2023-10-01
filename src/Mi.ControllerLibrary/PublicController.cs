@@ -14,20 +14,20 @@ namespace Mi.ControllerLibrary
             _publicService = publicService;
         }
 
-        [HttpGet("captcha")]
+        [HttpGet]
         public async Task<FileResult> LoginCaptcha()
         {
             var bytes = await _publicService.LoginCaptchaAsync();
             return File(bytes, "image/png");
         }
 
-        [HttpGet("config")]
+        [HttpGet]
         public async Task<PaConfigModel> Config()
         {
             return await _publicService.ReadConfigAsync();
         }
 
-        [HttpPost("has-permission")]
+        [HttpPost]
         public ResponseStructure HasPermission(string authCode) => _publicService.HasPermission(authCode);
     }
 }

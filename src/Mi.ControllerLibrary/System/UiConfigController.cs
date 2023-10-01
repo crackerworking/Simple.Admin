@@ -5,6 +5,7 @@ using Mi.Domain.Shared.Models.UI;
 namespace Mi.ControllerLibrary.System
 {
     [ApiRoute]
+    [Authorize]
     public class UiConfigController : ControllerBase
     {
         private readonly IPublicService _publicService;

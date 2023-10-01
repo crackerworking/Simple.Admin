@@ -65,7 +65,7 @@ namespace Mi.Application.Public
         public Task<byte[]> LoginCaptchaAsync()
         {
             string v = StringHelper.GetMacAddress();
-            return _captcha.CreateAsync(v, StringHelper.GetRandomString(5), 160, 30);
+            return _captcha.CreateAsync(v, StringHelper.GetRandomString(5), 120, 30);
         }
     }
 }
