@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 
 using Mi.Domain.Shared.Attributes;
+using Mi.Domain.Shared.Core;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +24,7 @@ namespace Mi.Domain.PipelineConfiguration
             foreach (var type in _types)
             {
                 object? v = Activator.CreateInstance(type);
-                type.GetMethod(nameof(Startup.ConfigureService))?.Invoke(v, new object[] { services });
+                type.GetMethod(nameof(Startup.ConfigureServices))?.Invoke(v, new object[] { services });
             }
         }
 

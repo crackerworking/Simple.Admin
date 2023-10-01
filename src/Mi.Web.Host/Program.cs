@@ -1,6 +1,7 @@
 using Mi.DataDriver;
 using Mi.DataDriver.EntityFrameworkCore;
 using Mi.Domain.PipelineConfiguration;
+using Mi.Domain.Shared;
 using Mi.Domain.Shared.Models;
 using Mi.Domain.User;
 
@@ -20,6 +21,9 @@ namespace Mi.Web.Host
             ConfigureService(builder.Services, builder.Configuration);
 
             var app = builder.Build();
+
+            App.Running(app.Environment.IsDevelopment(), app.Environment.WebRootPath, app.Configuration);
+
             ServiceManager.SetProvider(app.Services);
             PipelineStartup.Instance.Configure(app);
 

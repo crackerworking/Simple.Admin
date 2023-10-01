@@ -29,6 +29,7 @@ namespace Mi.Domain.PipelineConfiguration
                 Assembly.Load("Mi.Application.Contracts"),
                 Assembly.Load("Mi.DataDriver"),
                 Assembly.Load("Mi.Domain"),
+                Assembly.Load("Mi.ControllerLibrary"),
                 Assembly.Load("Mi.Web.Host")
             };
 

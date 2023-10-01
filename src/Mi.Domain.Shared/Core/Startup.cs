@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Mi.Domain.PipelineConfiguration
+namespace Mi.Domain.Shared.Core
 {
     public abstract class Startup
     {
-        public abstract void ConfigureService(IServiceCollection services);
+        public abstract void ConfigureServices(IServiceCollection services);
 
         public abstract void Configure(IApplicationBuilder app);
     }
