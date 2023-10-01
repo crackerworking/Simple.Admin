@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mi.ControllerLibrary", "Mi.ControllerLibrary\Mi.ControllerLibrary.csproj", "{3D6507CE-C283-4668-98F4-DF836701A824}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{DED28D0A-C1F6-46FD-9245-7E49D755B7F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DED28D0A-C1F6-46FD-9245-7E49D755B7F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DED28D0A-C1F6-46FD-9245-7E49D755B7F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D6507CE-C283-4668-98F4-DF836701A824}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D6507CE-C283-4668-98F4-DF836701A824}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D6507CE-C283-4668-98F4-DF836701A824}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D6507CE-C283-4668-98F4-DF836701A824}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
