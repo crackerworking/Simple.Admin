@@ -1,0 +1,95 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3723472 */
+  src: url('iconfont.woff2?t=1688047208573') format('woff2'),
+       url('iconfont.woff?t=1688047208573') format('woff'),
+       url('iconfont.ttf?t=1688047208573') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.mi-denglu:before {
+  content: "\e653";
+}
+
+.mi-caozuo:before {
+  content: "\e6d7";
+}
+
+.mi-qiyeweixin:before {
+  content: "\e6af";
+}
+
+.mi-daimashengcheng:before {
+  content: "\e620";
+}
+
+.mi-rizhi:before {
+  content: "\e617";
+}
+
+.mi-huancunjiankong:before {
+  content: "\e637";
+}
+
+.mi-bumen:before {
+  content: "\e7cf";
+}
+
+.mi-peizhi:before {
+  content: "\e6d8";
+}
+
+.mi-biaodanzujian-biaoge:before {
+  content: "\eb94";
+}
+
+.mi-xiaoxi:before {
+  content: "\e638";
+}
+
+.mi-iconfonticon:before {
+  content: "\e627";
+}
+
+.mi-zhandianpeizhi:before {
+  content: "\e6a3";
+}
+
+.mi-kaifa:before {
+  content: "\e733";
+}
+
+.mi-tijikongjian:before {
+  content: "\e89f";
+}
+
+.mi-yonghuguanli:before {
+  content: "\e619";
+}
+
+.mi-zidian:before {
+  content: "\e83a";
+}
+
+.mi-gongneng:before {
+  content: "\e84a";
+}
+
+.mi-shezhi:before {
+  content: "\e851";
+}
+
+.mi-yibiaoban:before {
+  content: "\e69b";
+}
+
+.mi-jiaoseguanli:before {
+  content: "\e62a";
+}
+
