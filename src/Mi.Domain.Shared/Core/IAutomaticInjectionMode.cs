@@ -1,4 +1,4 @@
-﻿namespace Mi.Domain.PipelineConfiguration
+﻿namespace Mi.Domain.Shared.Core
 {
     /// <summary>
     /// Scoped方式注入

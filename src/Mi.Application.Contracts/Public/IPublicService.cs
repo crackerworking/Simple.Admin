@@ -13,5 +13,7 @@ namespace Mi.Application.Contracts.Public
         Task<bool> WriteMessageAsync(string title, string content, IList<long> receiveUsers);
 
         ResponseStructure HasPermission(string authCode);
+
+        Task<byte[]> LoginCaptchaAsync();
     }
 }

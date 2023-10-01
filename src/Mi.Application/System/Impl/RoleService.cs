@@ -2,23 +2,23 @@
 
 using Dapper;
 
+using Mi.Domain.Shared.Core;
+
 namespace Mi.Application.System.Impl
 {
     public class RoleService : IRoleService, IScoped
     {
         private readonly IRepository<SysRole> _roleRepository;
         private readonly ICurrentUser _miUser;
-        private readonly ResponseStructure _message;
         private readonly IDapperRepository _dapperRepository;
         private readonly IMapper _mapper;
         private readonly IRepository<SysUserRole> _userRoleRepo;
 
-        public RoleService(IRepository<SysRole> roleRepository, ICurrentUser miUser, ResponseStructure message, IDapperRepository dapperRepository
+        public RoleService(IRepository<SysRole> roleRepository, ICurrentUser miUser, IDapperRepository dapperRepository
             , IMapper mapper, IRepository<SysUserRole> userRoleRepo)
         {
             _roleRepository = roleRepository;
             _miUser = miUser;
-            _message = message;
             _dapperRepository = dapperRepository;
             _mapper = mapper;
             _userRoleRepo = userRoleRepo;

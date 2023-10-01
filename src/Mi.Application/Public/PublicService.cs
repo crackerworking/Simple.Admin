@@ -1,4 +1,5 @@
 ﻿using Mi.Application.Contracts.Public;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.Application.Public
 {
@@ -7,15 +8,17 @@ namespace Mi.Application.Public
         private readonly PaConfigModel _uiConfig;
         private readonly ICurrentUser _miUser;
         private readonly IRepository<SysMessage> _messageRepo;
+        private readonly ICaptcha _captcha;
         private readonly IDictService _dictService;
 
         public PublicService(IOptionsMonitor<PaConfigModel> uiConfig, IDictService dictService
-            , ICurrentUser miUser, IRepository<SysMessage> messageRepo)
+            , ICurrentUser miUser, IRepository<SysMessage> messageRepo, ICaptcha captcha)
         {
             _dictService = dictService;
             _uiConfig = uiConfig.CurrentValue;
             _miUser = miUser;
             _messageRepo = messageRepo;
+            _captcha = captcha;
         }
 
         public async Task<bool> WriteMessageAsync(string title, string content, IList<long> receiveUsers)
@@ -57,6 +60,12 @@ namespace Mi.Application.Public
         {
             var flag = _miUser.AuthCodes.Contains(authCode);
             return flag ? ResponseHelper.Success("有") : ResponseHelper.Fail("无");
+        }
+
+        public Task<byte[]> LoginCaptchaAsync()
+        {
+            string v = StringHelper.GetMacAddress();
+            return _captcha.CreateAsync(v, StringHelper.GetRandomString(5), 160, 30);
         }
     }
 }

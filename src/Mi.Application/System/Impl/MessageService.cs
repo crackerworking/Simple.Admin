@@ -1,20 +1,20 @@
 ﻿using Dapper;
 
+using Mi.Domain.Shared.Core;
+
 namespace Mi.Application.System.Impl
 {
     public class MessageService : IMessageService, IScoped
     {
         private readonly IRepository<SysMessage> _messageRepository;
         private readonly ICurrentUser _miUser;
-        private readonly ResponseStructure _msg;
         private readonly IDapperRepository _dapperRepository;
 
-        public MessageService(IRepository<SysMessage> messageRepository, ICurrentUser miUser, ResponseStructure msg
+        public MessageService(IRepository<SysMessage> messageRepository, ICurrentUser miUser
             , IDapperRepository dapperRepository)
         {
             _messageRepository = messageRepository;
             _miUser = miUser;
-            _msg = msg;
             _dapperRepository = dapperRepository;
         }
 

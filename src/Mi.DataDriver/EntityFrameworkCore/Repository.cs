@@ -18,7 +18,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
         private readonly ICurrentUser _currentUser;
         private readonly AsyncLock _mutex = new AsyncLock();
 
-        internal Repository(MiDbContext dbContext, ICurrentUser currentUser)
+        public Repository(MiDbContext dbContext, ICurrentUser currentUser)
         {
             _dbContext = dbContext;
             _currentUser = currentUser;

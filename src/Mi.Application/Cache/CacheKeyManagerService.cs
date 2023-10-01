@@ -1,4 +1,5 @@
 ﻿using Mi.Application.Contracts.Cache;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.Application.Cache
 {
@@ -6,7 +7,7 @@ namespace Mi.Application.Cache
     {
         private readonly IMemoryCache _cache;
 
-        public CacheKeyManagerService(IMemoryCache cache, ResponseStructure msg)
+        public CacheKeyManagerService(IMemoryCache cache)
         {
             _cache = cache;
         }

@@ -1,14 +1,16 @@
 ﻿using System.Reflection;
 
+using Mi.Domain.Shared.Core;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Mi.Domain.PipelineConfiguration
 {
-    public static class AutomaticInjectionSetup
+    public static class InterfaceInjectionSetup
     {
         public static void AddAutomaticInjection(this IServiceCollection services)
         {
-            foreach (var assembly in LoadAssemblies())
+            foreach (var assembly in ServiceManager.LoadAssemblies())
             {
                 JoinAssembly(services, assembly);
             }
@@ -26,6 +28,12 @@ namespace Mi.Domain.PipelineConfiguration
             var types = assembly.DefinedTypes.Where(x => !x.IsAbstract && !x.IsInterface && _containTypes.Any(t => x.IsAssignableTo(t))).ToList();
             foreach (var type in types)
             {
+#if DEBUG
+                if (type.FullName!.Contains("Captcha"))
+                {
+                    Console.WriteLine("find Captcha.");
+                }
+#endif
                 Add(services, type);
             }
         }
@@ -54,19 +62,6 @@ namespace Mi.Domain.PipelineConfiguration
                 services.AddSingleton(serviceType, implType);
             else if (implType.IsAssignableTo(_transientType))
                 services.AddTransient(serviceType, implType);
-        }
-
-        private static List<Assembly> LoadAssemblies()
-        {
-            var list = new List<Assembly>
-            {
-                Assembly.Load("Mi.Application"),
-                Assembly.Load("Mi.Application.Contracts"),
-                Assembly.Load("Mi.DataDriver"),
-                Assembly.Load("Mi.Web.Host")
-            };
-
-            return list;
         }
     }
 }

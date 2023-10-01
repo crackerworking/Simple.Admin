@@ -5,6 +5,8 @@ using AutoMapper;
 
 using Dapper;
 
+using Mi.Domain.Shared.Core;
+
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Mi.Application.System.Impl

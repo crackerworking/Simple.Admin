@@ -4,24 +4,22 @@ using System.Linq.Expressions;
 using AutoMapper;
 
 using Mi.Domain.Entities.System.Enum;
-using Mi.Domain.Extension;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.Application.System.Impl
 {
     public class FunctionService : IFunctionService, IScoped
     {
         private readonly IMapper _mapper;
-        private readonly ResponseStructure _message;
         private readonly ICurrentUser _miUser;
         private readonly IRepository<SysFunction> _functionRepo;
         private readonly IMemoryCache _cache;
 
-        public FunctionService(IMapper mapper, ResponseStructure message, ICurrentUser miUser
+        public FunctionService(IMapper mapper, ICurrentUser miUser
             , IRepository<SysFunction> functionRepo
             , IMemoryCache cache)
         {
             _mapper = mapper;
-            _message = message;
             _miUser = miUser;
             _functionRepo = functionRepo;
             _cache = cache;

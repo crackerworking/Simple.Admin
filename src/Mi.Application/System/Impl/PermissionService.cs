@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 using Mi.Application.Contracts.Public;
 using Mi.Domain.Entities.System.Enum;
+using Mi.Domain.Shared.Core;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -24,6 +25,7 @@ namespace Mi.Application.System.Impl
         private readonly IRepository<SysUserRole> _userRoleRepo;
         private readonly IDapperRepository _dapperRepository;
         private readonly IRepository<SysRoleFunction> _roleFunctionRepo;
+        private readonly ICaptcha _captcha;
 
         public PermissionService(IRepository<SysUser> userRepository
             , IRepository<SysRole> roleRepository
@@ -35,7 +37,8 @@ namespace Mi.Application.System.Impl
             , IPublicService publicService
             , IRepository<SysUserRole> userRoleRepo
             , IDapperRepository dapperRepository
-            , IRepository<SysRoleFunction> roleFunctionRepo)
+            , IRepository<SysRoleFunction> roleFunctionRepo
+            , ICaptcha captcha)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
@@ -48,6 +51,7 @@ namespace Mi.Application.System.Impl
             _userRoleRepo = userRoleRepo;
             _dapperRepository = dapperRepository;
             _roleFunctionRepo = roleFunctionRepo;
+            _captcha = captcha;
         }
 
         public async Task<List<PaMenuModel>> GetSiderMenuAsync()
@@ -140,7 +144,8 @@ namespace Mi.Application.System.Impl
         public async Task<ResponseStructure> LoginAsync(string userName, string password, string verifyCode)
         {
             var mac = StringHelper.GetMacAddress();
-            if (!CaptchaHelper.Validate(mac, verifyCode)) return ResponseHelper.Fail("验证码错误");
+            var validateFlag = await _captcha.ValidateAsync(mac, verifyCode);
+            if (!validateFlag) return ResponseHelper.Fail("验证码错误");
 
             var user = await _userRepository.GetAsync(x => x.UserName.ToLower() == userName.ToLower());
             if (user == null) return ResponseHelper.Fail("用户名不存在");

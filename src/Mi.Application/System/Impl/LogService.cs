@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 
 using Mi.Domain.Extension;
+using Mi.Domain.Shared.Core;
 
 using Microsoft.AspNetCore.Http;
 

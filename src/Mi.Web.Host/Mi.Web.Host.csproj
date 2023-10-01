@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="font\RedwoodMount-p7Jrd.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="font\RedwoodMount-p7Jrd.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 

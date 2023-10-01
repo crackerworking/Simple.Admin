@@ -1,11 +1,9 @@
-﻿using Mi.Domain.PipelineConfiguration;
-
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Mi.Application.System
 {
-    internal class SystemModuleStartup : StartupBase
+    internal class SystemModuleStartup : Startup
     {
         public override void Configure(IApplicationBuilder app)
         {
@@ -15,7 +13,6 @@ namespace Mi.Application.System
         {
             services.AddAutoMapper(conf =>
             {
-
             });
         }
     }

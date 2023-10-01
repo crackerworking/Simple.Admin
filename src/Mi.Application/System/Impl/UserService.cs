@@ -3,6 +3,7 @@
 using AutoMapper;
 
 using Mi.Application.Contracts.System.Models.User;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.Application.System.Impl
 {
