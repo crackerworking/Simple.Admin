@@ -75,7 +75,8 @@ namespace Mi.Application.System.Impl
             foreach (var x in children)
             {
                 var temp = (await GetPaChildrenAsync(x.Id)).ToList();
-                var menu = new PaMenuModel(x.Id, 0, x.FunctionName, x.Url, x.Icon, temp);
+                var type = await GetMenuTypeAsync(x.Children);
+                var menu = new PaMenuModel(x.Id, type, x.FunctionName, x.Url, x.Icon, temp);
                 list.Add(menu);
             }
             return list;

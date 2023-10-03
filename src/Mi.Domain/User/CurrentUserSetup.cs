@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Mi.Domain.Shared.Models;
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Mi.Domain.User
@@ -7,15 +9,21 @@ namespace Mi.Domain.User
     {
         public static void AddCurrentUser(this IServiceCollection services)
         {
-            services.AddSingleton<ICurrentUser>(sp =>
+            services.AddScoped<ICurrentUser>(sp =>
             {
                 IHttpContextAccessor httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
                 var httpContext = httpContextAccessor.HttpContext;
+                var result = new CurrentUser();
                 if (httpContext != null)
                 {
-                    return httpContext.Features.Get<CurrentUser>() ?? new CurrentUser();
+                    var user = httpContext.Features.Get<UserModel>() ?? new UserModel();
+                    if (user.PowerItems != null)
+                    {
+                        result.FuncIds = user.PowerItems.Select(x => x.Id).ToList();
+                        result.AuthCodes = user.PowerItems.Select(x => x.AuthCode).Where(x => !string.IsNullOrEmpty(x)).ToList();
+                    }
                 }
-                return new CurrentUser();
+                return result;
             });
         }
     }

@@ -1,0 +1,129 @@
+﻿@{
+    Layout = "_ElementUiPlusLayout";
+}
+
+<el-row>
+    <el-col :span="10">
+        <el-card shadow="never">
+            <div slot="header">
+                <span>内存缓存</span>
+                <el-button style="float: right; padding: 3px 0" @@click="initData" type="text">刷新</el-button>
+            </div>
+            <el-table class="mt-1" v-loading="loading" :data="allKeys" style="width: 100%" highlight-current-row @@current-change="handleCurrentChange">
+                <el-table-column type="index" width="50"></el-table-column>
+                <el-table-column prop="name" label="Key名"></el-table-column>
+                <el-table-column label="操作" fixed="right" width="70px">
+                    <template #default="scope">
+                        <el-button size="small" v-permission="'Development:CacheKey:Remove'" type="danger" @@click="handleDelete(scope.row)"><el-icon><Delete /></el-icon></el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-card>
+    </el-col>
+    <el-col :span="14">
+        <el-card shadow="never" class="ml-1">
+            <div slot="header">
+                <span>缓存详情</span>
+            </div>
+            <div class="mt-1" v-if="form.keyData">
+                <el-form label-position="left"
+                         label-width="100px"
+                         :model="form">
+                    <el-form-item label="缓存Key">
+                        <el-input v-model="form.currentKey" disabled />
+                    </el-form-item>
+                    <el-form-item label="数据">
+                        <el-input v-model="form.keyData" type="textarea" disabled :autosize="{ minRows: 4, maxRows: 24 }" />
+                    </el-form-item>
+                </el-form>
+            </div>
+            <el-empty v-else description="无缓存数据" />
+        </el-card>
+    </el-col>
+</el-row>
+
+@section Scripts{
+    <script>
+        const ROOT_PATH = '/Development/CacheKeyManager/';
+        const App = {
+            data() {
+                return {
+                    labelWidth: '120px',
+                    allKeys: [],
+                    loading: false,
+                    form: {
+                        currentKey: null,
+                        keyData: null
+                    }
+                }
+            },
+            methods: {
+                handleCurrentChange(val) {
+                    if(val){
+                        this.form.currentKey = val.name
+                        this.getKeyData()
+                    }
+                },
+                clearForm(){
+                    this.form.currentKey = null
+                    this.form.keyData = null
+                },
+                getKeyData() {
+                    if (!this.form.currentKey) {
+                        ElementPlus.ElMessage.warning('请点击左侧列表选择缓存Key')
+                        return;
+                    }
+                    axios.post(ROOT_PATH + "GetData?key=" + this.form.currentKey).then(res => {
+                        if (MiUtils.ajaxSucceed(res.data.code)) {
+                            this.form.keyData = res.data.result;
+                        } else {
+                            ElementPlus.ElMessage.error(res.data.message)
+                        }
+                    })
+                },
+                initData() {
+                    this.loading = true
+                    axios.post(ROOT_PATH + "GetAllKeys").then(res => {
+                        setTimeout(() => {
+                            this.loading = false
+                            this.clearForm()
+                        }, 800)
+                        if (MiUtils.ajaxSucceed(res.data.code)) {
+                            this.allKeys = res.data.result;
+                        } else {
+                            ElementPlus.ElMessage.error(res.data.message)
+                        }
+                    })
+                },
+                handleDelete(row) {
+                    ElementPlus.ElMessageBox.confirm(
+                        '敏感操作，是否继续？',
+                        '提示',
+                        {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning',
+                        }
+                    ).then(() => {
+                            axios.post(ROOT_PATH + "RemoveKey?key=" + row.name).then(res => {
+                                if (MiUtils.ajaxSucceed(res.data.code)) {
+                                    ElementPlus.ElMessage.success(res.data.message)
+                                    this.initData()
+                                } else {
+                                    ElementPlus.ElMessage.error(res.data.message)
+                                }
+                            })
+                    }).catch(() => {
+                        ElementPlus.ElMessage({
+                            type: 'info',
+                            message: '取消操作',
+                        })
+                    })
+                }
+            },
+            created() {
+                this.initData()
+            }
+        }
+    </script>
+}

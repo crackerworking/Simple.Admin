@@ -1,0 +1,76 @@
+﻿@using Mi.IService.System.Models.Result;
+@model IList<UserRoleOption>
+
+<div class="layui-form">
+    <div class="mainBox">
+        <div class="main-container">
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色：</label>
+                <div class="layui-input-block">
+                    @{
+                        var index = 0;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <input @(item.Checked ? "checked" : "") type="checkbox" value="@item.Value" title="@(item.Name + (!string.IsNullOrEmpty(item.Remark) ? $"【{item.Remark}】" : ""))" name="roleIds[@(index++)]" lay-filter="role-id" lay-skin="tag">
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit
+                    lay-filter="save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        layui.use(['form', 'jquery', 'common'], function () {
+            let form = layui.form;
+            let $ = layui.jquery;
+            let common = layui.common;
+
+            form.on('submit(save)', function (data) {
+                let param = { userId: '@ViewBag.Id' }
+                let i = 0
+                for (const key in data.field) {
+                    if (key.indexOf('roleIds') != -1) {
+                        param[`roleIds[${i}]`] = data.field[key]
+                        delete data.field[key]
+                        i += 1
+                    }
+                }
+                $.ajax({
+                    url: '/System/User/SetUserRole',
+                    data: param,
+                    dataType: 'json',
+                    type: 'post',
+                    success: function (result) {
+                        if (MiUtils.ajaxSucceed(result.code)) {
+                            layer.msg(result.message, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+                                parent.window.refresh()
+                            });
+                        } else {
+                            layer.msg(result.message, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+                return false;
+            });
+        })
+    </script>
+}

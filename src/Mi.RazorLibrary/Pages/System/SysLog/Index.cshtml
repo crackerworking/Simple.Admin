@@ -1,0 +1,160 @@
+﻿@{
+    ViewData["PC"] = true;
+}
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-form">
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="userName" placeholder="请输入用户名称" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <select name="succeed" id="statusSelect">
+                        <option value="-1">全部</option>
+                        <option value="1">成功</option>
+                        <option value="2">失败</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <permission-button class-name="pear-btn pear-btn-primary pear-btn-md" lay-submit="true" lay-filter="log-query" auth-code="System:LoginLog:Query">
+                    <i class="layui-icon layui-icon-search"></i>
+                    查询
+                </permission-button>
+                <permission-button class-name="pear-btn pear-btn-md" id="btnReset" auth-code="System:LoginLog:Query">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                    重置
+                </permission-button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--table-->
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="log-table" lay-filter="log-table"></table>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        layui.use(['table', 'form', 'jquery', 'common'], function () {
+            let table = layui.table;
+            let form = layui.form;
+            let $ = layui.jquery;
+            let common = layui.common;
+
+            table.render({
+                elem: '#log-table',
+                url: '/System/SysLog/GetLoginLogList',
+                page: true,
+                request: {
+                    limitName: 'size'
+                },
+                contentType: 'application/json',
+                method: 'post',
+                cols: [[
+                    {
+                        type: 'numbers'
+                    },
+                    {
+                        title: '用户名',
+                        field: 'userName',
+                        align: 'center'
+                    },
+                    {
+                        title: 'IP',
+                        field: 'ipAddress',
+                        align: 'center'
+                    },
+                    {
+                        title: '区域',
+                        field: 'regionInfo',
+                        align: 'center'
+                    },
+                    {
+                        title: '浏览器',
+                        field: 'browser',
+                        align: 'center'
+                    },
+                    {
+                        title: '系统',
+                        field: 'system',
+                        align: 'center'
+                    },
+                    {
+                        title: '状态',
+                        field: 'status',
+                        align: 'center',
+                        templet: function (d) {
+                            if (d.status === 1) {
+                                return `<span class="layui-badge layui-bg-green">成功</span>`
+                            }
+                            return `<span class="layui-badge layui-bg-orange">失败</span>`
+                        }
+                    },
+                    {
+                        title: '操作信息',
+                        field: 'operationInfo',
+                        align: 'center'
+                    },
+                    {
+                        title: '登录时间',
+                        field: 'createdOn',
+                        align: 'center'
+                    }
+                ]],
+                skin: 'line',
+                toolbar: true,
+                defaultToolbar: [{
+                    title: '刷新',
+                    layEvent: 'refresh',
+                    icon: 'layui-icon-refresh',
+                }, 'filter'],
+                parseData: function (res) {
+                    let paging = common.pagingResult(res);
+                    return {
+                        "code": common.tableCode(res.code),
+                        "msg": res.message,
+                        "count": paging.total,
+                        "data": paging.data
+                    };
+                }
+            });
+
+            form.on('submit(log-query)', function (data) {
+                table.reload('log-table', {
+                    where: data.field,
+                    page: {
+                        curr: 1
+                    }
+                })
+                return false;
+            });
+
+            table.on('toolbar(log-table)', function (obj) {
+                if (obj.event === 'refresh') {
+                    window.refresh();
+                }
+            });
+
+            window.refresh = function (param) {
+                table.reload('log-table');
+            }
+
+            $("#btnReset").click(function () {
+                $("input[name='userName']").val('');
+                $("select[name='succeed']").val(-1);
+                form.render()
+                table.reload('log-table', {
+                    where: {}
+                })
+            })
+        })
+    </script>
+}

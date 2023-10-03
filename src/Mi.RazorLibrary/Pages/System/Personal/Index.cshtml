@@ -1,0 +1,236 @@
+﻿@using Mi.IService.System;
+@inject IDictService dictService
+@{
+    ViewData["PC"] = true;
+}
+
+@section Styles{
+    <link href="~/admin/css/other/person.css" rel="stylesheet" />
+}
+
+<div class="layui-row layui-col-space10">
+    <div class="layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-body" style="padding: 25px;">
+                <div class="text-center layui-text">
+                    <div class="user-info-head" id="userInfoHead">
+                        <img src="#" id="userAvatar" width="115" height="115" alt="头像">
+                    </div>
+                    <h2 id="nickname_h2" style="padding-top: 20px;font-size: 20px;">xxx</h2>
+                </div>
+            </div>
+            <div style="height: 45px;border-top: 1px whitesmoke solid;text-align: center;line-height: 45px;font-size: 13.5px;">
+                <span id="sign_span">xxx</span>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md9">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                基本资料
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-form" action="">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">性别</label>
+                        <div class="layui-input-block">
+                            @foreach (var item in dictService.GetOptions("Sex"))
+                            {
+                                <input type="radio" name="sex" value="@item.Value" title="@item.Name">
+                            }
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">昵称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="nickName" placeholder="请输入昵称" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">个性签名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="signature" placeholder="请输入个性签名" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <permission-button class-name="pear-btn pear-btn-primary pear-btn-md" lay-submit="true" lay-filter="infoSubmit" auth-code="System:Personal:SetUserBaseInfo">
+                                确认修改
+                            </permission-button>
+                            <button id="resetBtn" class="pear-btn pear-btn-md">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card mt-1">
+            <div class="layui-card-header">
+                修改密码
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-form" action="">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label mi-required-label">新密码</label>
+                        <div class="layui-input-block">
+                            <input type="password" name="pwd" required lay-verify="required" placeholder="请输入新密码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label mi-required-label">确认密码</label>
+                        <div class="layui-input-block">
+                            <input type="password" name="sure_pwd" required lay-verify="required" placeholder="请再次输入密码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <permission-button class-name="pear-btn pear-btn-primary pear-btn-md" lay-submit="true" lay-filter="pwdSubmit" auth-code="System:Personal:SetPassword">
+                                确认修改
+                            </permission-button>
+                            <button id="clearBtn" class="pear-btn pear-btn-md">清空</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        layui.use(['form', 'jquery', 'common', 'convert'], function () {
+            let form = layui.form;
+            let $ = layui.jquery;
+            let common = layui.common;
+            let convert = layui.convert;
+
+            initData();
+
+            var image = new Image();
+            image.src = "../../admin/images/avatar.jpg";
+            image.onload = function () {
+                $("#userAvatar").attr("src", convert.imageToBase64(image));
+            }
+
+            window.callback = function (data) {
+                layer.close(data.index);
+                $("#userAvatar").attr("src", data.newAvatar);
+            }
+
+            form.on('submit(pwdSubmit)', function (data) {
+                if (data.field.pwd != data.field.sure_pwd) {
+                    layer.msg('两次输入密码不一致',{icon:5});
+                    return false;
+                }
+                layer.confirm('确定更新登录密码？', {
+                    icon: 3,
+                    title: '提示'
+                }, function (index) {
+                    layer.close(index);
+                    let loading = layer.load();
+                    $.ajax({
+                        url: '/System/Personal/SetPassword?password=' + data.field.pwd,
+                        dataType: 'json',
+                        type: 'post',
+                        contentType: 'application/json',
+                        success: function (result) {
+                            layer.close(loading);
+                            if (MiUtils.ajaxSucceed(result.code)) {
+                                layer.msg(result.message, {
+                                    icon: 1,
+                                    time: 1000
+                                }, function () {
+                                    location.reload()
+                                });
+                            } else {
+                                layer.msg(result.message, {
+                                    icon: 2,
+                                    time: 1000
+                                });
+                            }
+                        }
+                    })
+                });
+                return false;
+            });
+
+            form.on('submit(infoSubmit)', function (data) {
+                let param = { ...data.field }
+                param.avatar = $('#userAvatar').attr('src')
+                $.ajax({
+                    url: '/System/Personal/SetUserBaseInfo',
+                    dataType: 'json',
+                    type: 'post',
+                    data: JSON.stringify(param),
+                    contentType: 'application/json',
+                    success: function (result) {
+                        if (MiUtils.ajaxSucceed(result.code)) {
+                            layer.msg(result.message, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                location.reload()
+                            });
+                        } else {
+                            layer.msg(result.message, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+                return false;
+            });
+
+            $("#userAvatar").click(function () {
+                layer.open({
+                    type: 2,
+                    title: '更换图片',
+                    shade: 0.1,
+                    area: ["900px", "500px"],
+                    content: '/System/Personal/Profile',
+                    btn: ['确定', '取消'],
+                    yes: function (index, layero) {
+                        window['layui-layer-iframe' + index].submitForm();
+                    }
+                });
+            });
+
+            function initData() {
+                $.post('/System/Personal/GetUserBaseInfo', function (res) {
+                    if (common.ajaxSuccess(res.code)) {
+                        $('#userAvatar').attr('src', res.result.avatar ?? '#')
+                        $('input[name="nickName"]').val(res.result.nickName ?? '')
+                        $('#nickname_h2').text(res.result.nickName ?? '')
+                        $('input[name="signature"]').val(res.result.signature ?? '')
+                        $('#sign_span').text(res.result.signature ?? '')
+                        $('input[name=sex]').each(function (index, element) {
+                            if ($(element).val() == res.result.sex) {
+                                $(element).prop('checked', true)
+                            }
+                            else{
+                                $(element).prop('checked', false)
+                            }
+                        })
+
+                        form.render()
+                    } else {
+                        layer.msg(res.message, {
+                            icon: 2,
+                            time: 1000
+                        });
+                    }
+                })
+            }
+
+            $('#clearBtn').click(function () {
+                $('input[name="pwd"]').val('')
+                $('input[name="sure_pwd"]').val('')
+            })
+
+            //TODO: 重置单选按钮无效
+            $('#resetBtn').click(function(){
+                initData()
+            })
+        });
+    </script>
+}

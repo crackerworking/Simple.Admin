@@ -1,0 +1,69 @@
+﻿@model SysUser
+
+<div class="layui-form">
+    <div class="mainBox">
+        <div class="main-container">
+            <div class="layui-form-item">
+                <label class="layui-form-label mi-required-label">用户名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="userName" value="@Model.UserName" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
+                           class="layui-input">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit
+                    lay-filter="user-save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        layui.use(['form', 'jquery', 'common'], function () {
+            let form = layui.form;
+            let $ = layui.jquery;
+            let common = layui.common;
+
+            form.on('submit(user-save)', function (data) {
+                $.ajax({
+                    url: '/System/User/AddUser?userName=' + data.field.userName,
+                    dataType: 'json',
+                    type: 'post',
+                    success: function (result) {
+                        if (MiUtils.ajaxSucceed(result.code)) {
+                            layer.alert('生成用户密码：'+result.result, {
+                                time: 10 * 1000,
+                                success: function (layero, index) {
+                                    var timeNum = this.time / 1000, setText = function (start) {
+                                        layer.title('<span class="layui-font-red">' + (start ? timeNum : --timeNum) + '</span> 秒后自动关闭', index);
+                                    };
+                                    setText(!0);
+                                    this.timer = setInterval(setText, 1000);
+                                    if (timeNum <= 0) clearInterval(this.timer);
+                                },
+                                end: function () {
+                                    clearInterval(this.timer);
+                                    parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
+                                    parent.window.refresh()
+                                }
+                            });
+                        } else {
+                            layer.msg(result.message, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+                return false;
+            });
+        })
+    </script>
+}

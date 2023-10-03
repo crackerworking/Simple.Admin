@@ -1,4 +1,311 @@
-﻿@page "/System/User"
+﻿@{
+    ViewData["PC"] = true;
+}
 
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-form">
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="userName" placeholder="请输入用户名" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <permission-button class-name="pear-btn pear-btn-primary pear-btn-md" lay-submit="true" lay-filter="user-query" auth-code="System:User:Query">
+                    <i class="layui-icon layui-icon-search"></i>
+                    查询
+                </permission-button>
+                <permission-button class-name="pear-btn pear-btn-md" id="btnReset" auth-code="System:User:Query">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                    重置
+                </permission-button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--table-->
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="user-table" lay-filter="user-table"></table>
+    </div>
+</div>
 
-<h2>User Index</h2>
+@section Scripts{
+    <script type="text/html" id="user-toolbar">
+        <permission-button class-name="pear-btn pear-btn-primary pear-btn-md" lay-event="add" auth-code="System:User:Add">
+            <i class="layui-icon layui-icon-add-1"></i>
+            新增
+        </permission-button>
+    </script>
+
+    <script type="text/html" id="user-bar">
+        {{#  if(d.isEnabled === 0){ }}
+         <permission-button class-name="pear-btn mi-btn-green pear-btn-md" lay-event="audit" auth-code="System:User:Passed">
+            <i class="layui-icon layui-icon-ok"></i>
+        </permission-button>
+        {{#  } }}
+        <permission-button class-name="pear-btn pear-btn-primary pear-btn-md" lay-event="has-role" auth-code="System:User:SetUserRole">
+            <i class="layui-icon layui-icon-username"></i>
+        </permission-button>
+        <permission-button class-name="pear-btn pear-btn-primary pear-btn-md" lay-event="gen" auth-code="System:User:UpdatePassword">
+            <i class="layui-icon layui-icon-password"></i>
+        </permission-button>
+        <permission-button class-name="pear-btn pear-btn-danger pear-btn-md" lay-event="remove" auth-code="System:User:Remove">
+            <i class="layui-icon layui-icon-delete"></i>
+        </permission-button>
+    </script>
+
+    <script>
+        layui.use(['table', 'form', 'jquery', 'common'], function () {
+            let table = layui.table;
+            let form = layui.form;
+            let $ = layui.jquery;
+            let common = layui.common;
+            let pageRootUrl = "/System/User/";
+
+            table.render({
+                elem: '#user-table',
+                url: pageRootUrl + 'GetUserList',
+                page: true,
+                request: {
+                    limitName: 'size'
+                },
+                contentType: 'application/json',
+                method: 'post',
+                cols: [[
+                    {
+                        type: 'numbers'
+                    },
+                    {
+                        title: '头像',
+                        field: 'avatar',
+                        align: 'center',
+                        templet: function (d) {
+                            if (!d.avatar){
+                                return ""
+                            }
+                            return `<img src="${d.avatar}" style="border-radius:50%" width="35" height="35" />`
+                        }
+                    },
+                    {
+                        title: '用户名',
+                        field: 'userName',
+                        align: 'center'
+                    },
+                    {
+                        title: '昵称',
+                        field: 'nickName',
+                        align: 'center'
+                    },
+                    {
+                        title: '性别',
+                        field: 'sex',
+                        align: 'center',
+                        templet: function (d) {
+                            return d.sex == 1 ? '男' : '女'
+                        }
+                    },
+                    {
+                        title: '个性签名',
+                        field: 'signature',
+                        align: 'center'
+                    },
+                    {
+                        title: '允许登录',
+                        field: 'isEnabled',
+                        align: 'center',
+                        templet: function (d) {
+                            if (d.isEnabled === 1) {
+                                return `<span class="layui-badge layui-bg-green">是</span>`
+                            }
+                            return `<span class="layui-badge layui-bg-orange">否</span>`
+                        }
+                    },
+                    {
+                        title: '角色/身份',
+                        field: 'roleNameString',
+                        align: 'center',
+                        templet: function (d) {
+                            if (d.roleNameString) {
+                                return d.roleNameString
+                            }
+                            return `--`
+                        }
+                    },
+                    {
+                        title: '创建时间',
+                        field: 'createdOn',
+                        align: 'center'
+                    },
+                    {
+                        title: '操作',
+                        toolbar: '#user-bar',
+                        align: 'center',
+                        width: 210
+                    }
+                ]],
+                skin: 'line',
+                toolbar: '#user-toolbar',
+                defaultToolbar: [{
+                    title: '刷新',
+                    layEvent: 'refresh',
+                    icon: 'layui-icon-refresh',
+                }, 'filter'],
+                parseData: function (res) {
+                    let paging = common.pagingResult(res);
+                    return {
+                        "code": common.tableCode(res.code),
+                        "msg": res.message,
+                        "count": paging.total,
+                        "data": paging.data
+                    };
+                }
+            });
+
+            table.on('toolbar(user-table)', function (obj) {
+                if (obj.event === 'add') {
+                    window.add();
+                } else if (obj.event === 'refresh') {
+                    window.refresh();
+                }
+            });
+
+            table.on('tool(user-table)', function (obj) {
+                if (obj.event === 'remove') {
+                    window.remove(obj);
+                } else if (obj.event === 'gen') {
+                    window.gen(obj);
+                } else if (obj.event === 'has-role') {
+                    window.role(obj)
+                } else if (obj.event === 'audit') {
+                    layer.confirm('启用后，用户可以登录系统，是否继续？', {
+                        icon: 3,
+                        title: '提示'
+                    }, function (index) {
+                        layer.close(index);
+                        $.post(pageRootUrl + 'PassedUser?id=' + obj.data['userId'], function (res) {
+                            if (MiUtils.ajaxSucceed(res.code)) {
+                                layer.msg(res.message, {
+                                    icon: 1,
+                                    time: 1000
+                                }, function () {
+                                    window.refresh()
+                                });
+                            } else {
+                                layer.msg(res.message, {
+                                    icon: 2,
+                                    time: 1000
+                                });
+                            }
+                        })
+                    })
+                }
+            });
+
+            form.on('submit(user-query)', function (data) {
+                table.reload('user-table', {
+                    where: data.field,
+                    page: {
+                        curr: 1
+                    }
+                })
+                return false;
+            });
+
+            $("#btnReset").click(function () {
+                $("input[name='userName']").val('');
+                table.reload('user-table', {
+                    where: {}
+                })
+            })
+
+            window.refresh = function (param) {
+                table.reload('user-table');
+            }
+
+            window.role = function (obj) {
+                layer.open({
+                    type: 2,
+                    title: '用户角色',
+                    shade: 0.1,
+                    area: ['600px', '400px'],
+                    content: pageRootUrl + 'UserRole?id=' + obj.data['userId']
+                });
+            }
+
+            window.add = function () {
+                layer.open({
+                    type: 2,
+                    title: '新增',
+                    shade: 0.1,
+                    area: ['500px', '300px'],
+                    content: pageRootUrl + 'Edit'
+                });
+            }
+
+            window.gen = function (obj) {
+                layer.confirm('更新用户密码后，旧密码将无法使用，确定继续吗？', {
+                    icon: 3,
+                    title: '提示'
+                }, function (index) {
+                    layer.close(index);
+                    $.post(pageRootUrl + 'UpdatePassword?userId=' + obj.data['userId'], function (res) {
+                        if (MiUtils.ajaxSucceed(res.code)) {
+                            layer.alert('更新后用户密码：' + res.result, {
+                                time: 10 * 1000,
+                                success: function (layero, index) {
+                                    var timeNum = this.time / 1000, setText = function (start) {
+                                        layer.title('<span class="layui-font-red">' + (start ? timeNum : --timeNum) + '</span> 秒后自动关闭', index);
+                                    };
+                                    setText(!0);
+                                    this.timer = setInterval(setText, 1000);
+                                    if (timeNum <= 0) clearInterval(this.timer);
+                                },
+                                end: function () {
+                                    clearInterval(this.timer);
+                                }
+                            });
+                        } else {
+                            layer.msg(res.message, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    })
+                })
+            }
+
+            window.remove = function (obj) {
+                layer.confirm('确定要删除该用户', {
+                    icon: 3,
+                    title: '提示'
+                }, function (index) {
+                    layer.close(index);
+                    let loading = layer.load();
+                    $.ajax({
+                        url: pageRootUrl + "RemoveUser?userId=" + obj.data['userId'],
+                        dataType: 'json',
+                        type: 'post',
+                        success: function (result) {
+                            layer.close(loading);
+                            if (MiUtils.ajaxSucceed(result.code)) {
+                                layer.msg(result.message, {
+                                    icon: 1,
+                                    time: 1000
+                                }, function () {
+                                    window.refresh()
+                                });
+                            } else {
+                                layer.msg(result.message, {
+                                    icon: 2,
+                                    time: 1000
+                                });
+                            }
+                        }
+                    })
+                });
+            }
+        })
+    </script>
+}

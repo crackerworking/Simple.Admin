@@ -1,0 +1,246 @@
+﻿@{
+    ViewData["PC"] = true;
+}
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-form">
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">编号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="no" placeholder="请输入编号" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">模糊匹配</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="vague" placeholder="请输入消息标题/内容" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <select name="readed" id="statusSelect">
+                        <option value="-1">全部</option>
+                        <option value="0">未读</option>
+                        <option value="1">已读</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">发送时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="writeTime" id="search-time" placeholder="请选择发送时间" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="message-query">
+                    <i class="layui-icon layui-icon-search"></i>
+                    查询
+                </button>
+                <button class="pear-btn pear-btn-md" id="btnReset">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                    重置
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--table-->
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="message-table" lay-filter="message-table"></table>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/html" id="message-toolbar">
+        <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="batch-readed">
+            <i class="layui-icon layui-icon-read"></i>
+            批量阅读
+        </button>
+    </script>
+
+    <script type="text/html" id="message-bar">
+        {{#  if(d.readed === 0){ }}
+        <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="readed"><i class="layui-icon layui-icon-read"></i></button>
+        {{#  } }}
+    </script>
+
+    <script>
+        layui.use(['table', 'form', 'jquery', 'common', 'laydate'], function () {
+            let table = layui.table;
+            let form = layui.form;
+            let $ = layui.jquery;
+            let common = layui.common;
+            let laydate = layui.laydate;
+            laydate.render({
+                elem: '#search-time',
+                range: '~'
+            });
+            let pageRootUrl = "/Workspace/Message/";
+
+            $('input[name="no"]').val(MiUtils.getGlobalParams('messageNo'))
+
+            table.render({
+                elem: '#message-table',
+                url: pageRootUrl + 'GetMessageList',
+                page: true,
+                request: {
+                    limitName: 'size'
+                },
+                where:{
+                    no: $('input[name="no"]').val()
+                },
+                contentType: 'application/json',
+                method: 'post',
+                cols: [[
+                    {
+                        type: 'checkbox'
+                    },
+                    {
+                        type: 'numbers'
+                    },
+                    {
+                        title: '编号',
+                        field: 'id',
+                        align: 'center'
+                    },
+                    {
+                        title: '标题',
+                        field: 'title',
+                        align: 'center'
+                    },
+                    {
+                        title: '内容',
+                        field: 'content',
+                        align: 'center'
+                    },
+                    {
+                        title: '状态',
+                        field: 'readed',
+                        align: 'center',
+                        templet:function(d){
+                            if (d.readed === 1) {
+                                return `<span class="layui-badge layui-bg-green">已读</span>`
+                            }
+                            return `<span class="layui-badge layui-bg-orange">未读</span>`
+                        }
+                    },
+                    {
+                        title: '发送时间',
+                        field: 'createdOn',
+                        align: 'center'
+                    },
+                    {
+                        title: '操作',
+                        toolbar: '#message-bar',
+                        align: 'center',
+                        width: 100
+                    }
+                ]],
+                skin: 'line',
+                toolbar: '#message-toolbar',
+                defaultToolbar: [{
+                    title: '刷新',
+                    layEvent: 'refresh',
+                    icon: 'layui-icon-refresh',
+                }, 'filter'],
+                parseData: function (res) {
+                    let paging = common.pagingResult(res);
+                    return {
+                        "code": common.tableCode(res.code),
+                        "msg": res.message,
+                        "count": paging.total,
+                        "data": paging.data
+                    };
+                }
+            });
+
+            table.on('toolbar(message-table)', function (obj) {
+                if(obj.event === 'batch-readed') {
+                    var checkIds = common.checkField(obj, 'id');
+                    if (!checkIds || checkIds.split(',').length === 0) {
+                        layer.msg('请选择一行数据', {
+                            icon: 2,
+                            time: 800
+                        });
+                        return
+                    }
+                    let ids = checkIds.split(',')
+                    window.readed(ids);
+                }
+            });
+
+            table.on('tool(message-table)', function (obj) {
+                if (obj.event === 'readed') {
+                    let ids = []
+                    ids.push(obj.data['id'])
+                    window.readed(ids);
+                }
+            });
+
+            form.on('submit(message-query)', function (data) {
+                table.reload('message-table', {
+                    where: data.field
+                })
+                return false;
+            });
+
+            $("#btnReset").click(function () {
+                $("input[name='vague']").val('');
+                $("input[name='no']").val('');
+                MiUtils.removeGlobalParams('messageNo')
+                $('#search-time').val('');
+                $('#statusSelect').val(-1)
+                form.render()
+                table.reload('message-table', {
+                    where: {}
+                })
+            })
+
+            window.refresh = function (param) {
+                table.reload('message-table');
+            }
+
+            window.readed = function (ids) {
+                if (!ids || ids.length == 0) return;
+                let i = 0,
+                    param = {}
+                for (const id of ids) {
+                    param[`ids[${i}]`] = id
+                    i += 1
+                }
+                layer.confirm('确认已读吗？', {
+                    icon: 3,
+                    title: '提示'
+                }, function (index) {
+                    layer.close(index);
+                    let loading = layer.load();
+                    $.ajax({
+                        url: pageRootUrl + "Readed",
+                        dataType: 'json',
+                        data: param,
+                        type: 'post',
+                        success: function (result) {
+                            layer.close(loading);
+                            if (MiUtils.ajaxSucceed(result.code)) {
+                                layer.msg(result.message, {
+                                    icon: 1,
+                                    time: 1000
+                                }, function () {
+                                    window.refresh()
+                                });
+                            } else {
+                                layer.msg(result.message, {
+                                    icon: 2,
+                                    time: 1000
+                                });
+                            }
+                        }
+                    })
+                });
+            }
+        })
+    </script>
+}

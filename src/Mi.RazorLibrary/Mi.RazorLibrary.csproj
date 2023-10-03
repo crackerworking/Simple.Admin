@@ -15,6 +15,10 @@
     <ProjectReference Include="..\Mi.Application.Contracts\Mi.Application.Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\System\" />
+  </ItemGroup>
+
 
 
 </Project>
