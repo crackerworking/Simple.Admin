@@ -7,11 +7,17 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/component/pear/css/pear.css" />
+    <link href="~/admin/css/mi.css" rel="stylesheet" asp-append-version="true" />
+    @await RenderSectionAsync("Styles",false)
 </head>
-<body>
-    <h1>布局</h1>
-    <div>
-        @RenderBody()
-    </div>
+<body class="@(Convert.ToBoolean(ViewData["PC"] ?? false) ? "pear-container":"")">
+    @RenderBody()
+    <script src="~/component/layui/layui.js"></script>
+    <script src="~/component/pear/pear.js"></script>
+    <script src="~/admin/js/xm-select.js"></script>
+    <script src="~/admin/js/axios.min.js"></script>
+    <script src="~/admin/js/mi-utils.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts",false)
 </body>
 </html>

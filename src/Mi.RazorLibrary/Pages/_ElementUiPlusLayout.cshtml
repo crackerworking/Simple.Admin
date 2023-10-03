@@ -1,5 +1,5 @@
-﻿@using Mi.Core.GlobalUser;
-@inject ICurrentUser miUser
+﻿@using Mi.Application.Contracts.System;
+@inject IUserService userService
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,7 +30,7 @@
     <script src="~/admin/js/mi-utils.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
     <script>
-        const allPowers = @Html.Raw(JsonConvert.SerializeObject(miUser.AuthCodes))
+        const allPowers = @Html.Raw(Json.Serialize(userService.GetAuthCode()))
         const app = Vue.createApp(App);
         for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
             app.component(key, component)

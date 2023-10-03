@@ -1,20 +1,21 @@
-﻿@model SysRole
+﻿@page "/system/role/edit"
+@model Mi.RazorLibrary.Pages.System.Role.EditModel
 
 <div class="layui-form">
-    @Html.HiddenFor(x=>x.Id)
+    @Html.HiddenFor(x=>x.Role.Id)
     <div class="mainBox">
         <div class="main-container">
             <div class="layui-form-item">
                 <label class="layui-form-label mi-required-label">角色名</label>
                 <div class="layui-input-block">
-                    <input type="text" name="name" value="@Model.RoleName" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
+                    <input type="text" name="name" value="@Model.Role.RoleName" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
                            class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">备注</label>
                 <div class="layui-input-block">
-                    <input type="text" name="remark" value="@Model.Remark" autocomplete="off" placeholder="请输入备注"
+                    <input type="text" name="remark" value="@Model.Role.Remark" autocomplete="off" placeholder="请输入备注"
                            class="layui-input">
                 </div>
             </div>
@@ -42,7 +43,7 @@
             form.on('submit(role-save)', function (data) {
                 var str = $.param(data.field)
                 $.ajax({
-                    url: '/System/Role/@(Model.Id > 0 ? "UpdateRole" : "AddRole")?' + str,
+                    url: '/System/Role/@(Model.Role.Id > 0 ? "UpdateRole" : "AddRole")?' + str,
                     dataType: 'json',
                     type: 'post',
                     success: function (result) {

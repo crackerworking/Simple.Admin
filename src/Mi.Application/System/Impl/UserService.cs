@@ -47,6 +47,11 @@ namespace Mi.Application.System.Impl
             return new ResponseStructure<string>(flag > 0, password);
         }
 
+        public List<string?> GetAuthCode()
+        {
+            return _miUser.AuthCodes!.ToList();
+        }
+
         public async Task<IList<SysRoleFull>> GetRolesAsync(long id)
         {
             var sql = new StringBuilder("select r.* from SysRole r,SysRoleFunction rf,SysUserRole ur where r.Id=rf.RoleId ");

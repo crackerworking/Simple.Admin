@@ -111,7 +111,11 @@ namespace Mi.Application.System.Impl
             return new ResponseStructure<SysDictFull>(model);
         }
 
-        public List<SysDict> GetAll() => _dictRepo.GetListAsync().Result;
+        public List<SysDictFull> GetAll()
+        {
+            var dict = _dictRepo.GetListAsync().Result;
+            return _mapper.Map<List<SysDictFull>>(dict);
+        }
 
         public async Task<List<Option>> GetParentListAsync()
         {
@@ -234,21 +238,6 @@ namespace Mi.Application.System.Impl
             if (updateList.Count > 0) await _dictRepo.UpdateRangeAsync(updateList);
             _cache.Remove(CacheConst.FUNCTION);
             return ResponseHelper.Success();
-        }
-
-        List<SysDictFull> IDictService.GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        T IDictService.Get<T>(string parentKey)
-        {
-            throw new NotImplementedException();
-        }
-
-        IList<Option> IDictService.GetOptions(string parentKey)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion 公共读写方法，带缓存

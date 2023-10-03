@@ -1,4 +1,5 @@
-﻿@using Mi.IService.System;
+﻿@page "/system/personal"
+@using Mi.Application.Contracts.System;
 @inject IDictService dictService
 @{
     ViewData["PC"] = true;
@@ -34,7 +35,7 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">性别</label>
                         <div class="layui-input-block">
-                            @foreach (var item in dictService.GetOptions("Sex"))
+                            @foreach (var item in await dictService.GetOptionsAsync("Sex"))
                             {
                                 <input type="radio" name="sex" value="@item.Value" title="@item.Name">
                             }

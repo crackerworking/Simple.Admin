@@ -1,5 +1,5 @@
-﻿@using Mi.IService.System.Models.Result;
-@model IList<UserRoleOption>
+﻿@page "/system/user/userrole"
+@model Mi.RazorLibrary.Pages.System.User.UserRoleModel
 
 <div class="layui-form">
     <div class="mainBox">
@@ -10,7 +10,7 @@
                     @{
                         var index = 0;
                     }
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Options)
                     {
                         <input @(item.Checked ? "checked" : "") type="checkbox" value="@item.Value" title="@(item.Name + (!string.IsNullOrEmpty(item.Remark) ? $"【{item.Remark}】" : ""))" name="roleIds[@(index++)]" lay-filter="role-id" lay-skin="tag">
                     }

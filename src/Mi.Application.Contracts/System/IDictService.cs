@@ -26,8 +26,6 @@ namespace Mi.Application.Contracts.System
 
         Task<T> GetAsync<T>(string parentKey) where T : class, new();
 
-        T Get<T>(string parentKey) where T : class, new();
-
         Task<bool> SetAsync<T>(T model) where T : class, new();
 
         Task<string> GetStringAsync(string key);
@@ -35,8 +33,6 @@ namespace Mi.Application.Contracts.System
         Task<bool> SetAsync(string key, string value, bool autoCreate = true);
 
         Task<IList<Option>> GetOptionsAsync(string parentKey);
-
-        IList<Option> GetOptions(string parentKey);
 
         Task<ResponseStructure> SetAsync(Dictionary<string, string> dict);
 

@@ -24,5 +24,7 @@ namespace Mi.Application.Contracts.System
         Task<ResponseStructure> SetUserBaseInfoAsync(UserBaseInfo model);
 
         Task<ResponseStructure> SetPasswordAsync(string password);
+
+        List<string?> GetAuthCode();
     }
 }

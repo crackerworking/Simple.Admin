@@ -1,4 +1,5 @@
-﻿@using Mi.IService.System;
+﻿@page "/system/function"
+@using Mi.Application.Contracts.System;
 @{
     Layout = "_ElementUiPlusLayout";
 }
@@ -103,8 +104,8 @@
 
 @section Scripts{
     <script>
-        const ROOT_PATH = '/System/Function/';
-        const allKeys = @Html.Raw(JsonConvert.SerializeObject(funcService.GetAllIds()))
+        const ROOT_PATH = '/api/Function/';
+        const allKeys = @Html.Raw(Json.Serialize(await funcService.GetAllIdsAsync()))
         const App = {
             data() {
                 return {

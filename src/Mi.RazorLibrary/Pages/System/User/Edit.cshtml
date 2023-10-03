@@ -1,4 +1,5 @@
-﻿@model SysUser
+﻿@page "/system/user/edit"
+@model Mi.RazorLibrary.Pages.System.User.EditModel
 
 <div class="layui-form">
     <div class="mainBox">
@@ -6,7 +7,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label mi-required-label">用户名</label>
                 <div class="layui-input-block">
-                    <input type="text" name="userName" value="@Model.UserName" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
+                    <input type="text" name="userName" value="@Model.UserInfo.UserName" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
                            class="layui-input">
                 </div>
             </div>

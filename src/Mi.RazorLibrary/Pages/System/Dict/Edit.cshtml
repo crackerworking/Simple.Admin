@@ -1,21 +1,20 @@
-﻿@model SysDict
-@{
-    var list = ViewBag.Options as List<SysDict>;
-}
+﻿@page "/system/dict/edit"
+@model Mi.RazorLibrary.Pages.System.Dict.EditModel
+
 <div class="layui-form">
-    @Html.HiddenFor(x=>x.Id)
+    @Html.HiddenFor(x=>x.Dict.Id)
     <div class="mainBox">
         <div class="main-container">
-            @if(list != null && list.Count > 0)
+            @if (Model.Options != null && Model.Options.Count > 0)
             {
                 <div class="layui-form-item">
                     <label class="layui-form-label">上级</label>
                     <div class="layui-input-block">
                         <select name="parentId" lay-search>
                             <option value="">请选择字典上级</option>
-                            @foreach (var item in list.Where(x=>x.Id != Model.Id))
+                            @foreach (var item in Model.Options.Where(x => x.Id != Model.Dict.Id))
                             {
-                                @if(item.Id == Model.ParentId)
+                                @if(item.Id == Model.Dict.ParentId)
                                 {
                                     <option selected="selected" value="@item.Id">@item.Name</option>
                                 }
@@ -31,35 +30,35 @@
             <div class="layui-form-item">
                 <label class="layui-form-label mi-required-label">名称</label>
                 <div class="layui-input-block">
-                    <input type="text" name="name" value="@Model.Name" lay-verify="required" autocomplete="off" placeholder="请输入字典名称"
+                    <input type="text" name="name" value="@Model.Dict.Name" lay-verify="required" autocomplete="off" placeholder="请输入字典名称"
                            class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label mi-required-label">键名</label>
                 <div class="layui-input-block">
-                    <input type="text" name="key" value="@Model.Key" lay-verify="required" autocomplete="off" placeholder="请输入字典键名"
+                    <input type="text" name="key" value="@Model.Dict.Key" lay-verify="required" autocomplete="off" placeholder="请输入字典键名"
                            class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">字典值</label>
                 <div class="layui-input-block">
-                    <input type="text" name="value" value="@Model.Value" autocomplete="off" placeholder="请输入字典值"
+                    <input type="text" name="value" value="@Model.Dict.Value" autocomplete="off" placeholder="请输入字典值"
                            class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">排序</label>
                 <div class="layui-input-block">
-                    <input type="number" name="sort" value="@Model.Sort" autocomplete="off"
+                    <input type="number" name="sort" value="@Model.Dict.Sort" autocomplete="off"
                            class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">备注</label>
                 <div class="layui-input-block">
-                    <input type="text" name="remark" value="@Model.Remark" autocomplete="off" placeholder="请输入备注"
+                    <input type="text" name="remark" value="@Model.Dict.Remark" autocomplete="off" placeholder="请输入备注"
                            class="layui-input">
                 </div>
             </div>
