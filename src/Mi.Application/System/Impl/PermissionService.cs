@@ -155,9 +155,9 @@ namespace Mi.Application.System.Impl
             return result;
         }
 
-        public async Task<ResponseStructure> LoginAsync(string userName, string password, string verifyCode)
+        public async Task<ResponseStructure> LoginAsync(Guid guid, string userName, string password, string verifyCode)
         {
-            var validateFlag = await _captcha.ValidateAsync("", verifyCode);
+            var validateFlag = await _captcha.ValidateAsync(guid.ToString(), verifyCode);
             if (!validateFlag) return ResponseHelper.Fail("验证码错误");
 
             var user = await _userRepository.GetAsync(x => x.UserName.ToLower() == userName.ToLower());

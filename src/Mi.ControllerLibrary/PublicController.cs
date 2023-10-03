@@ -15,9 +15,9 @@ namespace Mi.ControllerLibrary
         }
 
         [HttpGet]
-        public async Task<FileResult> LoginCaptcha()
+        public async Task<FileResult> LoginCaptcha(Guid guid)
         {
-            var bytes = await _publicService.LoginCaptchaAsync();
+            var bytes = await _publicService.LoginCaptchaAsync(guid);
             return File(bytes, "image/png");
         }
 

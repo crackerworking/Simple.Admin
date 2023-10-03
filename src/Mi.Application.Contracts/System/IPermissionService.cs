@@ -21,7 +21,7 @@ namespace Mi.Application.Contracts.System
 
         Task<ResponseStructure> RegisterAsync(string userName, string password);
 
-        Task<ResponseStructure> LoginAsync(string userName, string password, string verifyCode);
+        Task<ResponseStructure> LoginAsync(Guid guid, string userName, string password, string verifyCode);
 
         Task LogoutAsync();
 

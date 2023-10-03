@@ -14,6 +14,6 @@ namespace Mi.Application.Contracts.Public
 
         ResponseStructure HasPermission(string authCode);
 
-        Task<byte[]> LoginCaptchaAsync();
+        Task<byte[]> LoginCaptchaAsync(Guid guid);
     }
 }

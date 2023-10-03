@@ -3,6 +3,7 @@
 
 @{
     Layout = null;
+    ViewBag.Guid = Guid.NewGuid();
 }
 
 <!DOCTYPE html>
@@ -49,6 +50,9 @@
                         <ul class="ax-tab-content">
                             <li>
                                 <div class="layui-form">
+
+                                    <input name="guid" type="hidden" value="@ViewBag.Guid"/>
+
                                     <div class="ax-break"></div>
                                     <div class="ax-break ax-hide-tel"></div>
                                     <div class="ax-form-group">
@@ -81,7 +85,7 @@
                                                             <span class="ax-pos-left" style="width:2.4rem;"><i class="ax-iconfont ax-icon-shield-f"></i></span>
                                                             <input name="code" lay-verify="required" placeholder="输入验证码..." value="" type="text"><span class="ax-pos-right"><a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>
                                                         </div>
-                                                        <a class="ax-form-img"><img asp-append-version="true" id="captchaImg" src="/api/public/LoginCaptcha"></a>
+                                                        <a class="ax-form-img"><img asp-append-version="true" id="captchaImg" src="/api/public/LoginCaptcha?guid=@ViewBag.Guid"></a>
                                                     </div>
                                                 </div>
 
@@ -193,15 +197,8 @@
                 $(this).addClass('mi-active');
             })
 
-            function uuid() {
-                var temp_url = URL.createObjectURL(new Blob());
-                var uuid = temp_url.toString();
-                URL.revokeObjectURL(temp_url);
-                return uuid.substr(uuid.lastIndexOf("/") + 1);
-            }
-
             $('#captchaImg').click(function () {
-                this.src = '/api/public/LoginCaptcha?v=' + uuid()
+                this.src = '/api/public/LoginCaptcha?guid=@ViewBag.Guid'
             })
 
             form.on('submit(login)',function(loginData){
@@ -214,7 +211,7 @@
                         //    icon: 16,
                         //    shade: 0.01
                         //});
-                        request.setRequestHeader("Mi-Header", base64Encryption(MiUtils.header()))
+                        // request.setRequestHeader("Mi-Header", base64Encryption(MiUtils.header()))
                     },
                     success: function (res) {
                         //layer.closeAll();
@@ -225,7 +222,7 @@
                                 icon: 2,
                                 time: 800
                             }, function () {
-                                $('#captchaImg').attr('src', '/api/public/LoginCaptcha?v=' + uuid())
+                                $('#captchaImg').attr('src', '/api/public/LoginCaptcha?guid=@ViewBag.Guid')
                             });
                         }
                     }

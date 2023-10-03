@@ -62,10 +62,9 @@ namespace Mi.Application.Public
             return flag ? ResponseHelper.Success("有") : ResponseHelper.Fail("无");
         }
 
-        public Task<byte[]> LoginCaptchaAsync()
+        public Task<byte[]> LoginCaptchaAsync(Guid guid)
         {
-            string v = StringHelper.GetMacAddress();
-            return _captcha.CreateAsync(v, StringHelper.GetRandomString(5), 120, 30);
+            return _captcha.CreateAsync(guid.ToString(), StringHelper.GetRandomString(5), 120, 30);
         }
     }
 }

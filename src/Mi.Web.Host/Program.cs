@@ -6,6 +6,8 @@ using Mi.Domain.Shared.Models;
 using Mi.Domain.Shared.Models.UI;
 using Mi.Domain.User;
 
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 namespace Mi.Web.Host
 {
     public class Program
@@ -18,6 +20,9 @@ namespace Mi.Web.Host
             builder.Services.AddControllers();
             builder.Services.AddHttpContextAccessor();
 
+            builder.Services.AddAuthentication()
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => builder.Configuration.Bind("CookieSettings", options));
+
             PipelineStartup.Instance.ConfigureServices(builder.Services);
             ConfigureService(builder.Services, builder.Configuration);
 
@@ -29,6 +34,11 @@ namespace Mi.Web.Host
             PipelineStartup.Instance.Configure(app);
 
             app.UseStaticFiles();
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapRazorPages();
             app.MapControllerRoute("api-router", "/api/[Controller]/[Action]");

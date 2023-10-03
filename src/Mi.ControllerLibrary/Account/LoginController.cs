@@ -20,9 +20,9 @@ namespace Mi.ControllerLibrary.Account
         }
 
         [HttpPost]
-        public async Task<ResponseStructure> Do(string userName, string password, string code)
+        public async Task<ResponseStructure> Do(Guid guid, string userName, string password, string code)
         {
-            var result = await _permissionService.LoginAsync(userName, password, code);
+            var result = await _permissionService.LoginAsync(guid, userName, password, code);
             await _logService.WriteLoginLogAsync(userName, result.Code == response_type.Success, result.Message ?? "");
             return result;
         }

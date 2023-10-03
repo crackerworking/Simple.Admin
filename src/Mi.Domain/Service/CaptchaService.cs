@@ -23,7 +23,7 @@ namespace Mi.Domain.Service
 
         public Task<bool> ValidateAsync(string cacheKey, string verifyCode)
         {
-            var flag = _memoryCache.TryGetValue<string>(cacheKey, out var code) && code == verifyCode;
+            var flag = _memoryCache.TryGetValue<string>(cacheKey, out var code) && code != null && code.Equals(verifyCode, StringComparison.CurrentCultureIgnoreCase);
             return Task.FromResult(flag);
         }
     }
