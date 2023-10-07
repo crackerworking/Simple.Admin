@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Mi.RazorLibrary.Pages.System.User
 {
-    internal class EditModel : PageModel
+    public class EditModel : PageModel
     {
         public SysUserFull UserInfo { get; set; }
     }

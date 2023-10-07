@@ -1,4 +1,4 @@
-﻿namespace Mi.Domain.User
+﻿namespace Mi.Domain.Shared.Core
 {
     public interface ICurrentUser
     {

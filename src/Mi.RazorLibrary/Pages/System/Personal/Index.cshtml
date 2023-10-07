@@ -129,7 +129,7 @@
                     layer.close(index);
                     let loading = layer.load();
                     $.ajax({
-                        url: '/System/Personal/SetPassword?password=' + data.field.pwd,
+                        url: '/api/Personal/SetPassword?password=' + data.field.pwd,
                         dataType: 'json',
                         type: 'post',
                         contentType: 'application/json',
@@ -158,7 +158,7 @@
                 let param = { ...data.field }
                 param.avatar = $('#userAvatar').attr('src')
                 $.ajax({
-                    url: '/System/Personal/SetUserBaseInfo',
+                    url: '/api/Personal/SetUserBaseInfo',
                     dataType: 'json',
                     type: 'post',
                     data: JSON.stringify(param),
@@ -197,7 +197,7 @@
             });
 
             function initData() {
-                $.post('/System/Personal/GetUserBaseInfo', function (res) {
+                $.post('/api/Personal/GetUserBaseInfo', function (res) {
                     if (common.ajaxSuccess(res.code)) {
                         $('#userAvatar').attr('src', res.result.avatar ?? '#')
                         $('input[name="nickName"]').val(res.result.nickName ?? '')

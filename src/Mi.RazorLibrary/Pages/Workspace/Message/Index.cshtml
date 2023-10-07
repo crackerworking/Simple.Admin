@@ -1,4 +1,5 @@
-﻿@{
+﻿@page "/Workspace/Message"
+@{
     ViewData["PC"] = true;
 }
 
@@ -78,7 +79,7 @@
                 elem: '#search-time',
                 range: '~'
             });
-            let pageRootUrl = "/Workspace/Message/";
+            let pageRootUrl = "/api/Message/";
 
             $('input[name="no"]').val(MiUtils.getGlobalParams('messageNo'))
 

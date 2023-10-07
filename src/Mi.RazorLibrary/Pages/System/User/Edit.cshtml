@@ -34,7 +34,7 @@
 
             form.on('submit(user-save)', function (data) {
                 $.ajax({
-                    url: '/System/User/AddUser?userName=' + data.field.userName,
+                    url: '/api/User/AddUser?userName=' + data.field.userName,
                     dataType: 'json',
                     type: 'post',
                     success: function (result) {

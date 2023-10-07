@@ -1,4 +1,6 @@
-﻿namespace Mi.Domain.User
+﻿using Mi.Domain.Shared.Core;
+
+namespace Mi.Domain.User
 {
     internal class CurrentUser : ICurrentUser
     {

@@ -63,7 +63,7 @@
             let form = layui.form;
             let $ = layui.jquery;
             let common = layui.common;
-            let pageRootUrl = "/System/User/";
+            let pageRootUrl = "/api/User/";
 
             table.render({
                 elem: '#user-table',
@@ -241,7 +241,7 @@
                     title: '新增',
                     shade: 0.1,
                     area: ['500px', '300px'],
-                    content: pageRootUrl + 'Edit'
+                    content: "/System/User/" + 'Edit'
                 });
             }
 

@@ -3,8 +3,8 @@
 using Mi.Domain.DataAccess;
 using Mi.Domain.Entities;
 using Mi.Domain.Helper;
+using Mi.Domain.Shared.Core;
 using Mi.Domain.Shared.Models;
-using Mi.Domain.User;
 
 using Microsoft.EntityFrameworkCore;
 

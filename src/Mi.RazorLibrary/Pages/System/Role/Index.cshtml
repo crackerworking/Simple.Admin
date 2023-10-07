@@ -58,7 +58,7 @@
             let form = layui.form;
             let $ = layui.jquery;
             let common = layui.common;
-            let pageRootUrl = "/System/Role/";
+            let pageRootUrl = "/api/Role/";
 
             table.render({
                 elem: '#role-table',
@@ -132,7 +132,7 @@
                         title: '授权',
                         shade: 0.1,
                         area: ['80%', '75%'],
-                        content: pageRootUrl + 'RoleAuthorization?id=' + obj.data['id']
+                        content: "/System/Role/" + 'RoleAuthorization?id=' + obj.data['id']
                     });
                 }
             });
@@ -164,7 +164,7 @@
                     title: '新增',
                     shade: 0.1,
                     area: ['500px', '300px'],
-                    content: pageRootUrl + 'Edit'
+                    content: "/System/Role/" + 'Edit'
                 });
             }
 
@@ -174,7 +174,7 @@
                     title: '编辑',
                     shade: 0.1,
                     area: ['500px', '300px'],
-                    content: pageRootUrl + 'Edit?id=' + obj.data['id']
+                    content: "/System/Role/" + 'Edit?id=' + obj.data['id']
                 });
             }
 

@@ -85,7 +85,7 @@
 
             form.on('submit(save)', function (data) {
                 $.ajax({
-                    url: '/System/Dict/AddOrUpdateDict',
+                    url: '/api/Dict/AddOrUpdateDict',
                     data: JSON.stringify(data.field),
                     contentType:'application/json',
                     dataType: 'json',

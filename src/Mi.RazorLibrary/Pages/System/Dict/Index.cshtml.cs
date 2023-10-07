@@ -2,7 +2,7 @@
 
 namespace Mi.RazorLibrary.Pages.System.Dict
 {
-    internal class IndexModel : PageModel
+    public class IndexModel : PageModel
     {
     }
 }

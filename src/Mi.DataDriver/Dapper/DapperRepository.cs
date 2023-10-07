@@ -42,7 +42,7 @@ namespace Mi.DataDriver.Dapper
         public async Task<PagingModel<T>> QueryPagedAsync<T>(string sql, int page, int size, string? orderBy = null, object? param = null) where T : class, new()
         {
             var querySql = $"select * from ({sql}) as m ";
-            var total = await ExecuteScalarAsync<int>($"select count(*) from ({sql}) m ");
+            var total = await ExecuteScalarAsync<int>($"select count(*) from ({sql}) m ", param);
             if (!string.IsNullOrWhiteSpace(orderBy))
             {
                 querySql += $" order by {orderBy} ";
@@ -53,7 +53,7 @@ namespace Mi.DataDriver.Dapper
             }
 
             var model = new PagingModel<T> { Total = total };
-            model.Rows = await QueryAsync<T>(querySql);
+            model.Rows = await QueryAsync<T>(querySql, param);
 
             return model;
         }

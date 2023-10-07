@@ -43,7 +43,7 @@
             form.on('submit(role-save)', function (data) {
                 var str = $.param(data.field)
                 $.ajax({
-                    url: '/System/Role/@(Model.Role.Id > 0 ? "UpdateRole" : "AddRole")?' + str,
+                    url: '/api/Role/@(Model.Role.Id > 0 ? "UpdateRole" : "AddRole")?' + str,
                     dataType: 'json',
                     type: 'post',
                     success: function (result) {

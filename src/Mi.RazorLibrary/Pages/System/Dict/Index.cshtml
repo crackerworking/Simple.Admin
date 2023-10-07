@@ -72,7 +72,7 @@
             let form = layui.form;
             let $ = layui.jquery;
             let common = layui.common;
-            let pageRootUrl = "/System/Dict/";
+            let pageRootUrl = "/api/Dict/";
 
             loadSelectOptions();
 
@@ -201,7 +201,7 @@
                     title: '新增',
                     shade: 0.1,
                     area: ['500px', '490px'],
-                    content: pageRootUrl + 'Edit'
+                    content: "/System/Dict/" + 'Edit'
                 });
             }
 
@@ -257,7 +257,7 @@
                     title: '编辑',
                     shade: 0.1,
                     area: ['500px', '490px'],
-                    content: pageRootUrl + 'Edit?id=' + obj.data['id']
+                    content: "/System/Dict/" + 'Edit?id=' + obj.data['id']
                 });
             }
 

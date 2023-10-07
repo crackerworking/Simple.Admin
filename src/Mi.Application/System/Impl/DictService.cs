@@ -33,7 +33,7 @@ namespace Mi.Application.System.Impl
 
         public async Task<ResponseStructure<PagingModel<DictItem>>> GetDictListAsync(DictSearch search)
         {
-            var sql = new StringBuilder(@"select d.*,(select count(*) from SysDictFull where id = d.ParentId) ChildCount,(select name from SysDictFull where id=d.ParentId) ParentName from SysDictFull d where d.IsDeleted = 0 ");
+            var sql = new StringBuilder(@"select d.*,(select count(*) from SysDict where id = d.ParentId) ChildCount,(select name from SysDict where id=d.ParentId) ParentName from SysDict d where d.IsDeleted = 0 ");
             var parameters = new DynamicParameters();
             if (!string.IsNullOrEmpty(search.Vague))
             {
@@ -119,7 +119,7 @@ namespace Mi.Application.System.Impl
 
         public async Task<List<Option>> GetParentListAsync()
         {
-            var sql = "select Name,Id AS Value from SysDictFull where IsDeleted = 0 and Id in (select ParentId from SysDictFull where IsDeleted = 0) ";
+            var sql = "select Name,Id AS Value from SysDict where IsDeleted = 0 and Id in (select ParentId from SysDict where IsDeleted = 0) ";
 
             return await _dapperRepository.QueryAsync<Option>(sql);
         }

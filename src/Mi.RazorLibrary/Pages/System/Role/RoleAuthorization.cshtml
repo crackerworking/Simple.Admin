@@ -83,7 +83,7 @@
                     )
                         .then(() => {
                             let ids = this.$refs['treeRef'].getCheckedKeys()
-                            axios.post('/System/Role/SetRoleFunctions', Qs.stringify({ funcIds: ids, id: '@ViewBag.Id' }))
+                            axios.post('/api/Role/SetRoleFunctions', Qs.stringify({ funcIds: ids, id: '@ViewBag.Id' }))
                                 .then(res => {
                                     if (MiUtils.ajaxSucceed(res.data.code)) {
                                         ElementPlus.ElMessage.success(res.data.message)
@@ -102,7 +102,7 @@
                         })
                 },
                 fetchTreeData(){
-                    axios.get('/System/Function/GetFunctionList')
+                    axios.get('/api/Function/GetFunctionList')
                         .then(res => {
                             if (MiUtils.ajaxSucceed(res.data.code)) {
                                 this.treeData = res.data.result
@@ -113,7 +113,7 @@
                         })
                 },
                 getDefaultKeys(){
-                    axios.post('/System/Role/GetRoleFunctionIds?id=' + '@ViewBag.Id')
+                    axios.post('/api/Role/GetRoleFunctionIds?id=' + '@ViewBag.Id')
                         .then(res=>{
                             if (MiUtils.ajaxSucceed(res.data.code)) {
                                 this.defaultKeys = res.data.result
