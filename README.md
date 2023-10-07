@@ -1,2 +1,2 @@
 # mi-admin
-AspNetCoreMvc架构通用后台权限管理，权限设计(用户-角色-功能)，功能类型分为目录、菜单、按钮、资源，精确到每个接口的调用权限和按钮的显示隐藏；支持数据库切换、跨平台、自动注入、防抖和节流、消息推送。
+AspNetCoreMvc architecture universal background permission management, permission design (user-role-function), function types are divided into directories, menus, buttons, resources, accurate to the calling permissions of each interface and the display and hiding of buttons; supports database switching, cross-platform, Automatic injection, anti-shake and throttling, message push.
