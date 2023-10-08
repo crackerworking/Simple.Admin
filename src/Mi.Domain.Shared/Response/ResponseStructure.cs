@@ -13,10 +13,20 @@
             Code = code;
             Message = message;
         }
+
+        public virtual bool Ok()
+        {
+            return Code == response_type.Success;
+        }
     }
 
     public class ResponseStructure<T> : ResponseStructure
     {
+        public override bool Ok()
+        {
+            return Code == response_type.Success && Result != null;
+        }
+
         public T? Result { get; set; }
 
         public ResponseStructure()

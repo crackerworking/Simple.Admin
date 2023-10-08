@@ -2,7 +2,7 @@
 @model Mi.RazorLibrary.Pages.System.Role.EditModel
 
 <div class="layui-form">
-    @Html.HiddenFor(x=>x.Role.Id)
+    <input type="hidden" name="id" value="@Model.Role.Id"/>
     <div class="mainBox">
         <div class="main-container">
             <div class="layui-form-item">

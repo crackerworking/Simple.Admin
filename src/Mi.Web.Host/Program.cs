@@ -1,5 +1,6 @@
 using Mi.DataDriver;
 using Mi.DataDriver.EntityFrameworkCore;
+using Mi.Domain.Json;
 using Mi.Domain.PipelineConfiguration;
 using Mi.Domain.Shared;
 using Mi.Domain.Shared.Models;
@@ -18,7 +19,10 @@ namespace Mi.Web.Host
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddRazorPages();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(opt =>
+            {
+                opt.JsonSerializerOptions.Converters.Add(new LongToStringConverter());
+            });
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddAuthentication()

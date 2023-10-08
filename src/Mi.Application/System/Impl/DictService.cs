@@ -240,6 +240,16 @@ namespace Mi.Application.System.Impl
             return ResponseHelper.Success();
         }
 
+        public async Task<IList<Option>> GetOptionsAsync()
+        {
+            var dict = (await GetDictionaryCacheAsync()).Select(x => new Option
+            {
+                Name = x.Name,
+                Value = x.Value
+            });
+            return dict.ToList();
+        }
+
         #endregion 公共读写方法，带缓存
     }
 }

@@ -34,6 +34,8 @@ namespace Mi.Application.Contracts.System
 
         Task<IList<Option>> GetOptionsAsync(string parentKey);
 
+        Task<IList<Option>> GetOptionsAsync();
+
         Task<ResponseStructure> SetAsync(Dictionary<string, string> dict);
 
         #endregion 公共读写方法，带缓存
