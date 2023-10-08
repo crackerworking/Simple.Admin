@@ -21,6 +21,8 @@ namespace Mi.Application.System
                 conf.CreateMap<SysLoginLog, SysLoginLogFull>();
                 conf.CreateMap<SysLog, SysLogFull>();
                 conf.CreateMap<SysRole, SysRoleFull>();
+                conf.CreateMap<SysDict, SysDictFull>();
+                conf.CreateMap<DictOperation, SysDict>();
             });
         }
     }

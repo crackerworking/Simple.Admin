@@ -4,7 +4,8 @@ namespace Mi.Application.Contracts.System.Models.Result
 {
     public class UserItem
     {
-        public long UserId { get; set; }
+        public long Id { get; set; }
+        public long UserId => Id;
 
         [NotNull]
         public string? UserName { get; set; }

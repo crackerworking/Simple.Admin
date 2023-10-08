@@ -74,7 +74,7 @@ namespace Mi.Application.System.Impl
             else
             {
                 var dict = _mapper.Map<SysDict>(operation);
-                if (operation.ParentId > 0 && operation.ParentId != dict.ParentId)
+                if (operation.ParentId.GetValueOrDefault() > 0 && operation.ParentId != dict.ParentId)
                 {
                     dict.ParentKey = (await _dictRepo.GetAsync(x => x.Id == dict.ParentId))?.Key;
                 }

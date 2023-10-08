@@ -236,7 +236,7 @@ namespace Mi.Application.System.Impl
             var role = _roleRepository.GetAsync(x => x.Id == id);
             if (role == null || role.Id <= 0) return ResponseHelper.Fail("角色不存在");
 
-            await _dapperRepository.ExecuteAsync("delete from SysRoleFullFunction where RoleId=@id", new { id });
+            await _dapperRepository.ExecuteAsync("delete from SysRoleFunction where RoleId=@id", new { id });
 
             var powers = new List<SysRoleFunction>();
             foreach (var item in funcIds)

@@ -114,7 +114,7 @@
                         })
                 },
                 getDefaultKeys(){
-                    axios.post('/api/Role/GetRoleFunctionIds?id=' + '@ViewBag.Id')
+                    axios.post('/api/Role/GetRoleFunctionIds?id=' + '@Model.Id')
                         .then(res=>{
                             if (MiUtils.ajaxSucceed(res.data.code)) {
                                 this.defaultKeys = res.data.result
