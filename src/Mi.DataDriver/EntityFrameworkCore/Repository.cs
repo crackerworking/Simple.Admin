@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 
 using Mi.Domain.DataAccess;
 using Mi.Domain.Entities;
@@ -7,6 +8,7 @@ using Mi.Domain.Shared.Core;
 using Mi.Domain.Shared.Models;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 using Nito.AsyncEx;
 
@@ -143,13 +145,16 @@ namespace Mi.DataDriver.EntityFrameworkCore
                 var model = await _dbContext.Set<T>().AsNoTracking().FirstAsync(x => x.Id == id);
                 if (model == null) return 0;
 
+                var exist = _dbContext.Set<T>().Local.FirstOrDefault(p => p.Id == id);
+                if (exist != null) _dbContext.Set<T>().Local.Remove(exist);
+
                 Type type = typeof(T);
                 var props = type.GetProperties();
                 foreach (var keyValue in updator.KeyValuePairs)
                 {
-                    System.Reflection.FieldInfo? fieldInfo = type.GetField(keyValue.Key);
-                    if (fieldInfo == null) continue;
-                    fieldInfo.SetValue(model, keyValue.Value);
+                    var propInfo = type.GetProperty(keyValue.Key, BindingFlags.Public | BindingFlags.Instance);
+                    if (propInfo == null) continue;
+                    propInfo.SetValue(model, keyValue.Value);
                 }
 
                 return await UpdateAsync(model);

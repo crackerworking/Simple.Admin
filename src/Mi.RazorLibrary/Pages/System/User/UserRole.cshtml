@@ -38,7 +38,7 @@
             let common = layui.common;
 
             form.on('submit(save)', function (data) {
-                let param = { userId: '@ViewBag.Id' }
+                let param = { userId: '@Model.Id' }
                 let i = 0
                 for (const key in data.field) {
                     if (key.indexOf('roleIds') != -1) {

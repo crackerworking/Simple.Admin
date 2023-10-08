@@ -2,7 +2,7 @@
 @model Mi.RazorLibrary.Pages.System.Dict.EditModel
 
 <div class="layui-form">
-    @Html.HiddenFor(x=>x.Dict.Id)
+    <input type="hidden" name="id" value="@Model.Dict.Id" />
     <div class="mainBox">
         <div class="main-container">
             @if (Model.Options != null && Model.Options.Count > 0)

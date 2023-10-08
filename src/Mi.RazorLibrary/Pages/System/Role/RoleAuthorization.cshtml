@@ -1,4 +1,5 @@
 ﻿@page "/system/role/RoleAuthorization"
+@model Mi.RazorLibrary.Pages.System.Role.RoleAuthorizationModel
 @{
     Layout = "_ElementUiPlusLayout";
 }
@@ -83,7 +84,7 @@
                     )
                         .then(() => {
                             let ids = this.$refs['treeRef'].getCheckedKeys()
-                            axios.post('/api/Role/SetRoleFunctions', Qs.stringify({ funcIds: ids, id: '@ViewBag.Id' }))
+                            axios.post('/api/Role/SetRoleFunctions', Qs.stringify({ funcIds: ids, id: '@Model.Id' }))
                                 .then(res => {
                                     if (MiUtils.ajaxSucceed(res.data.code)) {
                                         ElementPlus.ElMessage.success(res.data.message)
