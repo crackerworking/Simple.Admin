@@ -216,7 +216,7 @@
                     this.expand(false)
                 },
                 fetchTableData() {
-                    axios.get(ROOT_PATH + 'GetFunctionList?' + Qs.stringify(this.form))
+                    axios.post(ROOT_PATH + 'GetFunctionList', this.form)
                         .then(res => {
                             if (MiUtils.ajaxSucceed(res.data.code)) {
                                 this.tableData = res.data.result

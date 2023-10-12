@@ -18,6 +18,6 @@ namespace Mi.ControllerLibrary.Workspace
         public async Task<ResponseStructure> Readed(IList<long> ids) => await _messageService.ReadedAsync(ids);
 
         [HttpPost, AuthorizeCode("Workspace:Message:Query")]
-        public async Task<ResponseStructure<PagingModel<SysMessageFull>>> GetMessageList(MessageSearch search) => await _messageService.GetMessageListAsync(search);
+        public async Task<ResponseStructure<PagingModel<SysMessageFull>>> GetMessageList([FromBody] MessageSearch search) => await _messageService.GetMessageListAsync(search);
     }
 }

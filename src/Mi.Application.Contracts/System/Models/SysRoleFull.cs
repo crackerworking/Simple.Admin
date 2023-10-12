@@ -10,5 +10,7 @@ namespace Mi.Application.Contracts.System.Models
         public string? RoleName { get; set; }
 
         public string? Remark { get; set; }
+
+        public DateTime CreatedOn { get; set; }
     }
 }

@@ -22,6 +22,8 @@ namespace Mi.Web.Host
             builder.Services.AddControllers().AddJsonOptions(opt =>
             {
                 opt.JsonSerializerOptions.Converters.Add(new LongToStringConverter());
+                opt.JsonSerializerOptions.Converters.Add(new DateTimeFormatConverter());
+                opt.JsonSerializerOptions.Converters.Add(new DateTimeNullableFormatConverter());
             });
             builder.Services.AddHttpContextAccessor();
 

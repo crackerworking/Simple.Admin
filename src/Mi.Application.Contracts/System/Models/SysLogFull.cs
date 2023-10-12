@@ -22,5 +22,6 @@ namespace Mi.Application.Contracts.System.Models
         public string? Exception { get; set; }
 
         public string? UniqueId { get; set; }
+        public DateTime CreatedOn { get; set; }
     }
 }

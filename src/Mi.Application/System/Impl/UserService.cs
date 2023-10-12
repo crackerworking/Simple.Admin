@@ -83,11 +83,15 @@ namespace Mi.Application.System.Impl
 
         public async Task<ResponseStructure<PagingModel<UserItem>>> GetUserListAsync(UserSearch search)
         {
-            var sql = "select * from SysUser where IsDeleted=0";
+            var sql = @"select u.*,GROUP_CONCAT(r.RoleName) as RoleNameString from SysUser u 
+                        left join SysUserRole ur on u.Id=ur.UserId
+                        left join SysRole r on ur.RoleId=r.Id
+                        where u.IsDeleted=0 ";
             if (!string.IsNullOrWhiteSpace(search.UserName))
             {
-                sql += " and UserName like @UserName ";
+                sql += " and u.UserName like @UserName ";
             }
+            sql += " GROUP BY u.Id ";
             var pageModel = await _dapperRepo.QueryPagedAsync<UserItem>(sql, search.Page, search.Size, "CreatedOn asc",
                 new { UserName = "%" + search.UserName + "%" });
 

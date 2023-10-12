@@ -34,7 +34,7 @@ namespace Mi.ControllerLibrary.Account
         public async Task<IActionResult> Exit()
         {
             await _permissionService.LogoutAsync();
-            return Redirect("/Account/Login");
+            return Redirect("/login");
         }
     }
 }

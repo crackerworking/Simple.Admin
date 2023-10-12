@@ -51,7 +51,7 @@
                             <li>
                                 <div class="layui-form">
 
-                                    <input name="guid" type="hidden" value="@ViewBag.Guid"/>
+                                    <input name="guid" type="hidden" value="@ViewBag.Guid" />
 
                                     <div class="ax-break"></div>
                                     <div class="ax-break ax-hide-tel"></div>
@@ -192,18 +192,18 @@
             let $ = layui.$;
             let form = layui.form;
 
-            $('.toggle-item').click(function(){
+            $('.toggle-item').click(function () {
                 $('.toggle-item').removeClass('mi-active')
                 $(this).addClass('mi-active');
             })
 
             $('#captchaImg').click(function () {
-                this.src = '/api/public/LoginCaptcha?guid=@ViewBag.Guid'
+                this.src = '/api/public/LoginCaptcha?v=' + uuid() + '&guid=@ViewBag.Guid'
             })
 
-            form.on('submit(login)',function(loginData){
+            form.on('submit(login)', function (loginData) {
                 $.ajax({
-                    type:'post',
+                    type: 'post',
                     url: '/api/login/Do',
                     data: loginData.field,
                     beforeSend: function (request) {
@@ -222,15 +222,15 @@
                                 icon: 2,
                                 time: 800
                             }, function () {
-                                $('#captchaImg').attr('src', '/api/public/LoginCaptcha?guid=@ViewBag.Guid')
+                                $('#captchaImg').attr('src', '/api/public/LoginCaptcha?v=' + uuid() + '&guid=@ViewBag.Guid')
                             });
                         }
                     }
                 })
             })
 
-            form.on('submit(register)',function(data){
-                if (data.field.re_sure_password != data.field.re_password){
+            form.on('submit(register)', function (data) {
+                if (data.field.re_sure_password != data.field.re_password) {
                     layer.msg('两次密码不一致', {
                         icon: 2,
                         time: 1000
@@ -238,7 +238,7 @@
                     return;
                 }
                 let param = {
-                    userName:data.field.re_userName,
+                    userName: data.field.re_userName,
                     password: data.field.re_password,
                 }
                 $.post('/api/Login/New', param, function (res) {
@@ -246,7 +246,7 @@
                         layer.msg(res.message, {
                             icon: 1,
                             time: 1000
-                        },function(){
+                        }, function () {
                             window.location.reload();
                         });
                     } else {

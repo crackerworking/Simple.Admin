@@ -14,8 +14,8 @@ namespace Mi.ControllerLibrary.System
             _functionService = functionService;
         }
 
-        [HttpGet, AuthorizeCode("System:Function:Query")]
-        public async Task<ResponseStructure> GetFunctionList(FunctionSearch search)
+        [HttpPost, AuthorizeCode("System:Function:Query")]
+        public async Task<ResponseStructure> GetFunctionList([FromBody] FunctionSearch search)
         {
             return await _functionService.GetFunctionListAsync(search);
         }

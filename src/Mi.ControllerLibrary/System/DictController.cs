@@ -16,7 +16,7 @@ namespace Mi.ControllerLibrary.System
         }
 
         [HttpPost, AuthorizeCode("System:Dict:Query")]
-        public async Task<ResponseStructure<PagingModel<DictItem>>> GetDictList(DictSearch search)
+        public async Task<ResponseStructure<PagingModel<DictItem>>> GetDictList([FromBody] DictSearch search)
             => await _dictService.GetDictListAsync(search);
 
         [HttpPost, AuthorizeCode("System:Dict:AddOrUpdate")]
