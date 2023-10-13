@@ -197,7 +197,7 @@ namespace Mi.Application.System.Impl
             {
                 var list = await _dictRepo.GetListAsync();
                 return list;
-            });
+            })!;
 
             return result;
         }
