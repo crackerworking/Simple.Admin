@@ -5,7 +5,7 @@ using Mi.Application.Contracts.Cache;
 namespace Mi.ControllerLibrary.Development
 {
     [ApiRoute]
-    [Authorize]
+    [AllowAnonymous]
     public class CacheKeyManagerController : ControllerBase
     {
         private readonly ICacheKeyManagerService _keyService;

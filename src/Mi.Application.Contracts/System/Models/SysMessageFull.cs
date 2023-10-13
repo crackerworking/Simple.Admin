@@ -28,5 +28,9 @@ namespace Mi.Application.Contracts.System.Models
         /// 接收用户
         /// </summary>
         public long ReceiveUser { get; set; }
+
+        public long Id { get; set; }
+
+        public DateTime CreatedOn { get; set; }
     }
 }

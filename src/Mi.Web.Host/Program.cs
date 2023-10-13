@@ -7,6 +7,7 @@ using Mi.Domain.Shared.Models;
 using Mi.Domain.Shared.Models.UI;
 using Mi.Domain.User;
 using Mi.Web.Host.Middleware;
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 
@@ -19,7 +20,7 @@ namespace Mi.Web.Host
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddRazorPages();
-            builder.Services.AddControllers().AddJsonOptions(opt =>
+            builder.Services.AddControllersWithViews().AddJsonOptions(opt =>
             {
                 opt.JsonSerializerOptions.Converters.Add(new LongToStringConverter());
                 opt.JsonSerializerOptions.Converters.Add(new DateTimeFormatConverter());
@@ -50,8 +51,7 @@ namespace Mi.Web.Host
             app.UseAuthorization();
 
             app.MapRazorPages();
-            app.MapControllerRoute("api-router", "/api/[Controller]/[Action]");
-            app.MapFallbackToFile("/index.html");
+            app.MapControllerRoute("api-router", "{controller=Home}/{action=Index}");
 
             app.Run();
         }
