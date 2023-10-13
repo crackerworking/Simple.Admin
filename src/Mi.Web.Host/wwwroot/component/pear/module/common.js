@@ -115,7 +115,7 @@ layui.define(['jquery', 'element', 'table'], function (exports) {
          * @param {any} code EnumResponseCode
          */
         this.ajaxSuccess = function (code) {
-            return code === 90001
+            return code === 10000
         }
 
         /**

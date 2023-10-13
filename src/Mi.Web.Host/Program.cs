@@ -2,7 +2,9 @@ using Mi.DataDriver;
 using Mi.DataDriver.EntityFrameworkCore;
 using Mi.Domain.Json;
 using Mi.Domain.PipelineConfiguration;
+using Mi.Domain.Services;
 using Mi.Domain.Shared;
+using Mi.Domain.Shared.Core;
 using Mi.Domain.Shared.Models;
 using Mi.Domain.Shared.Models.UI;
 using Mi.Domain.User;
@@ -61,6 +63,7 @@ namespace Mi.Web.Host
             // DB & Repository
             services.AddMiDbContext(configuration.GetConnectionString("Sqlite")!);
             services.AddRepository();
+            //services.AddSingleton<IDictionaryApi, DictionaryService>();
 
             // CurrentUser
             services.AddCurrentUser();

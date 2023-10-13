@@ -4,7 +4,9 @@ using Mi.Domain.DataAccess;
 using Mi.Domain.Entities.System;
 using Mi.Domain.PipelineConfiguration;
 using Mi.Domain.Shared.Core;
+using Mi.Domain.Shared.GlobalVars;
 
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -12,15 +14,17 @@ namespace Mi.Domain.Services
 {
 #pragma warning disable CS8602 // 解引用可能出现空引用。
 
-    internal class DictionaryService : IDictionaryApi
+    public class DictionaryService : IDictionaryApi
     {
         private ConcurrentDictionary<string, string> _keyValuePairs;
         private List<SysDict> _sysDict;
         private readonly ILogger<DictionaryService> _logger;
+        private readonly IMemoryCache _memoryCache;
 
-        public DictionaryService(ILogger<DictionaryService> logger)
+        public DictionaryService(ILogger<DictionaryService> logger, IMemoryCache memoryCache)
         {
             _logger = logger;
+            _memoryCache = memoryCache;
         }
 
         public Task<string> GetAsync(string key)
@@ -90,6 +94,7 @@ namespace Mi.Domain.Services
                 var dictRepo = p.ServiceProvider.GetRequiredService<IRepository<SysDict>>();
                 var allDict = dictRepo.GetListAsync(x => x.IsDeleted == 0).ConfigureAwait(false).GetAwaiter().GetResult();
                 _sysDict = allDict;
+                _memoryCache.Set(CacheConst.DICT, _sysDict);
                 foreach (var kv in _sysDict)
                 {
                     _keyValuePairs.TryAdd(kv.Key, kv.Value ?? "");

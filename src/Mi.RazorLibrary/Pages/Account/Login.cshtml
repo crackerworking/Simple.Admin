@@ -242,7 +242,7 @@
                     password: data.field.re_password,
                 }
                 $.post('/api/Login/New', param, function (res) {
-                    if (res.code === 90001) {
+                    if (MiUtils.ajaxSucceed(res.code)) {
                         layer.msg(res.message, {
                             icon: 1,
                             time: 1000

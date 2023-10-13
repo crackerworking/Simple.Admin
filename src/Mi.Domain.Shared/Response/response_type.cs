@@ -5,41 +5,41 @@
         /// <summary>
         /// 成功
         /// </summary>
-        Success = 90001,
+        Success = 10000,
 
         /// <summary>
         /// 参数错误
         /// </summary>
-        ParameterError = 90002,
+        ParameterError = 10001,
 
         /// <summary>
         /// 未登录
         /// </summary>
-        NonAuth = 90003,
+        NonAuth = 10002,
 
         /// <summary>
         /// 禁止访问
         /// </summary>
-        Forbidden = 90004,
+        Forbidden = 10003,
 
         /// <summary>
         /// 找不到，不存在
         /// </summary>
-        NonExist = 90005,
+        NonExist = 10004,
 
         /// <summary>
         /// 程序错误
         /// </summary>
-        Error = 90006,
+        Error = 10005,
 
         /// <summary>
         /// 失败
         /// </summary>
-        Fail = 90007,
+        Fail = 10006,
 
         /// <summary>
         /// 请求频繁
         /// </summary>
-        FrequentRequests = 90008
+        FrequentRequests = 10007
     }
 }

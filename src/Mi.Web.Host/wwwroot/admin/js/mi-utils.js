@@ -24,19 +24,21 @@ const MiUtils = {
  */
 const MiResponseCode = {
     /** 成功 */
-    Success: 90001,
+    Success: 10000,
     /** 错误请求，参数验证失败 */
-    ParameterError: 90002,
+    ParameterError: 10001,
     /** 未登录 */
-    NonAuth: 90003,
+    NonAuth: 10002,
     /** 禁止访问 */
-    Forbidden: 90004,
+    Forbidden: 10003,
     /** 找不到，不存在 */
-    NonExist: 90005,
+    NonExist: 10004,
     /** 程序错误 */
-    Error: 90006,
+    Error: 10005,
     /** 失败 */
-    Fail: 90007
+    Fail: 10006,
+    /** 请求频繁 */
+    Fail: 10007
 }
 
 /**
