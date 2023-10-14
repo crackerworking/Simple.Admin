@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 
 using Mi.Application.Contracts.Cache;
+using Mi.Application.Contracts.Cache.Models;
 using Mi.Domain.Shared.Core;
 
 namespace Mi.Application.Cache
@@ -14,7 +15,7 @@ namespace Mi.Application.Cache
             _cache = cache;
         }
 
-        public async Task<ResponseStructure<IList<Option>>> GetAllKeysAsync(string? vague, int cacheType = 1)
+        public async Task<ResponseStructure<IList<Option>>> GetAllKeysAsync(CacheKeySearch input)
         {
             var keys = _cache.GetCacheKeys();
             var list = keys.Select(k => new Option
@@ -26,17 +27,17 @@ namespace Mi.Application.Cache
             return await Task.FromResult(new ResponseStructure<IList<Option>>(list));
         }
 
-        public async Task<ResponseStructure<string>> GetDataAsync(string key)
+        public async Task<ResponseStructure<string>> GetDataAsync(CacheKeyIn input)
         {
-            _cache.TryGetValue(key, out var value);
+            _cache.TryGetValue(input.key, out var value);
             var str = JsonSerializer.Serialize(value ?? "");
 
             return await Task.FromResult(new ResponseStructure<string>(str));
         }
 
-        public Task<ResponseStructure> RemoveKeyAsync(string key)
+        public Task<ResponseStructure> RemoveKeyAsync(CacheKeyIn input)
         {
-            _cache.Remove(key);
+            _cache.Remove(input.key);
 
             return Task.FromResult(ResponseHelper.Success());
         }

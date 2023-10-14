@@ -1,4 +1,4 @@
-﻿using Mi.Application.Contracts.System.Models.Result;
+﻿using Mi.Application.Contracts.System.Models.Message;
 
 namespace Mi.Application.Contracts.System
 {

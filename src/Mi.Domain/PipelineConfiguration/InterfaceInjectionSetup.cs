@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 
+using Mi.Domain.Shared;
 using Mi.Domain.Shared.Core;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +11,7 @@ namespace Mi.Domain.PipelineConfiguration
     {
         public static void AddAutomaticInjection(this IServiceCollection services)
         {
-            foreach (var assembly in ServiceManager.LoadAssemblies())
+            foreach (var assembly in App.LoadAssemblies())
             {
                 JoinAssembly(services, assembly);
             }

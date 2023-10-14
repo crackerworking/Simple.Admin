@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-using Mi.Application.Contracts.Cache;
+﻿using Mi.Application.Contracts.Cache;
+using Mi.Application.Contracts.Cache.Models;
 
 namespace Mi.ControllerLibrary.Development
 {
@@ -17,14 +16,14 @@ namespace Mi.ControllerLibrary.Development
 
         [HttpPost]
         [AuthorizeCode("Development:CacheKey:Query")]
-        public async Task<ResponseStructure<IList<Option>>> GetAllKeys(string? vague, int cacheType) => await _keyService.GetAllKeysAsync(vague);
+        public async Task<ResponseStructure<IList<Option>>> GetAllKeys([FromBody] CacheKeySearch input) => await _keyService.GetAllKeysAsync(input);
 
         [HttpPost]
         [AuthorizeCode("Development:CacheKey:Remove")]
-        public async Task<ResponseStructure> RemoveKey([Required(ErrorMessage = "key不能为空")] string key) => await _keyService.RemoveKeyAsync(key);
+        public async Task<ResponseStructure> RemoveKey([FromBody] CacheKeyIn input) => await _keyService.RemoveKeyAsync(input);
 
         [HttpPost]
         [AuthorizeCode("Development:CacheKey:GetData")]
-        public async Task<ResponseStructure<string>> GetData([Required(ErrorMessage = "key不能为空")] string key) => await _keyService.GetDataAsync(key);
+        public async Task<ResponseStructure<string>> GetData([FromBody] CacheKeyIn input) => await _keyService.GetDataAsync(input);
     }
 }

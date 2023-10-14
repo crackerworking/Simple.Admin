@@ -1,5 +1,5 @@
 ﻿using Mi.Application.Contracts.System;
-using Mi.Application.Contracts.System.Models;
+using Mi.Application.Contracts.System.Models.Message;
 
 namespace Mi.ControllerLibrary.Workspace
 {

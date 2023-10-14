@@ -1,6 +1,5 @@
 ﻿using Mi.Application.Contracts.System;
-using Mi.Application.Contracts.System.Models.Result;
-
+using Mi.Application.Contracts.System.Models.User;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Mi.RazorLibrary.Pages.System.User

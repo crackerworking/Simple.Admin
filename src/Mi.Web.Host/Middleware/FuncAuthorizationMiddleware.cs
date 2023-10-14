@@ -9,6 +9,7 @@ using Mi.Domain.Extension;
 using Mi.Domain.PipelineConfiguration;
 using Microsoft.Extensions.Caching.Memory;
 using Mi.Domain.Shared.Response;
+using Mi.Domain.Shared;
 
 namespace Mi.Web.Host.Middleware
 {
@@ -75,7 +76,7 @@ namespace Mi.Web.Host.Middleware
 
         private List<Type> GetControllerTypesCache()
         {
-            var cache = ServiceManager.Get<IMemoryCache>();
+            var cache = App.Provider.GetRequiredService<IMemoryCache>();
             var types = cache.Get<List<Type>>(CacheConst.CONTROLLER_TYPES);
             if (types == null)
             {

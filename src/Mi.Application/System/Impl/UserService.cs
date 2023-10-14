@@ -1,7 +1,7 @@
 ﻿using System.Text;
 
 using AutoMapper;
-
+using Mi.Application.Contracts.System.Models.Role;
 using Mi.Application.Contracts.System.Models.User;
 using Mi.Domain.Shared.Core;
 

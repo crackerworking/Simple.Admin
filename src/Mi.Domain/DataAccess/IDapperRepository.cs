@@ -2,6 +2,9 @@
 
 namespace Mi.Domain.DataAccess
 {
+    /// <summary>
+    /// IDapperRepository
+    /// </summary>
     public interface IDapperRepository
     {
         Task<List<T>> QueryAsync<T>(string sql, object? param = default);

@@ -1,11 +1,13 @@
-﻿namespace Mi.Application.Contracts.Cache
+﻿using Mi.Application.Contracts.Cache.Models;
+
+namespace Mi.Application.Contracts.Cache
 {
     public interface ICacheKeyManagerService
     {
-        Task<ResponseStructure<IList<Option>>> GetAllKeysAsync(string? vague, int cacheType = 1);
+        Task<ResponseStructure<IList<Option>>> GetAllKeysAsync(CacheKeySearch input);
 
-        Task<ResponseStructure> RemoveKeyAsync(string key);
+        Task<ResponseStructure> RemoveKeyAsync(CacheKeyIn input);
 
-        Task<ResponseStructure<string>> GetDataAsync(string key);
+        Task<ResponseStructure<string>> GetDataAsync(CacheKeyIn input);
     }
 }

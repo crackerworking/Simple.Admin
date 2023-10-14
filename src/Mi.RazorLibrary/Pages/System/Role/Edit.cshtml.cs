@@ -1,6 +1,5 @@
 ﻿using Mi.Application.Contracts.System;
-using Mi.Application.Contracts.System.Models;
-
+using Mi.Application.Contracts.System.Models.Role;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Mi.RazorLibrary.Pages.System.Role

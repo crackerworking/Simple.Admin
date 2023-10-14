@@ -3,7 +3,7 @@
 using AutoMapper;
 
 using Dapper;
-
+using Mi.Application.Contracts.System.Models.Dict;
 using Mi.Domain.Shared.Core;
 
 namespace Mi.Application.System.Impl

@@ -5,9 +5,9 @@ namespace Mi.ControllerLibrary.Development
     [ApiRoute]
     public class CommandController : Controller
     {
-        private readonly IDictionaryApi _dictionaryApi;
+        private readonly IQuickDict _dictionaryApi;
 
-        public CommandController(IDictionaryApi dictionaryApi)
+        public CommandController(IQuickDict dictionaryApi)
         {
             _dictionaryApi = dictionaryApi;
         }

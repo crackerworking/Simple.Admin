@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 
 using Dapper;
-
+using Mi.Application.Contracts.System.Models.Role;
 using Mi.Domain.Shared.Core;
 
 namespace Mi.Application.System.Impl

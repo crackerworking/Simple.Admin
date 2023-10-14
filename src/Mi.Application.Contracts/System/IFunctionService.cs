@@ -1,5 +1,4 @@
-﻿using Mi.Application.Contracts.System.Models;
-using Mi.Application.Contracts.System.Models.Result;
+﻿using Mi.Application.Contracts.System.Models.Function;
 using Mi.Domain.Shared.Options;
 
 namespace Mi.Application.Contracts.System

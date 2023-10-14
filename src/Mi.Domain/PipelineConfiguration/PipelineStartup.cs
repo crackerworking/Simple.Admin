@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 
+using Mi.Domain.Shared;
 using Mi.Domain.Shared.Attributes;
 using Mi.Domain.Shared.Core;
 
@@ -55,7 +56,7 @@ namespace Mi.Domain.PipelineConfiguration
         {
             var list = new List<Type>();
             var baseType = typeof(Startup);
-            foreach (var assembly in ServiceManager.LoadAssemblies())
+            foreach (var assembly in App.LoadAssemblies())
             {
                 var types = assembly.DefinedTypes.Where(x => !x.IsAbstract && !x.IsInterface && x.IsAssignableTo(baseType)).ToList();
                 list.AddRange(types);

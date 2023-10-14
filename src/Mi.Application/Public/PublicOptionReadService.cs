@@ -5,9 +5,9 @@ namespace Mi.Application.Public
 {
     internal class PublicOptionReadService : IPublicOptionReadApi
     {
-        private readonly IDictionaryApi _dictionaryApi;
+        private readonly IQuickDict _dictionaryApi;
 
-        public PublicOptionReadService(IDictionaryApi dictionaryApi)
+        public PublicOptionReadService(IQuickDict dictionaryApi)
         {
             _dictionaryApi = dictionaryApi;
         }

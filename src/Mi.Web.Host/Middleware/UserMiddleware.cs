@@ -1,6 +1,6 @@
 ﻿using Mi.Application.Contracts.System;
 using Mi.Domain.Extension;
-using Mi.Domain.PipelineConfiguration;
+using Mi.Domain.Shared;
 
 namespace Mi.Web.Host.Middleware
 {
@@ -19,7 +19,7 @@ namespace Mi.Web.Host.Middleware
             var data = context.GetUserData();
             if (isLogin && !string.IsNullOrWhiteSpace(data))
             {
-                using var scoped = ServiceManager.Provider.CreateScope();
+                using var scoped = App.Provider.CreateScope();
                 var permissionService = scoped.ServiceProvider.GetService<IPermissionService>()!;
                 var userModel = await permissionService.QueryUserModelCacheAsync(data);
                 context.Features.Set(userModel);

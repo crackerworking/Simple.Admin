@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Mi.Application.Contracts.System;
-using Mi.Application.Contracts.System.Models;
+using Mi.Application.Contracts.System.Models.User;
 
 namespace Mi.ControllerLibrary.System
 {

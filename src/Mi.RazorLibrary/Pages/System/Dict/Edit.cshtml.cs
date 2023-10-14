@@ -1,5 +1,5 @@
 ﻿using Mi.Application.Contracts.System;
-using Mi.Application.Contracts.System.Models.Result;
+using Mi.Application.Contracts.System.Models.Dict;
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
 

@@ -10,4 +10,9 @@
     <ProjectReference Include="..\Mi.Domain.Shared\Mi.Domain.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Public\Models\" />
+    <Folder Include="System\Models\Permission\" />
+  </ItemGroup>
+
 </Project>

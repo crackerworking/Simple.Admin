@@ -1,5 +1,5 @@
 ﻿using Dapper;
-
+using Mi.Application.Contracts.System.Models.Message;
 using Mi.Domain.Shared.Core;
 
 namespace Mi.Application.System.Impl

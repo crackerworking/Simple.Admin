@@ -2,7 +2,10 @@
 using System.Security.Claims;
 
 using Mi.Application.Contracts.Public;
+using Mi.Application.Contracts.System.Models.Function;
+using Mi.Application.Contracts.System.Models.User;
 using Mi.Domain.Entities.System.Enum;
+using Mi.Domain.Services;
 using Mi.Domain.Shared.Core;
 
 using Microsoft.AspNetCore.Authentication;
@@ -152,7 +155,7 @@ namespace Mi.Application.System.Impl
                 inner join SysRoleFunction sr on s.id=sr.FunctionId
                 inner join SysUserRole ur on sr.RoleId=ur.RoleId
                 where s.IsDeleted=0 and s.AuthorizationCode = 'System:User:Passed'");
-            await _publicService.WriteMessageAsync("审核", $"系统有新用户('{userName}')注册，需要您及时审核！", ids);
+            MessageFactory.Instance.WriteMessage("审核", $"系统有新用户('{userName}')注册，需要您及时审核！", ids);
             return result;
         }
 

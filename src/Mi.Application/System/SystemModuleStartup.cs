@@ -1,4 +1,8 @@
-﻿using Mi.Domain.Shared.Core;
+﻿using Mi.Application.Contracts.System.Models.Dict;
+using Mi.Application.Contracts.System.Models.Function;
+using Mi.Application.Contracts.System.Models.Log;
+using Mi.Application.Contracts.System.Models.Role;
+using Mi.Domain.Shared.Core;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

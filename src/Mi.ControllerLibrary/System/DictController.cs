@@ -1,6 +1,5 @@
 ﻿using Mi.Application.Contracts.System;
-using Mi.Application.Contracts.System.Models;
-using Mi.Application.Contracts.System.Models.Result;
+using Mi.Application.Contracts.System.Models.Dict;
 
 namespace Mi.ControllerLibrary.System
 {

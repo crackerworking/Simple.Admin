@@ -9,9 +9,9 @@ namespace Mi.ControllerLibrary.System
     public class UiConfigController : ControllerBase
     {
         private readonly IPublicService _publicService;
-        private readonly IDictionaryApi _dictionaryApi;
+        private readonly IQuickDict _dictionaryApi;
 
-        public UiConfigController(IPublicService publicService, IDictionaryApi dictionaryApi)
+        public UiConfigController(IPublicService publicService, IQuickDict dictionaryApi)
         {
             _publicService = publicService;
             _dictionaryApi = dictionaryApi;

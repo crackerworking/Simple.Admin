@@ -2,9 +2,7 @@ using Mi.DataDriver;
 using Mi.DataDriver.EntityFrameworkCore;
 using Mi.Domain.Json;
 using Mi.Domain.PipelineConfiguration;
-using Mi.Domain.Services;
 using Mi.Domain.Shared;
-using Mi.Domain.Shared.Core;
 using Mi.Domain.Shared.Models;
 using Mi.Domain.Shared.Models.UI;
 using Mi.Domain.User;
@@ -39,9 +37,8 @@ namespace Mi.Web.Host
 
             var app = builder.Build();
 
-            App.Running(app.Environment.IsDevelopment(), app.Environment.WebRootPath, app.Configuration);
+            App.Running(app.Environment.IsDevelopment(), app.Environment.WebRootPath, app.Configuration, app.Services);
 
-            ServiceManager.SetProvider(app.Services);
             PipelineStartup.Instance.Configure(app);
 
             app.UseStaticFiles();
@@ -63,7 +60,6 @@ namespace Mi.Web.Host
             // DB & Repository
             services.AddMiDbContext(configuration.GetConnectionString("Sqlite")!);
             services.AddRepository();
-            //services.AddSingleton<IDictionaryApi, DictionaryService>();
 
             // CurrentUser
             services.AddCurrentUser();

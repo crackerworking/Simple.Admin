@@ -1,4 +1,6 @@
-﻿namespace Mi.Application.Contracts.System
+﻿using Mi.Application.Contracts.System.Models.Role;
+
+namespace Mi.Application.Contracts.System
 {
     public interface IRoleService
     {

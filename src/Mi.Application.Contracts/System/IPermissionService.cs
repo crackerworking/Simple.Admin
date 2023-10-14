@@ -1,4 +1,4 @@
-﻿using Mi.Application.Contracts.System.Models.Result;
+﻿using Mi.Application.Contracts.System.Models.User;
 using Mi.Domain.Shared.Models.UI;
 
 namespace Mi.Application.Contracts.System

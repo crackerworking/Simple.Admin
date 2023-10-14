@@ -9,11 +9,11 @@ namespace Mi.Application.Public
         private readonly ICurrentUser _miUser;
         private readonly IRepository<SysMessage> _messageRepo;
         private readonly ICaptcha _captcha;
-        private readonly IDictionaryApi _dictionaryApi;
+        private readonly IQuickDict _dictionaryApi;
         private readonly IDictService _dictService;
 
         public PublicService(IOptionsMonitor<PaConfigModel> uiConfig, IDictService dictService
-            , ICurrentUser miUser, IRepository<SysMessage> messageRepo, ICaptcha captcha, IDictionaryApi dictionaryApi)
+            , ICurrentUser miUser, IRepository<SysMessage> messageRepo, ICaptcha captcha, IQuickDict dictionaryApi)
         {
             _dictService = dictService;
             _uiConfig = uiConfig.CurrentValue;
@@ -21,18 +21,6 @@ namespace Mi.Application.Public
             _messageRepo = messageRepo;
             _captcha = captcha;
             _dictionaryApi = dictionaryApi;
-        }
-
-        public async Task<bool> WriteMessageAsync(string title, string content, IList<long> receiveUsers)
-        {
-            if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(content)) throw new FriendlyException("消息的标题和内容不能为空");
-            if (receiveUsers == null || receiveUsers.Count == 0) throw new FriendlyException("接收消息用户不能为空");
-
-            var now = DateTime.Now;
-            var list = receiveUsers.Select(x => new SysMessage { Title = title, Content = content, Readed = 0, CreatedBy = _miUser.UserId, CreatedOn = now, ReceiveUser = x }).ToList();
-            await _messageRepo.AddRangeAsync(list);
-
-            return true;
         }
 
         public async Task<PaConfigModel> ReadConfigAsync()

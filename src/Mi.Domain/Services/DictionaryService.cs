@@ -4,6 +4,7 @@ using System.Reflection;
 using Mi.Domain.DataAccess;
 using Mi.Domain.Entities.System;
 using Mi.Domain.PipelineConfiguration;
+using Mi.Domain.Shared;
 using Mi.Domain.Shared.Core;
 using Mi.Domain.Shared.GlobalVars;
 using Mi.Domain.Shared.Options;
@@ -16,7 +17,7 @@ namespace Mi.Domain.Services
 {
 #pragma warning disable CS8602 // 解引用可能出现空引用。
 
-    public class DictionaryService : IDictionaryApi
+    public class DictionaryService : IQuickDict
     {
         private ConcurrentDictionary<string, string> _keyValuePairs;
         private List<SysDict> _sysDict;
@@ -102,7 +103,7 @@ namespace Mi.Domain.Services
                 updateList.Add(temp);
             }
 
-            using (var p = ServiceManager.Provider.CreateScope())
+            using (var p = App.Provider.CreateScope())
             {
                 var dictRepo = p.ServiceProvider.GetRequiredService<IRepository<SysDict>>();
                 var res = 0 < await dictRepo.UpdateRangeAsync(updateList);
@@ -117,7 +118,7 @@ namespace Mi.Domain.Services
         private void Load()
         {
             _keyValuePairs = new ConcurrentDictionary<string, string>();
-            using (var p = ServiceManager.Provider.CreateScope())
+            using (var p = App.Provider.CreateScope())
             {
                 var dictRepo = p.ServiceProvider.GetRequiredService<IRepository<SysDict>>();
                 var allDict = dictRepo.GetListAsync(x => x.IsDeleted == 0).ConfigureAwait(false).GetAwaiter().GetResult();
