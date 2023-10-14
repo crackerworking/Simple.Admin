@@ -214,11 +214,7 @@
                     });
                     return
                 }
-                let param = {}
                 let ids = checkIds.split(',')
-                for (let i = 0; i < ids.length; i++) {
-                    param[`ids[${i}]`] = ids[i]
-                }
 
                 layer.confirm('确定要删除选中字典？', {
                     icon: 3,
@@ -228,9 +224,9 @@
                     let loading = layer.load();
                     $.ajax({
                         url: pageRootUrl + "RemoveDict",
-                        dataType: 'json',
+                        contentType: 'application/json',
                         type: 'post',
-                        data: param,
+                        data: JSON.stringify({ array_id: ids }),
                         success: function (result) {
                             layer.close(loading);
                             if (MiUtils.ajaxSucceed(result.code)) {
@@ -269,8 +265,9 @@
                     layer.close(index);
                     let loading = layer.load();
                     $.ajax({
-                        url: pageRootUrl + "RemoveDict?ids=" + obj.data['id'],
-                        dataType: 'json',
+                        url: pageRootUrl + "RemoveDict",
+                        data: JSON.stringify({ array_id: [obj.data['id']] }),
+                        contentType:'application/json',
                         type: 'post',
                         success: function (result) {
                             layer.close(loading);

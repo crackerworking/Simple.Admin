@@ -1,17 +1,18 @@
 ﻿using Mi.Application.Contracts.System.Models.Dict;
-using Mi.Domain.Shared.Options;
 
 namespace Mi.Application.Contracts.System
 {
     public interface IDictService
     {
-        List<SysDictFull> GetAll();
+        Task<List<SysDictFull>> GetAllAsync();
 
         Task<ResponseStructure<PagingModel<DictItem>>> GetDictListAsync(DictSearch search);
 
-        Task<ResponseStructure> AddOrUpdateDictAsync(DictOperation operation, bool addEnabled = true);
+        Task<ResponseStructure> AddAsync(DictPlus input);
 
-        Task<ResponseStructure> RemoveDictAsync(IList<string> ids);
+        Task<ResponseStructure> UpdateAsync(DictEdit input);
+
+        Task<ResponseStructure> RemoveDictAsync(PrimaryKeys input);
 
         Task<ResponseStructure<SysDictFull>> GetAsync(long id);
 

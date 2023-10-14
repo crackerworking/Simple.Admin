@@ -54,48 +54,9 @@ namespace Mi.Application.System.Impl
             return new ResponseStructure<PagingModel<DictItem>>(true, model);
         }
 
-        public async Task<ResponseStructure> AddOrUpdateDictAsync(DictOperation operation, bool addEnabled = true)
+        public async Task<ResponseStructure> RemoveDictAsync(PrimaryKeys input)
         {
-            if (operation.Id <= 0 && addEnabled)
-            {
-                var dict = _mapper.Map<SysDict>(operation);
-                dict.Id = SnowflakeIdHelper.Next();
-                if (dict.ParentId > 0)
-                {
-                    dict.ParentKey = (await _dictRepo.GetAsync(x => x.Id == dict.ParentId))?.Key;
-                }
-                await _dictRepo.AddAsync(dict);
-            }
-            else
-            {
-                var dict = await _dictRepo.GetAsync(x=>x.Id == operation.Id);
-                if (dict == null) return Back.NonExist();
-                if (operation.ParentId.GetValueOrDefault() > 0 && operation.ParentId != dict.ParentId)
-                {
-                    dict.ParentKey = (await _dictRepo.GetAsync(x => x.Id == dict.ParentId))?.Key;
-                }
-                else
-                {
-                    dict.ParentId = -1;
-                }
-
-                dict.Name = operation.Name;
-                dict.Key = operation.Key;
-                dict.Value = operation.Value;
-                dict.Remark = operation.Remark;
-                dict.Sort = operation.Sort;
-
-                await _dictRepo.UpdateAsync(dict);
-            }
-            _quickDict.Reload();
-
-
-            return Back.Success();
-        }
-
-        public async Task<ResponseStructure> RemoveDictAsync(IList<string> ids)
-        {
-            var list = await _dictRepo.GetListAsync(x => ids.Contains(x.Id.ToString()));
+            var list = await _dictRepo.GetListAsync(x => input.array_id.Contains(x.Id));
             foreach (var item in list)
             {
                 item.IsDeleted = 1;
@@ -118,9 +79,9 @@ namespace Mi.Application.System.Impl
             return new ResponseStructure<SysDictFull>(model);
         }
 
-        public List<SysDictFull> GetAll()
+        public async Task<List<SysDictFull>> GetAllAsync()
         {
-            var dict = _dictRepo.GetListAsync().Result;
+            var dict = await _dictRepo.GetListAsync();
             return _mapper.Map<List<SysDictFull>>(dict);
         }
 
@@ -129,6 +90,44 @@ namespace Mi.Application.System.Impl
             var sql = "select Name,Id AS Value from SysDict where IsDeleted = 0 and Id in (select ParentId from SysDict where IsDeleted = 0) ";
 
             return await _dapperRepository.QueryAsync<Option>(sql);
+        }
+
+        public async Task<ResponseStructure> AddAsync(DictPlus input)
+        {
+            var dict = _mapper.Map<SysDict>(input);
+            dict.Id = SnowflakeIdHelper.Next();
+            if (dict.ParentId > 0)
+            {
+                dict.ParentKey = (await _dictRepo.GetAsync(x => x.Id == dict.ParentId))?.Key;
+            }
+            var rows = await _dictRepo.AddAsync(dict);
+            if (rows > 0)
+            {
+                _quickDict.Reload();
+            }
+            return Back.Success();
+        }
+
+        public async Task<ResponseStructure> UpdateAsync(DictEdit input)
+        {
+            var dict = await _dictRepo.GetAsync(x => x.Id == input.Id);
+            if (dict == null) return Back.NonExist();
+
+            dict.Name = input.Name;
+            dict.Key = input.Key;
+            dict.Value = input.Value;
+            dict.Remark = input.Remark;
+            dict.Sort = input.Sort;
+            dict.ParentId = input.ParentId;
+            dict.ParentKey = input.ParentKey;
+
+            var rows = await _dictRepo.UpdateAsync(dict);
+
+            if (rows > 0)
+            {
+                _quickDict.Reload();
+            }
+            return Back.Success();
         }
     }
 }

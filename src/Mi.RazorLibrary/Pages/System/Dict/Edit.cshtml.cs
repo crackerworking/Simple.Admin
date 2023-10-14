@@ -25,7 +25,7 @@ namespace Mi.RazorLibrary.Pages.System.Dict
             {
                 Dict = r1.Result!;
             }
-            Options = _dictService.GetAll();
+            Options = await _dictService.GetAllAsync();
         }
     }
 }

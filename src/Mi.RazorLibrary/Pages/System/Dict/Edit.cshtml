@@ -10,17 +10,17 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">上级</label>
                     <div class="layui-input-block">
-                        <select name="parentId" lay-search>
+                        <select name="parentId" lay-search lay-filter="parent-key-select">
                             <option value="">请选择字典上级</option>
                             @foreach (var item in Model.Options.Where(x => x.Id != Model.Dict.Id))
                             {
                                 @if(item.Id == Model.Dict.ParentId)
                                 {
-                                    <option selected="selected" value="@item.Id">@item.Name</option>
+                                    <option selected="selected" value="@item.Id" data-key="@item.Key">@item.Name</option>
                                 }
                                 else
                                 {
-                                    <option value="@item.Id">@item.Name</option>
+                                    <option value="@item.Id" data-key="@item.Key">@item.Name</option>
                                 }
                             }
                         </select>
@@ -82,10 +82,23 @@
             let form = layui.form;
             let $ = layui.jquery;
             let common = layui.common;
+            let parentKey;
+
+            form.on('select(parent-key-select)',function(data){
+                let val = data.value;
+                let options = $('select[name="parentId"] option')
+                for (let i = 0; i < options.length;i++){
+                    if($(options[i]).val() == val){
+                        parentKey = $(options[i]).attr('data-key')
+                        break
+                    }
+                }
+            })
 
             form.on('submit(save)', function (data) {
+                data.field.parentKey = parentKey
                 $.ajax({
-                    url: '/api/Dict/AddOrUpdateDict',
+                    url: '/api/Dict/@(Model.Dict.Id > 0 ? "Update" : "Add")',
                     data: JSON.stringify(data.field),
                     contentType:'application/json',
                     dataType: 'json',

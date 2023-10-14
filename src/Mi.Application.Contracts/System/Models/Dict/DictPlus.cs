@@ -2,10 +2,8 @@
 
 namespace Mi.Application.Contracts.System.Models.Dict
 {
-    public class DictOperation
+    public class DictPlus
     {
-        public long Id { get; set; }
-
         /// <summary>
         /// 字典名称
         /// </summary>
@@ -23,7 +21,8 @@ namespace Mi.Application.Contracts.System.Models.Dict
         /// </summary>
         public string? Value { get; set; }
 
-        public long? ParentId { get; set; }
+        public long ParentId { get; set; }
+        public string ParentKey { get; set; }
         public string? Remark { get; set; }
         public int Sort { get; set; }
     }
