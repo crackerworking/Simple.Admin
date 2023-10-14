@@ -33,7 +33,7 @@ namespace Mi.Application.System.Impl
             var user = new SysUser
             {
                 UserName = userName,
-                Id = SnowflakeIdHelper.NextId(),
+                Id = SnowflakeIdHelper.Next(),
                 PasswordSalt = EncryptionHelper.GetPasswordSalt(),
                 Avatar = StringHelper.DefaultAvatar(),
                 NickName = userName,
@@ -70,7 +70,7 @@ namespace Mi.Application.System.Impl
         public async Task<ResponseStructure<UserBaseInfo>> GetUserBaseInfoAsync()
         {
             var user = await _userRepo.GetAsync(x => x.Id == _miUser.UserId);
-            if (user == null) return ResponseHelper.NonExist().As<UserBaseInfo>();
+            if (user == null) return Back.NonExist().As<UserBaseInfo>();
             return new ResponseStructure<UserBaseInfo>(new UserBaseInfo
             {
                 Avatar = user.Avatar,
@@ -112,7 +112,7 @@ namespace Mi.Application.System.Impl
                 .SetColumn(x => x.ModifiedBy, _miUser.UserId)
                 .SetColumn(x => x.ModifiedOn, DateTime.Now));
 
-            return rows > 0 ? ResponseHelper.Success() : ResponseHelper.Fail();
+            return rows > 0 ? Back.Success() : Back.Fail();
         }
 
         public async Task<ResponseStructure> RemoveUserAsync(long userId)
@@ -122,24 +122,24 @@ namespace Mi.Application.System.Impl
                 .SetColumn(x => x.ModifiedBy, _miUser.UserId)
                 .SetColumn(x => x.ModifiedOn, DateTime.Now));
 
-            return ResponseHelper.SuccessOrFail(flag > 0);
+            return Back.SuccessOrFail(flag > 0);
         }
 
         public async Task<ResponseStructure> SetPasswordAsync(string password)
         {
             var user = await _userRepo.GetAsync(x => x.Id == _miUser.UserId);
-            if (user == null) return ResponseHelper.NonExist();
+            if (user == null) return Back.NonExist();
             user.PasswordSalt = EncryptionHelper.GetPasswordSalt();
             user.Password = EncryptionHelper.GenEncodingPassword(password, user.PasswordSalt);
             await _userRepo.UpdateAsync(user);
 
-            return ResponseHelper.Success("修改成功，下次登录时请使用新密码");
+            return Back.Success("修改成功，下次登录时请使用新密码");
         }
 
         public async Task<ResponseStructure> SetUserBaseInfoAsync(UserBaseInfo model)
         {
             var user = await _userRepo.GetAsync(x => x.Id == _miUser.UserId);
-            if (user == null) return ResponseHelper.NonExist();
+            if (user == null) return Back.NonExist();
             user.Avatar = model.Avatar;
             user.NickName = model.NickName;
             user.Signature = model.Signature;
@@ -147,7 +147,7 @@ namespace Mi.Application.System.Impl
             user.ModifiedBy = _miUser.UserId;
             user.ModifiedOn = DateTime.Now;
             await _userRepo.UpdateAsync(user);
-            return ResponseHelper.Success();
+            return Back.Success();
         }
 
         public async Task<ResponseStructure<string>> UpdatePasswordAsync(long userId)

@@ -2,7 +2,7 @@
 
 namespace Mi.Domain.Helper
 {
-    public class GuardHelper
+    public class Guard
     {
         [return: NotNull]
         public static T NotNull<T>([NotNull] T? t,

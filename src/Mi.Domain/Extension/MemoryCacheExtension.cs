@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 using Microsoft.Extensions.Caching.Memory;
 
@@ -23,6 +24,20 @@ namespace Mi.Domain.Extension
                 keys.Add(cacheItem.Key.ToString()!);
             }
             return keys;
+        }
+
+        /// <summary>
+        /// 通过正则表达式移除缓存
+        /// </summary>
+        /// <param name="_cache"></param>
+        /// <param name="pattern"></param>
+        public static void RemoveByPattern(this IMemoryCache _cache, string pattern)
+        {
+            var keys = _cache.GetCacheKeys();
+            foreach (var key in keys.Where(x => Regex.IsMatch(x, pattern)))
+            {
+                _cache.Remove(key);
+            }
         }
     }
 }

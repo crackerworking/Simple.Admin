@@ -5,7 +5,7 @@ namespace Mi.Domain.Shared.Core
     /// <summary>
     /// 全局字典 IQuickDict
     /// </summary>
-    public interface IQuickDict : ISingleton
+    public interface IQuickDict
     {
         /// <summary>
         /// 读取字典value
@@ -49,5 +49,10 @@ namespace Mi.Domain.Shared.Core
         /// <param name="dict"></param>
         /// <returns></returns>
         Task<bool> SetAsync(Dictionary<string, string> dict);
+
+        /// <summary>
+        /// 重新加载
+        /// </summary>
+        void Reload();
     }
 }

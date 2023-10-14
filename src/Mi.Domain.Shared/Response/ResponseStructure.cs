@@ -49,14 +49,14 @@
         public ResponseStructure(bool successed, T? result)
         {
             Code = successed ? response_type.Success : response_type.Fail;
-            Message = "search " + (successed ? "successful" : "failed");
+            Message = "search " + (successed ? "success" : "fail");
             Result = result;
         }
 
         public ResponseStructure(T? result)
         {
             Code = response_type.Success;
-            Message = "successful";
+            Message = "success";
             Result = result;
         }
     }

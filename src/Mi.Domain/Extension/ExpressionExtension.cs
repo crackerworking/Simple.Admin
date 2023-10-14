@@ -19,7 +19,7 @@ namespace Mi.Domain.Extension
             var right = rightVisitor.Visit(expr2.Body);
 
             return Expression.Lambda<Func<T, bool>>(
-            Expression.OrElse(GuardHelper.NotNull(left), GuardHelper.NotNull(right)), parameter);
+            Expression.OrElse(Guard.NotNull(left), Guard.NotNull(right)), parameter);
         }
 
         public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> expr1,
@@ -33,7 +33,7 @@ namespace Mi.Domain.Extension
             var right = rightVisitor.Visit(expr2.Body);
 
             return Expression.Lambda<Func<T, bool>>(
-            Expression.AndAlso(GuardHelper.NotNull(left), GuardHelper.NotNull(right)), parameter);
+            Expression.AndAlso(Guard.NotNull(left), Guard.NotNull(right)), parameter);
         }
 
         public static Expression<Func<T, bool>> AndIf<T>(this Expression<Func<T, bool>> expr1, bool condition, Expression<Func<T, bool>> expr2)
@@ -50,7 +50,7 @@ namespace Mi.Domain.Extension
             var right = rightVisitor.Visit(expr2.Body);
 
             return Expression.Lambda<Func<T, bool>>(
-            Expression.AndAlso(GuardHelper.NotNull(left), GuardHelper.NotNull(right)), parameter);
+            Expression.AndAlso(Guard.NotNull(left), Guard.NotNull(right)), parameter);
         }
 
         private sealed class ReplaceExpressionVisitor : ExpressionVisitor

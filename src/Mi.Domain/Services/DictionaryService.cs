@@ -21,14 +21,10 @@ namespace Mi.Domain.Services
     {
         private ConcurrentDictionary<string, string> _keyValuePairs;
         private List<SysDict> _sysDict;
-        private readonly ILogger<DictionaryService> _logger;
-        private readonly IMemoryCache _memoryCache;
 
-        public DictionaryService(ILogger<DictionaryService> logger, IMemoryCache memoryCache)
-        {
-            _logger = logger;
-            _memoryCache = memoryCache;
-        }
+        private static Lazy<DictionaryService> _lazy => new Lazy<DictionaryService>(() => new DictionaryService());
+
+        public static DictionaryService Instance => _lazy.Value;
 
         public Task<string> GetAsync(string key)
         {
@@ -123,13 +119,16 @@ namespace Mi.Domain.Services
                 var dictRepo = p.ServiceProvider.GetRequiredService<IRepository<SysDict>>();
                 var allDict = dictRepo.GetListAsync(x => x.IsDeleted == 0).ConfigureAwait(false).GetAwaiter().GetResult();
                 _sysDict = allDict;
-                _memoryCache.Set(CacheConst.DICT, _sysDict);
                 foreach (var kv in _sysDict)
                 {
                     _keyValuePairs.TryAdd(kv.Key, kv.Value ?? "");
                 }
-                _logger.LogInformation("字典加载完毕");
             }
+        }
+
+        public void Reload()
+        {
+            Task.Run(Load);
         }
     }
 }

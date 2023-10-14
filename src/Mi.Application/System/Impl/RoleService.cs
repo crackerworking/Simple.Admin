@@ -27,7 +27,7 @@ namespace Mi.Application.System.Impl
         public async Task<ResponseStructure> AddRoleAsync(string name, string? remark)
         {
             var isExist = await _roleRepository.AnyAsync(x => x.RoleName.ToLower() == name.ToLower());
-            if (isExist) return ResponseHelper.Fail("角色名已存在");
+            if (isExist) return Back.Fail("角色名已存在");
 
             var role = new SysRole
             {
@@ -36,7 +36,7 @@ namespace Mi.Application.System.Impl
             };
             await _roleRepository.AddAsync(role);
 
-            return ResponseHelper.Success();
+            return Back.Success();
         }
 
         public async Task<ResponseStructure<SysRoleFull>> GetRoleAsync(long id)
@@ -65,28 +65,28 @@ namespace Mi.Application.System.Impl
         public async Task<ResponseStructure> RemoveRoleAsync(long id)
         {
             var count = await _userRoleRepo.CountAsync(x => x.RoleId == id);
-            if (count > 0) return ResponseHelper.Fail("角色正在使用，请先移除角色下用户");
+            if (count > 0) return Back.Fail("角色正在使用，请先移除角色下用户");
 
             await _roleRepository.UpdateAsync(id, node => node.
                 SetColumn(x => x.IsDeleted, 1));
             //移除角色下功能
             await _dapperRepository.ExecuteAsync("delete from SysRoleFunction where RoleId=@id", new { id });
 
-            return ResponseHelper.Success();
+            return Back.Success();
         }
 
         public async Task<ResponseStructure> UpdateRoleAsync(long id, string name, string remark)
         {
             var isExist = await _roleRepository.AnyAsync(x => x.RoleName.ToLower() == name.ToLower());
             var role = await _roleRepository.GetAsync(x => x.Id == id);
-            if (role == null) return ResponseHelper.NonExist();
-            if (isExist && role.RoleName != name) return ResponseHelper.Fail("角色名已存在");
+            if (role == null) return Back.NonExist();
+            if (isExist && role.RoleName != name) return Back.Fail("角色名已存在");
 
             await _roleRepository.UpdateAsync(id, node => node
                 .SetColumn(x => x.RoleName, name)
                 .SetColumn(x => x.Remark, remark));
 
-            return ResponseHelper.Success();
+            return Back.Success();
         }
     }
 }

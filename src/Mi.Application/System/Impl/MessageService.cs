@@ -93,9 +93,9 @@ namespace Mi.Application.System.Impl
 
         public async Task<ResponseStructure> ReadedAsync(IList<long> msgIds)
         {
-            if (msgIds.Count == 0) return ResponseHelper.ParameterError(nameof(msgIds));
+            if (msgIds.Count == 0) return Back.ParameterError(nameof(msgIds));
             await _dapperRepository.ExecuteAsync("update SysMessage set ModifiedOn=@time,ModifiedBy=@user,Readed=1 where Id in @ids", new { time = DateTime.Now, user = _miUser.UserId, ids = msgIds });
-            return ResponseHelper.Success();
+            return Back.Success();
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Mi.Application.Cache
         {
             _cache.Remove(input.key);
 
-            return Task.FromResult(ResponseHelper.Success());
+            return Task.FromResult(Back.Success());
         }
     }
 }

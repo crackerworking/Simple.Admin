@@ -8,7 +8,7 @@ namespace Mi.Domain.Helper
         /// 下一雪花ID
         /// </summary>
         /// <returns></returns>
-        public static long NextId()
+        public static long Next()
         {
             var dataCenterId = new Random().Next(1, 31);
             var workId = new Random().Next(1, 31);

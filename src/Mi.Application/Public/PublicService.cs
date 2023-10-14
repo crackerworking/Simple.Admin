@@ -42,19 +42,19 @@ namespace Mi.Application.Public
                 dict.TryAdd(prop.Name, (string?)prop.GetValue(operation) ?? "");
             }
             await _dictionaryApi.SetAsync(dict);
-            return ResponseHelper.Success();
+            return Back.Success();
         }
 
         public async Task<ResponseStructure<SysConfigModel>> GetUiConfigAsync()
         {
             var config = await _dictionaryApi.GetManyAsync<SysConfigModel>(DictKeyConst.UiConfig);
-            return ResponseHelper.Success("查询成功").As(config);
+            return Back.Success("查询成功").As(config);
         }
 
         public ResponseStructure HasPermission(string authCode)
         {
             var flag = _miUser.AuthCodes.Contains(authCode);
-            return flag ? ResponseHelper.Success("有") : ResponseHelper.Fail("无");
+            return flag ? Back.Success("有") : Back.Fail("无");
         }
 
         public Task<byte[]> LoginCaptchaAsync(Guid guid)

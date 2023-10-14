@@ -15,6 +15,7 @@ namespace Mi.Domain
         public override void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IMessageFactory>(MessageFactory.Instance);
+            services.AddSingleton<IQuickDict>(DictionaryService.Instance);
         }
     }
 }

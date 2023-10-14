@@ -66,7 +66,7 @@ namespace Mi.Domain.Helper
             return (long.Parse(strArray[0]), strArray[1], strArray[2]);
         }
 
-        public static string UserCachePattern() => "\\.*(_function_){1}\\.*";
+        public static string UserFunctionCachePattern() => "\\.*(_function_){1}\\.*";
 
         public static string DefaultAvatar()
         {

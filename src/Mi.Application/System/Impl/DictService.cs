@@ -11,19 +11,17 @@ namespace Mi.Application.System.Impl
     public class DictService : IDictService, IScoped
     {
         private readonly IRepository<SysDict> _dictRepo;
-        private readonly IMemoryCache _cache;
-        private readonly ICurrentUser _miUser;
         private readonly IMapper _mapper;
         private readonly IDapperRepository _dapperRepository;
+        private readonly IQuickDict _quickDict;
 
-        public DictService(IRepository<SysDict> dictRepo, IMemoryCache cache, ICurrentUser miUser, IMapper mapper
-            , IDapperRepository dapperRepository)
+        public DictService(IRepository<SysDict> dictRepo, IMapper mapper
+            , IDapperRepository dapperRepository,IQuickDict quickDict)
         {
             _dictRepo = dictRepo;
-            _cache = cache;
-            _miUser = miUser;
             _mapper = mapper;
             _dapperRepository = dapperRepository;
+            _quickDict = quickDict;
         }
 
         public async Task<ResponseStructure<PagingModel<DictItem>>> GetDictListAsync(DictSearch search)
@@ -40,14 +38,16 @@ namespace Mi.Application.System.Impl
                 sql.Append(" and d.remark like @remark ");
                 parameters.Add("remark", "%" + search.Remark + "%");
             }
-            var orderBy = "";
             if (search.ParentId.HasValue && search.ParentId > 0)
             {
                 sql.Append(" and d.ParentId = @parentId ");
-                orderBy = " Sort asc,";
+                sql.AppendLine(" order by Sort asc ");
                 parameters.Add("parentId", search.ParentId);
             }
-            sql.AppendFormat(" order by {0} CreatedOn desc ", orderBy);
+            else
+            {
+                sql.AppendLine(" order by CreatedOn desc ");
+            }
 
             var model = await _dapperRepository.QueryPagedAsync<DictItem>(sql.ToString(), search.Page, search.Size, param: parameters);
 
@@ -59,7 +59,7 @@ namespace Mi.Application.System.Impl
             if (operation.Id <= 0 && addEnabled)
             {
                 var dict = _mapper.Map<SysDict>(operation);
-                dict.Id = SnowflakeIdHelper.NextId();
+                dict.Id = SnowflakeIdHelper.Next();
                 if (dict.ParentId > 0)
                 {
                     dict.ParentKey = (await _dictRepo.GetAsync(x => x.Id == dict.ParentId))?.Key;
@@ -68,17 +68,29 @@ namespace Mi.Application.System.Impl
             }
             else
             {
-                var dict = _mapper.Map<SysDict>(operation);
+                var dict = await _dictRepo.GetAsync(x=>x.Id == operation.Id);
+                if (dict == null) return Back.NonExist();
                 if (operation.ParentId.GetValueOrDefault() > 0 && operation.ParentId != dict.ParentId)
                 {
                     dict.ParentKey = (await _dictRepo.GetAsync(x => x.Id == dict.ParentId))?.Key;
                 }
+                else
+                {
+                    dict.ParentId = -1;
+                }
+
+                dict.Name = operation.Name;
+                dict.Key = operation.Key;
+                dict.Value = operation.Value;
+                dict.Remark = operation.Remark;
+                dict.Sort = operation.Sort;
+
                 await _dictRepo.UpdateAsync(dict);
             }
+            _quickDict.Reload();
 
-            _cache.Remove(CacheConst.DICT);
 
-            return ResponseHelper.Success();
+            return Back.Success();
         }
 
         public async Task<ResponseStructure> RemoveDictAsync(IList<string> ids)
@@ -90,12 +102,12 @@ namespace Mi.Application.System.Impl
             }
 
             var rows = await _dictRepo.UpdateRangeAsync(list);
-
             if (rows > 0)
             {
-                _cache.Remove(CacheConst.DICT);
+                _quickDict.Reload();
             }
-            return ResponseHelper.SuccessOrFail(rows > 0);
+
+            return Back.SuccessOrFail(rows > 0);
         }
 
         public async Task<ResponseStructure<SysDictFull>> GetAsync(long id)

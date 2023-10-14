@@ -55,17 +55,18 @@
                     form: {
                         currentKey: null,
                         keyData: null
-                    }
+                    },
+                    searchParams: {}
                 }
             },
             methods: {
                 handleCurrentChange(val) {
-                    if(val){
+                    if (val) {
                         this.form.currentKey = val.name
                         this.getKeyData()
                     }
                 },
-                clearForm(){
+                clearForm() {
                     this.form.currentKey = null
                     this.form.keyData = null
                 },
@@ -74,7 +75,7 @@
                         ElementPlus.ElMessage.warning('请点击左侧列表选择缓存Key')
                         return;
                     }
-                    axios.post(ROOT_PATH + "GetData?key=" + this.form.currentKey).then(res => {
+                    axios.post(ROOT_PATH + "GetData", { key: this.form.currentKey }).then(res => {
                         if (MiUtils.ajaxSucceed(res.data.code)) {
                             this.form.keyData = res.data.result;
                         } else {
@@ -84,7 +85,7 @@
                 },
                 initData() {
                     this.loading = true
-                    axios.post(ROOT_PATH + "GetAllKeys").then(res => {
+                    axios.post(ROOT_PATH + "GetAllKeys", this.searchParams).then(res => {
                         setTimeout(() => {
                             this.loading = false
                             this.clearForm()
@@ -106,14 +107,14 @@
                             type: 'warning',
                         }
                     ).then(() => {
-                            axios.post(ROOT_PATH + "RemoveKey?key=" + row.name).then(res => {
-                                if (MiUtils.ajaxSucceed(res.data.code)) {
-                                    ElementPlus.ElMessage.success(res.data.message)
-                                    this.initData()
-                                } else {
-                                    ElementPlus.ElMessage.error(res.data.message)
-                                }
-                            })
+                        axios.post(ROOT_PATH + "RemoveKey", { key: row.name }).then(res => {
+                            if (MiUtils.ajaxSucceed(res.data.code)) {
+                                ElementPlus.ElMessage.success(res.data.message)
+                                this.initData()
+                            } else {
+                                ElementPlus.ElMessage.error(res.data.message)
+                            }
+                        })
                     }).catch(() => {
                         ElementPlus.ElMessage({
                             type: 'info',

@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using AutoMapper;
 using Mi.Application.Contracts.System.Models.Function;
 using Mi.Domain.Entities.System.Enum;
+using Mi.Domain.Extension;
 using Mi.Domain.Shared.Core;
 
 namespace Mi.Application.System.Impl
@@ -38,7 +39,7 @@ namespace Mi.Application.System.Impl
                 var func = _mapper.Map<SysFunction>(operation);
                 func.CreatedBy = _miUser.UserId;
                 func.CreatedOn = DateTime.Now;
-                func.Id = SnowflakeIdHelper.NextId();
+                func.Id = SnowflakeIdHelper.Next();
                 await _functionRepo.AddAsync(func);
             }
             else
@@ -55,7 +56,7 @@ namespace Mi.Application.System.Impl
             }
             RemoveCache();
 
-            return ResponseHelper.Success();
+            return Back.Success();
         }
 
         public async Task<SysFunctionFull> GetAsync(long id)
@@ -130,7 +131,7 @@ namespace Mi.Application.System.Impl
 
         public async Task<ResponseStructure> RemoveFunctionAsync(IList<long> ids)
         {
-            if (ids.Count <= 0) return ResponseHelper.Fail("id不能为空");
+            if (ids.Count <= 0) return Back.Fail("id不能为空");
 
             var funcs = await _functionRepo.GetListAsync(x => ids.Contains(x.Id));
             foreach (var item in funcs)
@@ -140,7 +141,7 @@ namespace Mi.Application.System.Impl
             await _functionRepo.UpdateRangeAsync(funcs);
             RemoveCache();
 
-            return ResponseHelper.Success();
+            return Back.Success();
         }
 
         public async Task<IList<SysFunctionFull>> GetFunctionsCacheAsync()
@@ -156,6 +157,7 @@ namespace Mi.Application.System.Impl
         private void RemoveCache()
         {
             _cache.Remove(CacheConst.FUNCTION);
+            _cache.RemoveByPattern(StringHelper.UserFunctionCachePattern());
         }
 
         public async Task<IList<string>> GetAllIdsAsync()

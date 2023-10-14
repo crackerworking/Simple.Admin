@@ -123,7 +123,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
             if (model.CreatedOn.Equals(new DateTime()))
                 model.CreatedOn = DateTime.Now;
             if (model.Id == 0)
-                model.Id = SnowflakeIdHelper.NextId();
+                model.Id = SnowflakeIdHelper.Next();
         }
 
         public async Task<PagingModel<T>> GetPagedAsync(Expression<Func<T, bool>> expression, int page, int size, IEnumerable<QuerySortField>? querySortFields = null)

@@ -31,5 +31,7 @@ namespace Mi.Application.Contracts.System.Models.Dict
         public int Sort { get; set; }
         public long ParentId { get; set; }
         public string? Remark { get; set; }
+
+        public DateTime CreatedOn {  get; set; }
     }
 }
