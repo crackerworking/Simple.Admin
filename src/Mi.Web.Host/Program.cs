@@ -46,6 +46,7 @@ namespace Mi.Web.Host
             app.UseRouting();
 
             app.UseAuthentication();
+            app.UseMiddleware<MiHeaderMiddleware>();
             app.UseMiddleware<UserMiddleware>();
             app.UseAuthorization();
 
@@ -70,7 +71,11 @@ namespace Mi.Web.Host
             // AddAutomaticInjection
             services.AddAutomaticInjection();
 
-            services.AddScoped<MiHeader>();
+            services.AddScoped(sp =>
+            {
+                var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+                return httpContextAccessor.HttpContext!.Features.Get<MiHeader>() ?? new MiHeader();
+            });
 
             // UI Config
             var uiConfig = configuration.GetSection("AdminUI");

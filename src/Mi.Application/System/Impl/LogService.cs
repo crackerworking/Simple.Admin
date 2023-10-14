@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+
 using Mi.Application.Contracts.System.Models.Log;
-using Mi.Domain.Extension;
 using Mi.Domain.Shared.Core;
 
 using Microsoft.AspNetCore.Http;
