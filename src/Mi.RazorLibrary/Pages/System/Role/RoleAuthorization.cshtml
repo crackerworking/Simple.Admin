@@ -103,7 +103,7 @@
                         })
                 },
                 fetchTreeData(){
-                    axios.get('/api/Function/GetFunctionList')
+                    axios.post('/api/Function/GetFunctionList', {})
                         .then(res => {
                             if (MiUtils.ajaxSucceed(res.data.code)) {
                                 this.treeData = res.data.result

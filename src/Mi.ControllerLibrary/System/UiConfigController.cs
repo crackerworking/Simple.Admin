@@ -1,4 +1,4 @@
-﻿using Mi.Application.Contracts.Public;
+﻿using Mi.Application.Contracts.System;
 using Mi.Domain.Shared.Core;
 using Mi.Domain.Shared.Models.UI;
 
@@ -8,13 +8,13 @@ namespace Mi.ControllerLibrary.System
     [Authorize]
     public class UiConfigController : ControllerBase
     {
-        private readonly IPublicService _publicService;
         private readonly IQuickDict _dictionaryApi;
+        private readonly IUIConfigService _uiConfigService;
 
-        public UiConfigController(IPublicService publicService, IQuickDict dictionaryApi)
+        public UiConfigController(IQuickDict dictionaryApi, IUIConfigService uiConfigService)
         {
-            _publicService = publicService;
             _dictionaryApi = dictionaryApi;
+            _uiConfigService = uiConfigService;
         }
 
         [HttpPost, AuthorizeCode("System:SetConfig")]
@@ -25,6 +25,6 @@ namespace Mi.ControllerLibrary.System
         }
 
         [HttpPost, AuthorizeCode("System:GetConfig")]
-        public async Task<ResponseStructure<SysConfigModel>> GetUiConfig() => await _publicService.GetUiConfigAsync();
+        public async Task<ResponseStructure<SysConfigModel>> GetUiConfig() => await _uiConfigService.GetUiConfigAsync();
     }
 }

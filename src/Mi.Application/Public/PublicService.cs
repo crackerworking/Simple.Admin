@@ -34,29 +34,6 @@ namespace Mi.Application.Public
             return result;
         }
 
-        public async Task<ResponseStructure> SetUiConfigAsync(SysConfigModel operation)
-        {
-            var dict = new Dictionary<string, string>();
-            foreach (var prop in typeof(SysConfigModel).GetProperties())
-            {
-                dict.TryAdd(prop.Name, (string?)prop.GetValue(operation) ?? "");
-            }
-            await _dictionaryApi.SetAsync(dict);
-            return Back.Success();
-        }
-
-        public async Task<ResponseStructure<SysConfigModel>> GetUiConfigAsync()
-        {
-            var config = await _dictionaryApi.GetManyAsync<SysConfigModel>(DictKeyConst.UiConfig);
-            return Back.Success("查询成功").As(config);
-        }
-
-        public ResponseStructure HasPermission(string authCode)
-        {
-            var flag = _miUser.AuthCodes.Contains(authCode);
-            return flag ? Back.Success("有") : Back.Fail("无");
-        }
-
         public Task<byte[]> LoginCaptchaAsync(Guid guid)
         {
             return _captcha.CreateAsync(guid.ToString(), StringHelper.GetRandomString(5), 120, 30);

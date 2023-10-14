@@ -4,7 +4,6 @@ using Mi.Domain.Shared.Models.UI;
 namespace Mi.ControllerLibrary
 {
     [ApiRoute]
-    [AllowAnonymous]
     public class PublicController : ControllerBase
     {
         private readonly IPublicService _publicService;
@@ -15,6 +14,7 @@ namespace Mi.ControllerLibrary
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<FileResult> LoginCaptcha(Guid guid)
         {
             var bytes = await _publicService.LoginCaptchaAsync(guid);
@@ -26,8 +26,5 @@ namespace Mi.ControllerLibrary
         {
             return await _publicService.ReadConfigAsync();
         }
-
-        [HttpPost]
-        public ResponseStructure HasPermission(string authCode) => _publicService.HasPermission(authCode);
     }
 }

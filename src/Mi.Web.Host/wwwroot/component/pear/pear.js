@@ -26,12 +26,10 @@ layui.config({
 	topBar: "topBar",		     // 置顶组件
 	button: "button",		     // 加载按钮
 	design: "design",		     // 表单设计
-	card: "card",			     // 数据卡片组件
 	loading: "loading",		     // 加载组件
 	cropper:"cropper",		     // 裁剪组件
 	convert:"convert",		     // 数据转换
 	context: "context",		     // 上下文组件
-	http: "http",			     // 网络请求组件
 	theme: "theme",			     // 主题转换
 	message: "message",          // 通知组件
 	toast: "toast",              // 消息通知
