@@ -1,4 +1,6 @@
-﻿namespace Mi.Domain.Shared.Core
+﻿using Mi.Domain.Shared.Options;
+
+namespace Mi.Domain.Shared.Core
 {
     /// <summary>
     /// 全局字典
@@ -13,18 +15,25 @@
         Task<string> GetAsync(string key);
 
         /// <summary>
-        /// 读取字典value
-        /// </summary>
-        /// <param name="key">字典key</param>
-        /// <returns></returns>
-        Task<T?> GetAsync<T>(string key);
-
-        /// <summary>
         /// 读取字典子集
         /// </summary>
         /// <param name="parentKey"></param>
         /// <returns></returns>
         Task<Dictionary<string, string>> GetManyAsync(string parentKey);
+
+        /// <summary>
+        /// 读取字典子集，赋值到模型
+        /// </summary>
+        /// <param name="parentKey"></param>
+        /// <returns></returns>
+        Task<T> GetManyAsync<T>(string parentKey);
+
+        /// <summary>
+        /// 读取字典子集，组装成option
+        /// </summary>
+        /// <param name="parentKey"></param>
+        /// <returns></returns>
+        Task<List<Option>> GetOptionsAsync(string parentKey);
 
         /// <summary>
         /// 更新字典value

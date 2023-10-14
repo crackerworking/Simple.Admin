@@ -16,11 +16,6 @@ namespace Mi.Domain.Entities.System
         public string? FunctionName { get; set; }
 
         /// <summary>
-        /// 树节点
-        /// </summary>
-        public EnumTreeNode Node { get; set; }
-
-        /// <summary>
         /// 图标
         /// </summary>
         public string? Icon { get; set; }

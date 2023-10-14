@@ -19,7 +19,7 @@ namespace Mi.RazorLibrary.Pages.System.User
         public async Task OnGetAsync(long? id)
         {
             var r1 = await _userService.GetUserAsync(id.GetValueOrDefault());
-            if (r1.Ok())
+            if (r1.IsOk())
             {
                 UserInfo = r1.Result!;
             }

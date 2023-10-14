@@ -8,8 +8,6 @@ namespace Mi.Application.Contracts.System
     {
         Task<ResponseStructure> AddOrUpdateFunctionAsync(FunctionOperation operation);
 
-        int CheckFunctionNode(SysFunctionFull node);
-
         Task<ResponseStructure<IList<FunctionItem>>> GetFunctionListAsync(FunctionSearch search);
 
         IList<TreeOption> GetFunctionTree();

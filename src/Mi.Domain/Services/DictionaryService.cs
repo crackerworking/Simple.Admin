@@ -1,10 +1,12 @@
 ﻿using System.Collections.Concurrent;
+using System.Reflection;
 
 using Mi.Domain.DataAccess;
 using Mi.Domain.Entities.System;
 using Mi.Domain.PipelineConfiguration;
 using Mi.Domain.Shared.Core;
 using Mi.Domain.Shared.GlobalVars;
+using Mi.Domain.Shared.Options;
 
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,12 +35,6 @@ namespace Mi.Domain.Services
             return Task.FromResult(_keyValuePairs[key]);
         }
 
-        public async Task<T?> GetAsync<T>(string key)
-        {
-            var value = await GetAsync(key);
-            return value == null ? default : (T)Convert.ChangeType(value, typeof(T));
-        }
-
         public Task<Dictionary<string, string>> GetManyAsync(string parentKey)
         {
             if (_sysDict == null) Load();
@@ -48,6 +44,38 @@ namespace Mi.Domain.Services
                 dict.TryAdd(item.Key, item.Value ?? "");
             }
             return Task.FromResult(dict);
+        }
+
+        public Task<T> GetManyAsync<T>(string parentKey)
+        {
+            if (_sysDict == null) Load();
+            var model = Activator.CreateInstance<T>();
+
+            var children = _sysDict!.Where(x => x.ParentKey == parentKey).ToList();
+            if (children.Count == 0) return Task.FromResult(model);
+            foreach (PropertyInfo prop in typeof(T).GetProperties())
+            {
+                var item = children.FirstOrDefault(x => x.Key == prop.Name);
+                if (item != null)
+                {
+                    prop.SetValue(model, Convert.ChangeType(item.Value, prop.PropertyType));
+                }
+            }
+
+            return Task.FromResult(model);
+        }
+
+        public Task<List<Option>> GetOptionsAsync(string parentKey)
+        {
+            if (_sysDict == null) Load();
+
+            var list = _sysDict!.Where(x => x.ParentKey == parentKey).Select(x => new Option
+            {
+                Name = x.Name,
+                Value = x.Value
+            }).ToList();
+
+            return Task.FromResult(list);
         }
 
         public Task<bool> SetAsync(string key, string value)

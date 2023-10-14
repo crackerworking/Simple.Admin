@@ -21,7 +21,7 @@ namespace Mi.RazorLibrary.Pages.System.Dict
         public async Task OnGetAsync(long? id)
         {
             var r1 = await _dictService.GetAsync(id.GetValueOrDefault());
-            if (r1.Ok())
+            if (r1.IsOk())
             {
                 Dict = r1.Result!;
             }

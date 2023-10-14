@@ -39,63 +39,23 @@ namespace Mi.Application.System.Impl
                 func.CreatedBy = _miUser.UserId;
                 func.CreatedOn = DateTime.Now;
                 func.Id = SnowflakeIdHelper.NextId();
-                func.Node = (EnumTreeNode)CheckFunctionNode(_mapper.Map<SysFunctionFull>(func));
-                if (func.ParentId > 0)
-                {
-                    await UpdateParentNodeAsync(func.ParentId, func.Id);
-                }
                 await _functionRepo.AddAsync(func);
             }
             else
             {
                 var func = _mapper.Map<SysFunction>(operation);
                 func.Icon = operation.Icon;
-                if (operation.ParentId > 0 && operation.ParentId != func.ParentId)
-                {
-                    await UpdateParentNodeAsync(operation.ParentId, func.Id, func.ParentId);
-                }
                 func.FunctionName = operation.FunctionName;
                 func.Url = operation.Url;
                 func.AuthorizationCode = operation.AuthorizationCode;
                 func.ParentId = operation.ParentId;
                 func.Sort = operation.Sort;
                 func.FunctionType = (EnumFunctionType)operation.FunctionType;
-                func.Node = (EnumTreeNode)CheckFunctionNode(_mapper.Map<SysFunctionFull>(func));
                 await _functionRepo.UpdateAsync(func);
             }
             RemoveCache();
 
             return ResponseHelper.Success();
-        }
-
-        private async Task UpdateParentNodeAsync(long parentId, long childId, long rawParentId = default)
-        {
-            var parent = await _functionRepo.GetAsync(x => x.Id == parentId);
-            parent.Children += "," + childId;
-            parent.Node = (EnumTreeNode)CheckFunctionNode(_mapper.Map<SysFunctionFull>(parent));
-            parent.Children = parent.Children.Trim(',');
-            if (rawParentId > 0)
-            {
-                var raw = await _functionRepo.GetAsync(x => x.Id == rawParentId);
-                raw.Children = (raw.Children ?? "").Replace(childId.ToString(), "").Trim(',');
-                raw.Node = (EnumTreeNode)CheckFunctionNode(_mapper.Map<SysFunctionFull>(raw));
-                await _functionRepo.UpdateAsync(raw);
-            }
-
-            await _functionRepo.UpdateAsync(parent);
-        }
-
-        public int CheckFunctionNode(SysFunctionFull node)
-        {
-            var hasChildren = !string.IsNullOrEmpty(node.Children) && node.Children.Split(",").Length > 0;
-            var hasParent = node.ParentId > 0;
-
-            if (hasParent && hasChildren)
-                return (int)EnumTreeNode.ChildNode;
-            else if (hasParent && !hasChildren)
-                return (int)EnumTreeNode.LeafNode;
-
-            return (int)EnumTreeNode.RootNode;
         }
 
         public async Task<SysFunctionFull> GetAsync(long id)
@@ -112,13 +72,13 @@ namespace Mi.Application.System.Impl
 
             var searchList = _allFunctions.Where(exp.Compile()).OrderBy(x => x.Sort);
             var flag = exp.Body.NodeType == ExpressionType.AndAlso;
-            var topLevel = flag ? searchList : _allFunctions.Where(x => x.Node == (int)EnumTreeNode.RootNode).OrderBy(x => x.Sort);
+            var topLevel = flag ? searchList : _allFunctions.Where(x => x.ParentId <= 0).OrderBy(x => x.Sort);
             var list = topLevel.Select(x => new FunctionItem
             {
                 FunctionName = x.FunctionName,
                 Icon = x.Icon,
                 Url = x.Url,
-                FunctionType = (int)x.FunctionType,
+                FunctionType = x.FunctionType,
                 AuthorizationCode = x.AuthorizationCode,
                 ParentId = x.ParentId,
                 Sort = x.Sort,
@@ -131,7 +91,7 @@ namespace Mi.Application.System.Impl
 
         private IList<FunctionItem> GetFuncChildNode(long id)
         {
-            var children = _allFunctions.Where(x => x.Node != (int)EnumTreeNode.RootNode && x.ParentId == id).OrderBy(x => x.Sort);
+            var children = _allFunctions.Where(x => x.ParentId == id).OrderBy(x => x.Sort);
             return children.Select(x => new FunctionItem
             {
                 FunctionName = x.FunctionName,
@@ -148,7 +108,7 @@ namespace Mi.Application.System.Impl
 
         public IList<TreeOption> GetFunctionTree()
         {
-            var topLevels = _allFunctions.Where(x => x.Node == (int)EnumTreeNode.RootNode).OrderBy(x => x.Sort);
+            var topLevels = _allFunctions.Where(x => x.ParentId <= 0).OrderBy(x => x.Sort);
             return topLevels.Select(x => new TreeOption
             {
                 Name = x.FunctionName,
@@ -159,7 +119,7 @@ namespace Mi.Application.System.Impl
 
         private IList<TreeOption> GetFunctionChildNode(long id)
         {
-            var children = _allFunctions.Where(x => x.Node != (int)EnumTreeNode.RootNode && x.ParentId == id).OrderBy(x => x.Sort);
+            var children = _allFunctions.Where(x => x.ParentId == id).OrderBy(x => x.Sort);
             return children.Select(x => new TreeOption
             {
                 Name = x.FunctionName,
@@ -195,6 +155,7 @@ namespace Mi.Application.System.Impl
 
         private void RemoveCache()
         {
+            _cache.Remove(CacheConst.FUNCTION);
         }
 
         public async Task<IList<string>> GetAllIdsAsync()

@@ -17,7 +17,7 @@ namespace Mi.Application.System
             {
                 conf.CreateMap<SysFunctionFull, SysFunction>();
                 conf.CreateMap<SysFunction, SysFunctionFull>();
-                conf.CreateMap<SysFunction, FunctionOperation>();
+                conf.CreateMap<FunctionOperation, SysFunction>();
                 conf.CreateMap<SysLoginLog, SysLoginLogFull>();
                 conf.CreateMap<SysLog, SysLogFull>();
                 conf.CreateMap<SysRole, SysRoleFull>();

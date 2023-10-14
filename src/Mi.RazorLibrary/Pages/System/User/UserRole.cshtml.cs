@@ -22,7 +22,7 @@ namespace Mi.RazorLibrary.Pages.System.User
         {
             Id = id.GetValueOrDefault();
             var r1 = await _permissionService.GetUserRolesAsync(Id);
-            if (r1.Ok())
+            if (r1.IsOk())
             {
                 Options = r1.Result!.ToList();
             }

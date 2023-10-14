@@ -14,7 +14,7 @@
             Message = message;
         }
 
-        public virtual bool Ok()
+        public virtual bool IsOk()
         {
             return Code == response_type.Success;
         }
@@ -22,7 +22,7 @@
 
     public class ResponseStructure<T> : ResponseStructure
     {
-        public override bool Ok()
+        public override bool IsOk()
         {
             return Code == response_type.Success && Result != null;
         }

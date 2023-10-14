@@ -9,16 +9,18 @@ namespace Mi.Application.Public
         private readonly ICurrentUser _miUser;
         private readonly IRepository<SysMessage> _messageRepo;
         private readonly ICaptcha _captcha;
+        private readonly IDictionaryApi _dictionaryApi;
         private readonly IDictService _dictService;
 
         public PublicService(IOptionsMonitor<PaConfigModel> uiConfig, IDictService dictService
-            , ICurrentUser miUser, IRepository<SysMessage> messageRepo, ICaptcha captcha)
+            , ICurrentUser miUser, IRepository<SysMessage> messageRepo, ICaptcha captcha, IDictionaryApi dictionaryApi)
         {
             _dictService = dictService;
             _uiConfig = uiConfig.CurrentValue;
             _miUser = miUser;
             _messageRepo = messageRepo;
             _captcha = captcha;
+            _dictionaryApi = dictionaryApi;
         }
 
         public async Task<bool> WriteMessageAsync(string title, string content, IList<long> receiveUsers)
@@ -35,7 +37,7 @@ namespace Mi.Application.Public
 
         public async Task<PaConfigModel> ReadConfigAsync()
         {
-            var config = await _dictService.GetAsync<SysConfigModel>(DictKeyConst.UiConfig);
+            var config = await _dictionaryApi.GetManyAsync<SysConfigModel>(DictKeyConst.UiConfig);
             var result = _uiConfig;
             result.logo.title = config.header_name;
             result.logo.image = config.logo ?? "";
@@ -46,13 +48,18 @@ namespace Mi.Application.Public
 
         public async Task<ResponseStructure> SetUiConfigAsync(SysConfigModel operation)
         {
-            await _dictService.SetAsync(operation);
+            var dict = new Dictionary<string, string>();
+            foreach (var prop in typeof(SysConfigModel).GetProperties())
+            {
+                dict.TryAdd(prop.Name, (string?)prop.GetValue(operation) ?? "");
+            }
+            await _dictionaryApi.SetAsync(dict);
             return ResponseHelper.Success();
         }
 
         public async Task<ResponseStructure<SysConfigModel>> GetUiConfigAsync()
         {
-            var config = await _dictService.GetAsync<SysConfigModel>(DictKeyConst.UiConfig);
+            var config = await _dictionaryApi.GetManyAsync<SysConfigModel>(DictKeyConst.UiConfig);
             return ResponseHelper.Success("查询成功").As(config);
         }
 

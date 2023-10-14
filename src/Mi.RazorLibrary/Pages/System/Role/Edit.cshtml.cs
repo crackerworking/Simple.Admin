@@ -19,7 +19,7 @@ namespace Mi.RazorLibrary.Pages.System.Role
         public async Task OnGetAsync(long? id)
         {
             var r1 = await _roleService.GetRoleAsync(id.GetValueOrDefault());
-            if (r1.Ok())
+            if (r1.IsOk())
             {
                 Role = r1.Result!;
             }

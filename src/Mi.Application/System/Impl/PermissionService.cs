@@ -56,7 +56,7 @@ namespace Mi.Application.System.Impl
         public async Task<List<PaMenuModel>> GetSiderMenuAsync()
         {
             var topLevels = (await _functionService.GetFunctionsCacheAsync())
-                .Where(x => _miUser.FuncIds.Contains(x.Id) && x.Node == (int)EnumTreeNode.RootNode && x.FunctionType == (int)EnumFunctionType.Menu).OrderBy(x => x.Sort);
+                .Where(x => _miUser.FuncIds.Contains(x.Id) && x.ParentId <=0 && x.FunctionType == (int)EnumFunctionType.Menu).OrderBy(x => x.Sort);
             var list = new List<PaMenuModel>();
             foreach (var x in topLevels)
             {
@@ -70,7 +70,7 @@ namespace Mi.Application.System.Impl
 
         private async Task<IList<PaMenuModel>> GetPaChildrenAsync(long id)
         {
-            var children = (await _functionService.GetFunctionsCacheAsync()).Where(x => _miUser.FuncIds.Contains(x.Id) && x.Node != (int)EnumTreeNode.RootNode && x.FunctionType == (int)EnumFunctionType.Menu && x.ParentId == id).OrderBy(x => x.Sort);
+            var children = (await _functionService.GetFunctionsCacheAsync()).Where(x => _miUser.FuncIds.Contains(x.Id) && x.ParentId > 0 && x.FunctionType == (int)EnumFunctionType.Menu && x.ParentId == id).OrderBy(x => x.Sort);
             var list = new List<PaMenuModel>();
             foreach (var x in children)
             {
