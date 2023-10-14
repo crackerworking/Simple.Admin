@@ -1,4 +1,4 @@
-layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'menu', 'frame', 'theme', 'convert'],
+layui.define(['message', 'table', 'jquery', 'element', 'form', 'tab', 'menu', 'frame', 'theme', 'convert'],
     function(exports) {
         "use strict";
         var $ = layui.jquery;
