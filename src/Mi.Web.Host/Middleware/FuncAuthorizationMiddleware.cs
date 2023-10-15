@@ -17,7 +17,7 @@ namespace Mi.Web.Host.Middleware
     {
         private readonly AuthorizationMiddlewareResultHandler defaultHandler = new();
         private readonly ILogger<FuncAuthorizationMiddleware> _logger;
-        private readonly string[] IGNORE_CONTROLLERS = { "home" };
+        private readonly string[] IGNORE_PAGES = { "/entry" };
         private readonly List<Type> CONTROLLER_TYPES = new List<Type> { typeof(Controller), typeof(ControllerBase) };
         private readonly List<string?> VIEW_TYPES = new List<string?> { typeof(IActionResult).FullName, typeof(ViewResult).FullName, typeof(RedirectResult).FullName };
 
@@ -29,10 +29,9 @@ namespace Mi.Web.Host.Middleware
         public async Task HandleAsync(RequestDelegate next, HttpContext context, AuthorizationPolicy policy, PolicyAuthorizationResult authorizeResult)
         {
             var userModel = context.GetUser();
-            var controllerName = (string?)context.Request.RouteValues["controller"] ?? "";
-            var actionName = (string?)context.GetRouteValue("action") ?? "";
+            var pageRoute = (string?)context.Request.RouteValues["page"] ?? "";
 
-            if (!IGNORE_CONTROLLERS.Contains(controllerName.ToLower()) && userModel != null && userModel.UserId > 0)
+            if (!IGNORE_PAGES.Contains(pageRoute.ToLower()) && userModel != null && userModel.UserId > 0)
             {
                 var path = context.Request.Path.Value;
                 if (!userModel.IsSuperAdmin)
@@ -51,20 +50,20 @@ namespace Mi.Web.Host.Middleware
                     {
                         _logger.LogWarning($"'用户Id：{userModel.UserId}，用户名：{userModel.UserName}'访问地址`{path}`权限不足");
 
-                        var types = GetControllerTypesCache();
-                        foreach (var item in types)
-                        {
-                            if (item.Name.Equals($"{controllerName}Controller", StringComparison.CurrentCultureIgnoreCase) || item.Name.Equals(controllerName, StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                var method = item.GetMethods().Where(x => x.Name.ToLower() == actionName.ToLower()).FirstOrDefault();
-                                var returnType = method?.ReturnType;
-                                if (returnType != null && VIEW_TYPES.Contains(returnType.FullName))
-                                {
-                                    context.Response.Redirect("/html/403.html");
-                                    return;
-                                }
-                            }
-                        }
+                        //var types = GetControllerTypesCache();
+                        //foreach (var item in types)
+                        //{
+                        //    if (item.Name.Equals($"{controllerName}Controller", StringComparison.CurrentCultureIgnoreCase) || item.Name.Equals(controllerName, StringComparison.CurrentCultureIgnoreCase))
+                        //    {
+                        //        var method = item.GetMethods().Where(x => x.Name.ToLower() == actionName.ToLower()).FirstOrDefault();
+                        //        var returnType = method?.ReturnType;
+                        //        if (returnType != null && VIEW_TYPES.Contains(returnType.FullName))
+                        //        {
+                        //            context.Response.Redirect("/html/403.html");
+                        //            return;
+                        //        }
+                        //    }
+                        //}
 
                         await context.Response.WriteAsJsonAsync(new ResponseStructure(response_type.Forbidden, "权限不足，无法访问或操作"));
                         return;

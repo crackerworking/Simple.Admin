@@ -5,6 +5,7 @@
         long UserId { get; }
         string UserName { get; }
         bool IsSuperAdmin { get; }
+        bool IsDemo { get; }
         IEnumerable<long> FuncIds { get; }
 
         IEnumerable<string?> AuthCodes { get; }

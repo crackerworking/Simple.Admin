@@ -29,6 +29,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
 
         public async Task<int> AddAsync(T model)
         {
+            Demo.ThrowExceptionForDBWriteAction(_currentUser);
             WithCreatedFields(model);
 
             _dbContext.Add(model);
@@ -37,6 +38,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
 
         public async Task<int> AddRangeAsync(IEnumerable<T> models)
         {
+            Demo.ThrowExceptionForDBWriteAction(_currentUser);
             foreach (var model in models)
             {
                 WithCreatedFields(model);
@@ -60,6 +62,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
 
         public async Task<int> DeleteAsync(long id)
         {
+            Demo.ThrowExceptionForDBWriteAction(_currentUser);
             var model = await GetAsync(x => x.Id == id);
             if (model == null) return 0;
             _dbContext.Remove(model);
@@ -68,12 +71,14 @@ namespace Mi.DataDriver.EntityFrameworkCore
 
         public Task<int> DeleteAsync(T model)
         {
+            Demo.ThrowExceptionForDBWriteAction(_currentUser);
             _dbContext.Remove(model);
             return _dbContext.SaveChangesAsync();
         }
 
         public Task<int> DeleteRangeAsync(IEnumerable<T> models)
         {
+            Demo.ThrowExceptionForDBWriteAction(_currentUser);
             _dbContext.RemoveRange(models);
             return _dbContext.SaveChangesAsync();
         }
@@ -92,6 +97,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
 
         public Task<int> UpdateAsync(T model)
         {
+            Demo.ThrowExceptionForDBWriteAction(_currentUser);
             WithModifiedFields(model);
 
             _dbContext.Update(model);
@@ -100,6 +106,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
 
         public Task<int> UpdateRangeAsync(IEnumerable<T> models)
         {
+            Demo.ThrowExceptionForDBWriteAction(_currentUser);
             foreach (var model in models)
             {
                 WithModifiedFields(model);
@@ -159,6 +166,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
 
         public async Task<int> UpdateAsync(long id, Func<Updatable<T>, Updatable<T>> updatable)
         {
+            Demo.ThrowExceptionForDBWriteAction(_currentUser);
             using (await _mutex.LockAsync())
             {
                 var updator = Activator.CreateInstance<Updatable<T>>();

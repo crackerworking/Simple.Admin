@@ -10,6 +10,8 @@ namespace Mi.Domain.User
 
         public bool IsSuperAdmin { get; set; }
 
+        public bool IsDemo => !IsSuperAdmin && UserName != null && UserName.Contains("demo");
+
         public IEnumerable<long> FuncIds { get; set; }
 
         public IEnumerable<string?> AuthCodes { get; set; }

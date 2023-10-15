@@ -4,6 +4,7 @@ using Dapper;
 
 using Mi.DataDriver.EntityFrameworkCore;
 using Mi.Domain.DataAccess;
+using Mi.Domain.Shared.Core;
 using Mi.Domain.Shared.Models;
 
 using Microsoft.EntityFrameworkCore;
@@ -13,14 +14,17 @@ namespace Mi.DataDriver.Dapper
     internal class DapperRepository : IDapperRepository
     {
         private readonly IDbConnection _conn;
+        private readonly ICurrentUser _currentUser;
 
-        public DapperRepository(MiDbContext dbContext)
+        public DapperRepository(MiDbContext dbContext,ICurrentUser currentUser)
         {
             _conn = dbContext.Database.GetDbConnection();
+            _currentUser = currentUser;
         }
 
         public Task<int> ExecuteAsync(string sql, object? param = null)
         {
+            Demo.ThrowExceptionForDBWriteAction(_currentUser);
             return _conn.ExecuteAsync(sql, param);
         }
 
@@ -52,8 +56,11 @@ namespace Mi.DataDriver.Dapper
                 querySql += $" limit {(page - 1) * size},{size} ";
             }
 
-            var model = new PagingModel<T> { Total = total };
-            model.Rows = await QueryAsync<T>(querySql, param);
+            var model = new PagingModel<T>
+            {
+                Total = total,
+                Rows = await QueryAsync<T>(querySql, param)
+            };
 
             return model;
         }

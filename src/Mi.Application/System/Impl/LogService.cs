@@ -80,6 +80,7 @@ namespace Mi.Application.System.Impl
 
         public async Task<bool> SetExceptionAsync(string uniqueId, string errorMsg)
         {
+            if (_miUser.IsDemo) return false;
             var log = await _logRepo.GetAsync(x => x.UniqueId == uniqueId);
             if (log == null) return false;
             log.Exception = errorMsg;
@@ -89,6 +90,7 @@ namespace Mi.Application.System.Impl
 
         public async Task<bool> WriteLogAsync(string url, string? param, string? actionFullName, string? uniqueId = default, string? contentType = null, bool succeed = true, string? exception = null)
         {
+            if (_miUser.IsDemo) return false;
             var log = new SysLog();
             log.RequestUrl = url;
             log.RequestParams = param;
