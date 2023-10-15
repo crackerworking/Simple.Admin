@@ -1,5 +1,6 @@
 using Mi.DataDriver;
 using Mi.DataDriver.EntityFrameworkCore;
+using Mi.Domain.Hubs;
 using Mi.Domain.Json;
 using Mi.Domain.PipelineConfiguration;
 using Mi.Domain.Shared;
@@ -21,7 +22,8 @@ namespace Mi.Web.Host
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddRazorPages();
-            builder.Services.AddControllersWithViews(opt =>
+            builder.Services.AddSignalR();
+            builder.Services.AddControllers(opt =>
             {
                 opt.Filters.Add<GlobalExceptionFilter>();
                 opt.Filters.Add<GlobalActionFilterAttribute>();
@@ -55,15 +57,16 @@ namespace Mi.Web.Host
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseMiddleware<MiHeaderMiddleware>();
 
             app.UseAuthentication();
-            app.UseMiddleware<MiHeaderMiddleware>();
             app.UseMiddleware<UserMiddleware>();
             app.UseAuthorization();
 
             app.MapRazorPages();
-            app.MapControllerRoute("api-router", "{controller=Home}/{action=Index}");
+            app.MapControllerRoute("api-router","/api/{controller}/{action}");
 
+            app.MapHub<NoticeHub>("/noticeHub");
             app.Run();
         }
 

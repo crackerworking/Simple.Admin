@@ -3,7 +3,7 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/noticeHub").build();
 
 connection.on("ReceiveMessage", function (title, content) {
-    window.toast.info({ title: title, message: content, position: 'topCenter' });
+    window.toast.info({ title: title, message: content, position: 'bottomRight' });
 });
 
 connection.start().then(() => {

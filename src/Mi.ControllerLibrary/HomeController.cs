@@ -9,7 +9,7 @@
         /// <returns></returns>
         public IActionResult Index()
         {
-            return Redirect("/index.html");
+            return Redirect("/auth/index.html");
         }
     }
 }

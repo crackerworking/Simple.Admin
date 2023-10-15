@@ -139,3 +139,4 @@ obj/
 .idea
 .vscode
 appsettings.json
+microsoft-signalr

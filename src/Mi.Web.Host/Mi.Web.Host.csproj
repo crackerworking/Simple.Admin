@@ -27,10 +27,4 @@
     <ProjectReference Include="..\Mi.RazorLibrary\Mi.RazorLibrary.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="wwwroot\index.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>

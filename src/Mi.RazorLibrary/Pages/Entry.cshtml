@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@page "/"
+@attribute [Authorize]
+@model Mi.RazorLibrary.Pages.EntryModel
+@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -97,7 +105,6 @@
     <!-- 依 赖 脚 本 -->
     <script src="./component/layui/layui.js"></script>
     <script src="./component/pear/pear.js"></script>
-    <!--<script src="./component/microsoft/signalr/dist/browser/signalr.min.js"></script>-->
     <script src="./admin/js/mi-utils.js" asp-append-version="true"></script>
     <!-- 框 架 初 始 化 -->
     <script>
@@ -146,6 +153,7 @@
             }
         })
     </script>
-    <!--<script src="./admin/js/notice.js"></script>-->
+    <script src="./microsoft-signalr/signalr.min.js"></script>
+    <script src="./admin/js/notice.js"></script>
 </body>
 </html>
