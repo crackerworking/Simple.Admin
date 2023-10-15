@@ -1,4 +1,6 @@
-﻿using Mi.Domain.Shared.Options;
+﻿using System.Runtime.CompilerServices;
+
+using Mi.Domain.Shared.Options;
 
 namespace Mi.Domain.Shared.Core
 {
@@ -7,6 +9,13 @@ namespace Mi.Domain.Shared.Core
     /// </summary>
     public interface IQuickDict
     {
+        /// <summary>
+        /// 获取字典value
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        string this[string key] { get; }
+
         /// <summary>
         /// 读取字典value
         /// </summary>

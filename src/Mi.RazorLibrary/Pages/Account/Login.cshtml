@@ -3,7 +3,7 @@
 
 @{
     Layout = null;
-    ViewBag.Guid = Guid.NewGuid();
+    ViewBag.Guid = Model.GuidKey;
 }
 
 <!DOCTYPE html>
@@ -191,14 +191,30 @@
         layui.use(['form', 'jquery'], function () {
             let $ = layui.$;
             let form = layui.form;
+            let isShow = '@Model.ShowLoginCaptcha'
+            let guid = '@ViewBag.Guid'
 
             $('.toggle-item').click(function () {
                 $('.toggle-item').removeClass('mi-active')
                 $(this).addClass('mi-active');
             })
 
+            function sendCaptcha(){
+                $('#captchaImg').attr('src', '/api/public/LoginCaptcha?v=' + uuid() + '&guid=' + guid)
+                if (isShow) {
+                    setTimeout(()=>{
+                        $.get('/api/public/GetLoginCaptcha?guid=' + guid, function (code) {
+                            console.log(code)
+                            layer.msg("验证码：" + code, {
+                                time: 2000
+                            })
+                        })
+                    },500)
+                }
+            }
+
             $('#captchaImg').click(function () {
-                this.src = '/api/public/LoginCaptcha?v=' + uuid() + '&guid=@ViewBag.Guid'
+                sendCaptcha()
             })
 
             form.on('submit(login)', function (loginData) {
@@ -222,7 +238,7 @@
                                 icon: 2,
                                 time: 800
                             }, function () {
-                                $('#captchaImg').attr('src', '/api/public/LoginCaptcha?v=' + uuid() + '&guid=@ViewBag.Guid')
+                                sendCaptcha()
                             });
                         }
                     }

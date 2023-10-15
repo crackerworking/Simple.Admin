@@ -3,15 +3,11 @@ using System.Reflection;
 
 using Mi.Domain.DataAccess;
 using Mi.Domain.Entities.System;
-using Mi.Domain.PipelineConfiguration;
 using Mi.Domain.Shared;
 using Mi.Domain.Shared.Core;
-using Mi.Domain.Shared.GlobalVars;
 using Mi.Domain.Shared.Options;
 
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Mi.Domain.Services
 {
@@ -25,6 +21,15 @@ namespace Mi.Domain.Services
         private static Lazy<DictionaryService> _lazy => new Lazy<DictionaryService>(() => new DictionaryService());
 
         public static DictionaryService Instance => _lazy.Value;
+
+        public string this[string key]
+        {
+            get
+            {
+                if (_keyValuePairs == null) Load();
+                return _keyValuePairs[key];
+            }
+        }
 
         public Task<string> GetAsync(string key)
         {

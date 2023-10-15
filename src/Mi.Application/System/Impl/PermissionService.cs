@@ -251,9 +251,8 @@ namespace Mi.Application.System.Impl
             }
 
             if (powers.Count > 0) await _roleFunctionRepo.AddRangeAsync(powers);
-            //正则移除所有角色功能缓存 TODO:
-            //var keys = _cache.GetCacheKeys().Where(x => Regex.IsMatch(x, StringHelper.UserCachePattern()));
-            //_cache.RemoveAll(keys);
+            //正则移除所有角色功能缓存
+            _cache.RemoveByPattern(StringHelper.UserFunctionCachePattern());
 
             return Back.Success();
         }

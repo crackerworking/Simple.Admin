@@ -36,7 +36,8 @@ namespace Mi.Application.Public
 
         public Task<byte[]> LoginCaptchaAsync(Guid guid)
         {
-            return _captcha.CreateAsync(guid.ToString(), StringHelper.GetRandomString(5), 120, 30);
+            var code = StringHelper.GetRandomString(5);
+            return _captcha.CreateAsync(guid.ToString(), code, 120, 30);
         }
     }
 }

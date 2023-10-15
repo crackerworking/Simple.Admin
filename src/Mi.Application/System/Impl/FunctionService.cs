@@ -2,9 +2,9 @@
 using System.Linq.Expressions;
 
 using AutoMapper;
+
 using Mi.Application.Contracts.System.Models.Function;
 using Mi.Domain.Entities.System.Enum;
-using Mi.Domain.Extension;
 using Mi.Domain.Shared.Core;
 
 namespace Mi.Application.System.Impl
@@ -157,7 +157,6 @@ namespace Mi.Application.System.Impl
         private void RemoveCache()
         {
             _cache.Remove(CacheConst.FUNCTION);
-            _cache.RemoveByPattern(StringHelper.UserFunctionCachePattern());
         }
 
         public async Task<IList<string>> GetAllIdsAsync()
