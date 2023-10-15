@@ -143,6 +143,17 @@ layui.define(['jquery', 'element', 'table'], function (exports) {
             }
             return paging;
         }
+
+        /**
+         * 处理空值
+         * @param {any} d
+         * @param {any} key
+         * @returns
+         */
+        this.handleNullValue = function (d,key) {
+            if (!d[key]) return "--"
+            return d[key]
+        }
     }
     exports(MOD_NAME, common);
 });

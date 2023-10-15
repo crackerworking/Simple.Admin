@@ -36,7 +36,14 @@ namespace Mi.Application.System.Impl
                 .AndIf(!string.IsNullOrEmpty(search.UserName), x => x.UserName.Contains(search.UserName!))
                 .AndIf(search.Succeed == 1, x => x.Status == 1)
                 .AndIf(search.Succeed == 2, x => x.Status == 0);
-            var model = await _loginLogRepo.GetPagedAsync(exp, search.Page, search.Size);
+            var model = await _loginLogRepo.GetPagedAsync(exp, search.Page, search.Size, new List<QuerySortField>
+            {
+                new QuerySortField
+                {
+                    FieldName = nameof(SysLog.CreatedOn),
+                    Desc = true
+                }
+            });
             var clonedModel = new PagingModel<SysLoginLogFull>
             {
                 Total = model.Total,
@@ -54,7 +61,14 @@ namespace Mi.Application.System.Impl
                 .AndIf(search.Succeed == 1, x => x.Succeed == 1)
                 .AndIf(search.Succeed == 2, x => x.Succeed == 0)
                 .AndIf(search.CreatedOn != null && search.CreatedOn.Length == 2, x => x.CreatedOn >= search.CreatedOn![0].Date && x.CreatedOn <= search.CreatedOn![1].Date.AddDays(1).AddSeconds(-1));
-            var model = await _logRepo.GetPagedAsync(exp, search.Page, search.Size);
+            var model = await _logRepo.GetPagedAsync(exp, search.Page, search.Size, new List<QuerySortField>
+            {
+                new QuerySortField
+                {
+                    FieldName = nameof(SysLog.CreatedOn),
+                    Desc = true
+                }
+            });
             var clonedModel = new PagingModel<SysLogFull>
             {
                 Total = model.Total,

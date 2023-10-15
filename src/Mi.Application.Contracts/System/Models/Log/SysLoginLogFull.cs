@@ -41,5 +41,7 @@ namespace Mi.Application.Contracts.System.Models.Log
         /// 区域信息
         /// </summary>
         public string? RegionInfo { get; set; }
+
+        public DateTime CreatedOn { get; set; }
     }
 }

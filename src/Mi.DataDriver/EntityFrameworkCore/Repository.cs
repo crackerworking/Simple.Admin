@@ -1,14 +1,15 @@
-﻿using System.Linq.Expressions;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq.Expressions;
 using System.Reflection;
 
 using Mi.Domain.DataAccess;
 using Mi.Domain.Entities;
+using Mi.Domain.Extension;
 using Mi.Domain.Helper;
 using Mi.Domain.Shared.Core;
 using Mi.Domain.Shared.Models;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 using Nito.AsyncEx;
 
@@ -130,7 +131,28 @@ namespace Mi.DataDriver.EntityFrameworkCore
         {
             var model = new PagingModel<T>();
             model.Total = await _dbContext.Set<T>().CountAsync(expression);
-            model.Rows = _dbContext.Set<T>().Where(expression).Skip((page - 1) * size).Take(size).ToList();
+
+            if (!querySortFields.IsNull())
+            {
+                var type = typeof(T);
+                var tableName = type.Name;
+                var tableAttr = type.GetCustomAttribute<TableAttribute>();
+                if (tableAttr != null)
+                {
+                    tableName = tableAttr.Name;
+                }
+                var sql = $"select * from {tableName} order by ";
+                foreach (var item in querySortFields!)
+                {
+                    sql += $" {item.FieldName} {(item.Desc ? "desc" : "asc")},";
+                }
+                sql = sql.TrimEnd(',');
+                model.Rows = _dbContext.Set<T>().FromSqlRaw(sql).Where(expression).Skip((page - 1) * size).Take(size).ToList();
+            }
+            else
+            {
+                model.Rows = _dbContext.Set<T>().Where(expression).Skip((page - 1) * size).Take(size).ToList();
+            }
 
             return model;
         }

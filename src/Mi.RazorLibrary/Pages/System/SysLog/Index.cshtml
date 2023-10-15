@@ -71,22 +71,25 @@
                     {
                         title: 'IP',
                         field: 'ipAddress',
-                        align: 'center'
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'ipAddress')
                     },
-                    {
-                        title: '区域',
-                        field: 'regionInfo',
-                        align: 'center'
-                    },
+                    // {
+                    //     title: '区域',
+                    //     field: 'regionInfo',
+                    //     align: 'center'
+                    // },
                     {
                         title: '浏览器',
                         field: 'browser',
-                        align: 'center'
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'browser')
                     },
                     {
                         title: '系统',
                         field: 'system',
-                        align: 'center'
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'system')
                     },
                     {
                         title: '状态',
@@ -102,7 +105,8 @@
                     {
                         title: '操作信息',
                         field: 'operationInfo',
-                        align: 'center'
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'operationInfo')
                     },
                     {
                         title: '登录时间',

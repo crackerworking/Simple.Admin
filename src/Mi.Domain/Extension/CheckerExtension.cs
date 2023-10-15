@@ -4,7 +4,7 @@
     {
         // ============== array ==============
 
-        public static bool IsNull<T>(this IEnumerable<T> arr)
+        public static bool IsNull<T>(this IEnumerable<T>? arr)
         {
             return arr == null || !arr.Any();
         }

@@ -105,7 +105,8 @@
                     {
                         title: '字典值',
                         field: 'value',
-                        align: 'center'
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'value')
                     },
                     {
                         title: '排序',
@@ -115,12 +116,14 @@
                     {
                         title: '备注',
                         field: 'remark',
-                        align: 'center'
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'remark')
                     },
                     {
                         title: '上级',
                         field: 'parentName',
-                        align: 'center'
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'parentName')
                     },
                     {
                         title: '创建时间',

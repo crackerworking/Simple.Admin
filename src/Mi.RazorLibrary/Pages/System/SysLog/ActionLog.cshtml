@@ -76,12 +76,14 @@
                     {
                         title: '类型',
                         field: 'contentType',
-                        align: 'center'
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'contentType')
                     },
                     {
                         title: '参数',
                         field: 'requestParams',
-                        align: 'center'
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'requestParams')
                     },
                     {
                         title: '状态',
@@ -102,10 +104,11 @@
                     {
                         title: '异常',
                         field: 'exception',
-                        align: 'center'
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'exception')
                     },
                     {
-                        title: '登录时间',
+                        title: '操作时间',
                         field: 'createdOn',
                         align: 'center'
                     }

@@ -11,5 +11,7 @@ namespace Mi.Application.Contracts.System
         Task<ResponseStructure<PagingModel<SysLoginLogFull>>> GetLoginLogListAsync(LoginLogSearch search);
 
         Task<ResponseStructure<PagingModel<SysLogFull>>> GetLogListAsync(LogSearch search);
+
+        Task<bool> SetExceptionAsync(string uniqueId, string errorMsg);
     }
 }

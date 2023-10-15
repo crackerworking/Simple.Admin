@@ -81,7 +81,8 @@
                     {
                         title: '备注',
                         field: 'remark',
-                        align: 'center'
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'remark')
                     },
                     {
                         title: '创建时间',

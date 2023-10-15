@@ -6,6 +6,7 @@ using Mi.Domain.Shared;
 using Mi.Domain.Shared.Models;
 using Mi.Domain.Shared.Models.UI;
 using Mi.Domain.User;
+using Mi.Web.Host.Filter;
 using Mi.Web.Host.Middleware;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -20,7 +21,11 @@ namespace Mi.Web.Host
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddRazorPages();
-            builder.Services.AddControllersWithViews().AddJsonOptions(opt =>
+            builder.Services.AddControllersWithViews(opt =>
+            {
+                opt.Filters.Add<GlobalExceptionFilter>();
+                opt.Filters.Add<GlobalActionFilterAttribute>();
+            }).AddJsonOptions(opt =>
             {
                 opt.JsonSerializerOptions.Converters.Add(new LongToStringConverter());
                 opt.JsonSerializerOptions.Converters.Add(new DateTimeFormatConverter());
@@ -40,6 +45,12 @@ namespace Mi.Web.Host
             App.Running(app.Environment.IsDevelopment(), app.Environment.WebRootPath, app.Configuration, app.Services);
 
             PipelineStartup.Instance.Configure(app);
+
+            app.Use((context, next) =>
+            {
+                context.Request.EnableBuffering();
+                return next(context);
+            });
 
             app.UseStaticFiles();
 

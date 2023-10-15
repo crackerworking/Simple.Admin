@@ -1,4 +1,6 @@
-﻿using Mi.Domain.Extension;
+﻿using System.Net;
+
+using Mi.Domain.Extension;
 using Mi.Domain.Shared.Models;
 
 using UAParser;
@@ -19,7 +21,12 @@ namespace Mi.Web.Host.Middleware
             var ip = context.Request.Headers["X-Forwarded-For"]; // nginx or docker
             if (ip.IsNull())
             {
-                ip = context.Request.HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+                ip = context.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+            }
+
+            if (!ip.IsNull() && Array.IndexOf(new IPAddress[] { IPAddress.Any, IPAddress.None, IPAddress.Broadcast, IPAddress.Loopback, new IPAddress(new byte[] { 0, 0, 0, 1 }) }, IPAddress.Parse(ip!)) == -1)
+            {
+                ;
             }
 
             var c = Parser.GetDefault().Parse(context.Request.Headers.UserAgent);
