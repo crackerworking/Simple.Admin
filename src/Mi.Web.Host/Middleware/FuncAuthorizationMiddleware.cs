@@ -1,15 +1,15 @@
-﻿using Mi.Domain.Shared.Attributes;
+﻿using System.Reflection;
+
+using Mi.Domain.Extension;
+using Mi.Domain.Shared;
+using Mi.Domain.Shared.Attributes;
 using Mi.Domain.Shared.GlobalVars;
-using System.Reflection;
+using Mi.Domain.Shared.Response;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc;
-using Mi.Domain.Extension;
-using Mi.Domain.PipelineConfiguration;
 using Microsoft.Extensions.Caching.Memory;
-using Mi.Domain.Shared.Response;
-using Mi.Domain.Shared;
 
 namespace Mi.Web.Host.Middleware
 {
@@ -50,20 +50,11 @@ namespace Mi.Web.Host.Middleware
                     {
                         _logger.LogWarning($"'用户Id：{userModel.UserId}，用户名：{userModel.UserName}'访问地址`{path}`权限不足");
 
-                        //var types = GetControllerTypesCache();
-                        //foreach (var item in types)
-                        //{
-                        //    if (item.Name.Equals($"{controllerName}Controller", StringComparison.CurrentCultureIgnoreCase) || item.Name.Equals(controllerName, StringComparison.CurrentCultureIgnoreCase))
-                        //    {
-                        //        var method = item.GetMethods().Where(x => x.Name.ToLower() == actionName.ToLower()).FirstOrDefault();
-                        //        var returnType = method?.ReturnType;
-                        //        if (returnType != null && VIEW_TYPES.Contains(returnType.FullName))
-                        //        {
-                        //            context.Response.Redirect("/html/403.html");
-                        //            return;
-                        //        }
-                        //    }
-                        //}
+                        if (!pageRoute.IsNull())
+                        {
+                            context.Response.Redirect("/html/403.html");
+                            return;
+                        }
 
                         await context.Response.WriteAsJsonAsync(new ResponseStructure(response_type.Forbidden, "权限不足，无法访问或操作"));
                         return;

@@ -1,4 +1,6 @@
 ﻿@page "/system/role"
+@attribute [AuthorizeCode("System:Role")]
+@attribute [Authorize]
 @{
     ViewData["PC"] = true;
 }

@@ -1,4 +1,6 @@
 ﻿@page "/Workspace/Message"
+@attribute [AuthorizeCode("Workspace:Message")]
+@attribute [Authorize]
 @{
     ViewData["PC"] = true;
 }

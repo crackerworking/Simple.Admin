@@ -51,13 +51,13 @@ namespace Mi.DataDriver.EntityFrameworkCore
         public Task<bool> AnyAsync(Expression<Func<T, bool>>? expression = null)
         {
             expression ??= x => x.IsDeleted == 0;
-            return _dbContext.Set<T>().AnyAsync(expression);
+            return _dbContext.SetNoTracking<T>().AnyAsync(expression);
         }
 
         public Task<int> CountAsync(Expression<Func<T, bool>>? expression = null)
         {
             expression ??= x => x.IsDeleted == 0;
-            return _dbContext.Set<T>().CountAsync(expression);
+            return _dbContext.SetNoTracking<T>().CountAsync(expression);
         }
 
         public async Task<int> DeleteAsync(long id)
@@ -86,13 +86,13 @@ namespace Mi.DataDriver.EntityFrameworkCore
         public Task<T?> GetAsync(Expression<Func<T, bool>>? expression = null)
         {
             expression ??= x => x.IsDeleted == 0;
-            return _dbContext.Set<T>().FirstOrDefaultAsync(expression);
+            return _dbContext.SetNoTracking<T>().FirstOrDefaultAsync(expression);
         }
 
         public async Task<List<T>> GetListAsync(Expression<Func<T, bool>>? expression = null)
         {
             expression ??= x => x.IsDeleted == 0;
-            return await _dbContext.Set<T>().Where(expression).ToListAsync();
+            return await _dbContext.SetNoTracking<T>().Where(expression).ToListAsync();
         }
 
         public Task<int> UpdateAsync(T model)
@@ -137,7 +137,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
         public async Task<PagingModel<T>> GetPagedAsync(Expression<Func<T, bool>> expression, int page, int size, IEnumerable<QuerySortField>? querySortFields = null)
         {
             var model = new PagingModel<T>();
-            model.Total = await _dbContext.Set<T>().CountAsync(expression);
+            model.Total = await _dbContext.SetNoTracking<T>().CountAsync(expression);
 
             if (!querySortFields.IsNull())
             {
@@ -154,11 +154,11 @@ namespace Mi.DataDriver.EntityFrameworkCore
                     sql += $" {item.FieldName} {(item.Desc ? "desc" : "asc")},";
                 }
                 sql = sql.TrimEnd(',');
-                model.Rows = _dbContext.Set<T>().FromSqlRaw(sql).Where(expression).Skip((page - 1) * size).Take(size).ToList();
+                model.Rows = _dbContext.Set<T>().FromSqlRaw(sql).AsNoTracking().Where(expression).Skip((page - 1) * size).Take(size).ToList();
             }
             else
             {
-                model.Rows = _dbContext.Set<T>().Where(expression).Skip((page - 1) * size).Take(size).ToList();
+                model.Rows = _dbContext.SetNoTracking<T>().Where(expression).Skip((page - 1) * size).Take(size).ToList();
             }
 
             return model;
@@ -172,7 +172,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
                 var updator = Activator.CreateInstance<Updatable<T>>();
                 updator = updatable(updator);
 
-                var model = await _dbContext.Set<T>().AsNoTracking().FirstAsync(x => x.Id == id);
+                var model = await _dbContext.SetNoTracking<T>().AsNoTracking().FirstAsync(x => x.Id == id);
                 if (model == null) return 0;
 
                 var exist = _dbContext.Set<T>().Local.FirstOrDefault(p => p.Id == id);

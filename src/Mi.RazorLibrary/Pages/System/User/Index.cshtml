@@ -1,4 +1,6 @@
 ﻿@page "/system/user"
+@attribute [AuthorizeCode("System:User")]
+@attribute [Authorize]
 @{
     ViewData["PC"] = true;
 }

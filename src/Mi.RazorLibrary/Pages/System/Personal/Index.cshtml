@@ -1,4 +1,6 @@
 ﻿@page "/system/personal"
+@attribute [AuthorizeCode("System:Personal")]
+@attribute [Authorize]
 @using Mi.Application.Contracts.Public;
 @inject IPublicOptionReadApi readApi
 @{

@@ -1,4 +1,6 @@
 ﻿@page "/system/dict"
+@attribute [AuthorizeCode("System:Dict")]
+@attribute [Authorize]
 @model Mi.RazorLibrary.Pages.System.Dict.IndexModel
 @{
     ViewData["PC"] = true;

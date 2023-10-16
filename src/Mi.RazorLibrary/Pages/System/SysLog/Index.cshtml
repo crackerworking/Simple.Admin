@@ -1,4 +1,6 @@
 ﻿@page "/system/syslog"
+@attribute [AuthorizeCode("System:Syslog")]
+@attribute [Authorize]
 @{
     ViewData["PC"] = true;
 }
