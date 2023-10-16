@@ -37,8 +37,8 @@ namespace Mi.Web.Host.Filter
                     var guid = (string?)temp;
                     _logService.SetExceptionAsync(guid ?? Guid.NewGuid().ToString(), context.Exception.Message);
                 }
+                context.ExceptionHandled = true;
             }
-            context.ExceptionHandled = true;
         }
     }
 }
