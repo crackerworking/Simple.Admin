@@ -6,6 +6,7 @@ using Mi.Domain.PipelineConfiguration;
 using Mi.Domain.Shared;
 using Mi.Domain.Shared.Models;
 using Mi.Domain.Shared.Models.UI;
+using Mi.Domain.Tasks;
 using Mi.Domain.User;
 using Mi.Web.Host.Filter;
 using Mi.Web.Host.Middleware;
@@ -67,6 +68,8 @@ namespace Mi.Web.Host
             app.MapControllerRoute("api-router","/api/{controller}/{action}");
 
             app.MapHub<NoticeHub>("/noticeHub");
+
+            SystemJobScheduler.Instance.Run();
             app.Run();
         }
 

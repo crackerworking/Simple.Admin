@@ -4,6 +4,7 @@ using Dapper;
 
 using Mi.DataDriver.EntityFrameworkCore;
 using Mi.Domain.DataAccess;
+using Mi.Domain.Helper;
 using Mi.Domain.Shared.Core;
 using Mi.Domain.Shared.Models;
 

@@ -1,7 +1,7 @@
 ﻿using Mi.Domain.Exceptions;
 using Mi.Domain.Shared.Core;
 
-namespace Mi.DataDriver
+namespace Mi.Domain.Helper
 {
     public class Demo
     {

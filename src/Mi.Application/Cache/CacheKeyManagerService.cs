@@ -2,7 +2,6 @@
 
 using Mi.Application.Contracts.Cache;
 using Mi.Application.Contracts.Cache.Models;
-using Mi.DataDriver;
 using Mi.Domain.Shared.Core;
 
 namespace Mi.Application.Cache
