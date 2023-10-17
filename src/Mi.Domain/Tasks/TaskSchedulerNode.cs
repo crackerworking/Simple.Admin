@@ -25,10 +25,11 @@ namespace Mi.Domain.Tasks
                     Task.Factory.StartNew(() =>
                     {
                         if (task == null) return;
-                        Thread.Sleep(2000);
+                        Thread.Sleep(10000);
                         using var p = App.Provider.CreateScope();
                         var repo = p.ServiceProvider.GetRequiredService<IRepository<SysTask>>();
-                        task.ExecutedTime = DateTime.Now;
+                        task.ModifiedOn = DateTime.Now;
+                        task.ExecutedTime = task.ModifiedOn;
                         repo.UpdateAsync(task).ConfigureAwait(true).GetAwaiter();
                     });
                 }

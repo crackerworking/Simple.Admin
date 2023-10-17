@@ -9,8 +9,8 @@
         public override Task ExcuteAsync(string? extra)
         {
             extra ??= "default";
-            Console.WriteLine(extra);
-            Console.WriteLine("hello-task");
+            Console.WriteLine("[{0,10}]--[{1,15}]", extra, DateTime.Now);
+            Console.WriteLine("[{0,10}]--[{1,15}]", "hello-task", DateTime.Now);
             return Task.CompletedTask;
         }
     }

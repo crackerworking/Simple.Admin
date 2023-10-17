@@ -21,6 +21,14 @@ namespace Mi.Application.System.Impl
             _scheduler = scheduler;
         }
 
+        public async Task<TaskItem> GetAsync(long id)
+        {
+            var raw = await _repo.GetAsync(x=>x.Id == id);
+            var model = _mapper.Map<TaskItem>(raw);
+
+            return model;
+        }
+
         public async Task<ResponseStructure<List<TaskItem>>> GetListAsync()
         {
             var raw = await _repo.GetListAsync();
@@ -51,7 +59,6 @@ namespace Mi.Application.System.Impl
                     }
                     else if (model.IsEnabled == 1)
                     {
-                        await _scheduler.ResumeJob(job.Key);
                         var triggerKey = new TriggerKey(model.TaskName + "_trigger");
                         var trigger = await _scheduler.GetTrigger(triggerKey);
                         var ct = (CronTriggerImpl?)trigger;
@@ -59,7 +66,8 @@ namespace Mi.Application.System.Impl
                         {
                             job.JobDataMap[SystemJobScheduler.SYS_TASK_INS] = model;
                             ct.CronExpressionString = model.Cron;
-                            await _scheduler.PauseTrigger(triggerKey);
+                            await _scheduler.UnscheduleJob(triggerKey);
+                            await _scheduler.ScheduleJob(job, ct);
                         }
                     }
                 }

@@ -29,12 +29,6 @@ namespace Mi.Domain.PipelineConfiguration
             var types = assembly.DefinedTypes.Where(x => !x.IsAbstract && !x.IsInterface && _containTypes.Any(t => x.IsAssignableTo(t))).ToList();
             foreach (var type in types)
             {
-#if DEBUG
-                if (type.FullName!.Contains("Captcha"))
-                {
-                    Console.WriteLine("find Captcha.");
-                }
-#endif
                 Add(services, type);
             }
         }
