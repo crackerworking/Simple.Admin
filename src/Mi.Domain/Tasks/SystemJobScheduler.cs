@@ -8,7 +8,6 @@ using Mi.Domain.Shared;
 using Microsoft.Extensions.DependencyInjection;
 
 using Quartz;
-using Quartz.Impl;
 
 namespace Mi.Domain.Tasks
 {
@@ -19,7 +18,6 @@ namespace Mi.Domain.Tasks
         public static SystemJobScheduler Instance => _lazy.Value;
 
         public const string NODE_INSTANCE = nameof(NODE_INSTANCE);
-        public const string EXTRA_PARAMS = nameof(EXTRA_PARAMS);
         public const string SYS_TASK_INS = nameof(SYS_TASK_INS);
 
         private readonly ConcurrentDictionary<string, TaskSchedulerNodeBase> _keyValuePairs = new ConcurrentDictionary<string, TaskSchedulerNodeBase>();
@@ -34,10 +32,9 @@ namespace Mi.Domain.Tasks
         {
             await ReadTasksAsync();
 
-            // 1. Create a scheduler Factory
-            ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
+            // 1. Create a scheduler Factory ISchedulerFactory schedulerFactory = new StdSchedulerFactory();
             // 2. Get and start a scheduler
-            IScheduler scheduler = await schedulerFactory.GetScheduler();
+            IScheduler scheduler = App.Provider.GetRequiredService<IScheduler>();
             await scheduler.Start();
             // 3. Create a job
             var types = GetAllTaskSchedulerNodeBaseTypes();
@@ -60,7 +57,6 @@ namespace Mi.Domain.Tasks
                 IJobDetail job = JobBuilder.Create(jobType).WithIdentity(ins.Name).SetJobData(new JobDataMap
                 {
                     { NODE_INSTANCE , ins },
-                    { EXTRA_PARAMS , obj?.ExtraParams! },
                     { SYS_TASK_INS , obj! },
                 }).Build();
                 // 4. Create a trigger

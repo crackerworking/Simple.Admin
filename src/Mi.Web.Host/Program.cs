@@ -14,6 +14,9 @@ using Mi.Web.Host.Middleware;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 
+using Quartz;
+using Quartz.Impl;
+
 namespace Mi.Web.Host
 {
     public class Program
@@ -65,7 +68,7 @@ namespace Mi.Web.Host
             app.UseAuthorization();
 
             app.MapRazorPages();
-            app.MapControllerRoute("api-router","/api/{controller}/{action}");
+            app.MapControllerRoute("api-router", "/api/{controller}/{action}");
 
             app.MapHub<NoticeHub>("/noticeHub");
 
@@ -97,6 +100,13 @@ namespace Mi.Web.Host
             // UI Config
             var uiConfig = configuration.GetSection("AdminUI");
             services.Configure<PaConfigModel>(uiConfig);
+
+            // quartz
+            services.AddSingleton(sp =>
+            {
+                var f = new StdSchedulerFactory();
+                return f.GetScheduler().ConfigureAwait(false).GetAwaiter().GetResult();
+            });
         }
     }
 }

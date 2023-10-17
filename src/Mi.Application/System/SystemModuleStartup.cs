@@ -2,6 +2,7 @@
 using Mi.Application.Contracts.System.Models.Function;
 using Mi.Application.Contracts.System.Models.Log;
 using Mi.Application.Contracts.System.Models.Role;
+using Mi.Application.Contracts.System.Models.Tasks;
 using Mi.Domain.Shared.Core;
 
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,7 @@ namespace Mi.Application.System
                 conf.CreateMap<SysRole, SysRoleFull>();
                 conf.CreateMap<SysDict, SysDictFull>();
                 conf.CreateMap<DictPlus, SysDict>();
+                conf.CreateMap<SysTask, TaskItem>();
             });
         }
     }
