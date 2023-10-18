@@ -1,7 +1,10 @@
-﻿namespace Mi.Application.Contracts.System.Models.Tasks
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Mi.Application.Contracts.System.Models.Tasks
 {
     public class TaskEdit
     {
+        [Range(1, long.MaxValue)]
         public long Id { get; set; }
 
         /// <summary>
@@ -17,6 +20,7 @@
         /// <summary>
         /// cron表达式
         /// </summary>
+        [Required]
         public string Cron { get; set; }
 
         /// <summary>

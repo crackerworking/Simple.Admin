@@ -64,7 +64,7 @@ namespace Mi.Application.System.Impl
                         var ct = (CronTriggerImpl?)trigger;
                         if (ct != null)
                         {
-                            job.JobDataMap[SystemJobScheduler.SYS_TASK_INS] = model;
+                            job.JobDataMap[SystemTaskScheduler.SYS_TASK_INS] = model;
                             ct.CronExpressionString = model.Cron;
                             await _scheduler.UnscheduleJob(triggerKey);
                             await _scheduler.ScheduleJob(job, ct);

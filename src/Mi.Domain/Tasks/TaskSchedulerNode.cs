@@ -14,8 +14,8 @@ namespace Mi.Domain.Tasks
         {
             try
             {
-                var model = (T?)context.MergedJobDataMap[SystemJobScheduler.NODE_INSTANCE];
-                var task = (SysTask?)context.MergedJobDataMap[SystemJobScheduler.SYS_TASK_INS];
+                var model = (T?)context.MergedJobDataMap[SystemTaskScheduler.NODE_INSTANCE];
+                var task = (SysTask?)context.MergedJobDataMap[SystemTaskScheduler.SYS_TASK_INS];
                 var extra = task?.ExtraParams;
 
                 if (model != null)

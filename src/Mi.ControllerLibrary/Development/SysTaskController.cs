@@ -4,6 +4,7 @@ using Mi.Application.Contracts.System.Models.Tasks;
 namespace Mi.ControllerLibrary.Development
 {
     [ApiRoute]
+    [ApiController]
     public class SysTaskController : ControllerBase
     {
         private readonly ISysTaskService _sysTaskService;

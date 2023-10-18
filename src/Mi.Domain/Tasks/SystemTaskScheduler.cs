@@ -11,11 +11,11 @@ using Quartz;
 
 namespace Mi.Domain.Tasks
 {
-    public class SystemJobScheduler
+    public class SystemTaskScheduler
     {
-        private static Lazy<SystemJobScheduler> _lazy => new Lazy<SystemJobScheduler>(() => new SystemJobScheduler());
+        private static Lazy<SystemTaskScheduler> _lazy => new Lazy<SystemTaskScheduler>(() => new SystemTaskScheduler());
 
-        public static SystemJobScheduler Instance => _lazy.Value;
+        public static SystemTaskScheduler Instance => _lazy.Value;
 
         public const string NODE_INSTANCE = nameof(NODE_INSTANCE);
         public const string SYS_TASK_INS = nameof(SYS_TASK_INS);

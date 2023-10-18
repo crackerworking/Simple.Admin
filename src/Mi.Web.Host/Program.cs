@@ -1,5 +1,7 @@
 using Mi.DataDriver;
 using Mi.DataDriver.EntityFrameworkCore;
+using Mi.Domain.Extension;
+using Mi.Domain.Helper;
 using Mi.Domain.Hubs;
 using Mi.Domain.Json;
 using Mi.Domain.PipelineConfiguration;
@@ -13,8 +15,8 @@ using Mi.Web.Host.Middleware;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-using Quartz;
 using Quartz.Impl;
 
 namespace Mi.Web.Host
@@ -72,7 +74,7 @@ namespace Mi.Web.Host
 
             app.MapHub<NoticeHub>("/noticeHub");
 
-            SystemJobScheduler.Instance.Run();
+            SystemTaskScheduler.Instance.Run();
             app.Run();
         }
 
@@ -106,6 +108,17 @@ namespace Mi.Web.Host
             {
                 var f = new StdSchedulerFactory();
                 return f.GetScheduler().ConfigureAwait(false).GetAwaiter().GetResult();
+            });
+
+            // model validate
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = (context) =>
+                {
+                    var error = context.ModelState.FirstOrDefaultMsg();
+
+                    return new JsonResult(Back.ParameterError(error));
+                };
             });
         }
     }
