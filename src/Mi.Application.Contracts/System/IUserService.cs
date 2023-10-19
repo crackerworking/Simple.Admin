@@ -7,15 +7,15 @@ namespace Mi.Application.Contracts.System
     {
         Task<ResponseStructure<PagingModel<UserItem>>> GetUserListAsync(UserSearch search);
 
-        Task<ResponseStructure<string>> AddUserAsync(string userName);
+        Task<ResponseStructure<string>> AddUserAsync(UserPlus input);
 
-        Task<ResponseStructure> RemoveUserAsync(long userId);
+        Task<ResponseStructure> RemoveUserAsync(PrimaryKey input);
 
-        Task<ResponseStructure<string>> UpdatePasswordAsync(long userId);
+        Task<ResponseStructure<string>> UpdatePasswordAsync(PrimaryKey input);
 
         Task<ResponseStructure<SysUserFull>> GetUserAsync(long userId);
 
-        Task<ResponseStructure> PassedUserAsync(long id);
+        Task<ResponseStructure> PassedUserAsync(PrimaryKey input);
 
         Task<IList<SysRoleFull>> GetRolesAsync(long id);
 
@@ -23,7 +23,7 @@ namespace Mi.Application.Contracts.System
 
         Task<ResponseStructure> SetUserBaseInfoAsync(UserBaseInfo model);
 
-        Task<ResponseStructure> SetPasswordAsync(string password);
+        Task<ResponseStructure> SetPasswordAsync(SetPasswordIn input);
 
         List<string?> GetAuthCode();
     }

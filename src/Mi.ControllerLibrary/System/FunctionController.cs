@@ -25,8 +25,8 @@ namespace Mi.ControllerLibrary.System
             => await _functionService.AddOrUpdateFunctionAsync(operation);
 
         [HttpPost, AuthorizeCode("System:Function:Remove")]
-        public async Task<ResponseStructure> RemoveFunction([FromForm] IList<long> ids)
-            => await _functionService.RemoveFunctionAsync(ids);
+        public async Task<ResponseStructure> RemoveFunction([FromBody] PrimaryKeys input)
+            => await _functionService.RemoveFunctionAsync(input);
 
         [HttpPost, AuthorizeCode("System:Function:Query")]
         public IList<TreeOption> GetFunctionTree() => _functionService.GetFunctionTree();

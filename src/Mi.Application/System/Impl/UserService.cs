@@ -24,19 +24,19 @@ namespace Mi.Application.System.Impl
             _mapper = mapper;
         }
 
-        public async Task<ResponseStructure<string>> AddUserAsync(string userName)
+        public async Task<ResponseStructure<string>> AddUserAsync(UserPlus input)
         {
-            if (!userName.RegexValidate(PatternConst.UserName)) return new ResponseStructure<string>(false, "用户名只支持大小写字母和数字，最短4位，最长12位", null);
-            var count = await _dapperRepo.ExecuteScalarAsync<int>("select count(*) from SysUser where LOWER(UserName)=@name and IsDeleted=0", new { name = userName.ToLower() });
+            if (!input.userName.RegexValidate(PatternConst.UserName)) return new ResponseStructure<string>(false, "用户名只支持大小写字母和数字，最短4位，最长12位", null);
+            var count = await _dapperRepo.ExecuteScalarAsync<int>("select count(*) from SysUser where LOWER(UserName)=@name and IsDeleted=0", new { name = input.userName.ToLower() });
             if (count > 0) return new ResponseStructure<string>(false, "用户名已存在", null);
 
             var user = new SysUser
             {
-                UserName = userName,
+                UserName = input.userName,
                 Id = SnowflakeIdHelper.Next(),
                 PasswordSalt = EncryptionHelper.GetPasswordSalt(),
                 Avatar = StringHelper.DefaultAvatar(),
-                NickName = userName,
+                NickName = input.userName,
                 Signature = "请设置您的个性签名"
             };
             var password = StringHelper.GetRandomString(6);
@@ -105,9 +105,9 @@ namespace Mi.Application.System.Impl
             return new ResponseStructure<PagingModel<UserItem>>(true, "查询成功", pageModel);
         }
 
-        public async Task<ResponseStructure> PassedUserAsync(long id)
+        public async Task<ResponseStructure> PassedUserAsync(PrimaryKey input)
         {
-            var rows = await _userRepo.UpdateAsync(id, updatable => updatable
+            var rows = await _userRepo.UpdateAsync(input.id, updatable => updatable
                 .SetColumn(x => x.IsEnabled, 1)
                 .SetColumn(x => x.ModifiedBy, _miUser.UserId)
                 .SetColumn(x => x.ModifiedOn, DateTime.Now));
@@ -115,9 +115,9 @@ namespace Mi.Application.System.Impl
             return rows > 0 ? Back.Success() : Back.Fail();
         }
 
-        public async Task<ResponseStructure> RemoveUserAsync(long userId)
+        public async Task<ResponseStructure> RemoveUserAsync(PrimaryKey input)
         {
-            var flag = await _userRepo.UpdateAsync(userId, updatable => updatable
+            var flag = await _userRepo.UpdateAsync(input.id, updatable => updatable
                 .SetColumn(x => x.IsDeleted, 1)
                 .SetColumn(x => x.ModifiedBy, _miUser.UserId)
                 .SetColumn(x => x.ModifiedOn, DateTime.Now));
@@ -125,12 +125,12 @@ namespace Mi.Application.System.Impl
             return Back.SuccessOrFail(flag > 0);
         }
 
-        public async Task<ResponseStructure> SetPasswordAsync(string password)
+        public async Task<ResponseStructure> SetPasswordAsync(SetPasswordIn input)
         {
             var user = await _userRepo.GetAsync(x => x.Id == _miUser.UserId);
             if (user == null) return Back.NonExist();
             user.PasswordSalt = EncryptionHelper.GetPasswordSalt();
-            user.Password = EncryptionHelper.GenEncodingPassword(password, user.PasswordSalt);
+            user.Password = EncryptionHelper.GenEncodingPassword(input.password, user.PasswordSalt);
             await _userRepo.UpdateAsync(user);
 
             return Back.Success("修改成功，下次登录时请使用新密码");
@@ -150,13 +150,13 @@ namespace Mi.Application.System.Impl
             return Back.Success();
         }
 
-        public async Task<ResponseStructure<string>> UpdatePasswordAsync(long userId)
+        public async Task<ResponseStructure<string>> UpdatePasswordAsync(PrimaryKey input)
         {
-            var user = await _userRepo.GetAsync(x => x.Id == userId);
+            var user = await _userRepo.GetAsync(x => x.Id == input.id);
             if (user == null || user.Id <= 0) return new ResponseStructure<string>(false, "用户不存在", "");
 
             var password = StringHelper.GetRandomString(6);
-            var flag = await _userRepo.UpdateAsync(userId, updatable => updatable
+            var flag = await _userRepo.UpdateAsync(input.id, updatable => updatable
                 .SetColumn(x => x.Password, EncryptionHelper.GenEncodingPassword(password, user.PasswordSalt))
                 .SetColumn(x => x.ModifiedBy, _miUser.UserId)
                 .SetColumn(x => x.ModifiedOn, DateTime.Now));

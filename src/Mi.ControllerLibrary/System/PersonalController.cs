@@ -32,7 +32,7 @@ namespace Mi.ControllerLibrary.System
         public async Task<ResponseStructure> SetUserBaseInfo([FromBody] UserBaseInfo model) => await _userService.SetUserBaseInfoAsync(model);
 
         [HttpPost, AuthorizeCode("System:Personal:SetPassword")]
-        public async Task<ResponseStructure> SetPassword(string password) => await _userService.SetPasswordAsync(password);
+        public async Task<ResponseStructure> SetPassword([FromBody] SetPasswordIn input) => await _userService.SetPasswordAsync(input);
 
         [HttpGet]
         [AllowAnonymous]

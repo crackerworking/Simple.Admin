@@ -4,13 +4,13 @@ namespace Mi.Application.Contracts.System
 {
     public interface IRoleService
     {
-        Task<ResponseStructure> AddRoleAsync(string name, string? remark);
+        Task<ResponseStructure> AddRoleAsync(RolePlus input);
 
-        Task<ResponseStructure> RemoveRoleAsync(long id);
+        Task<ResponseStructure> RemoveRoleAsync(PrimaryKey input);
 
         Task<ResponseStructure<PagingModel<SysRoleFull>>> GetRoleListAsync(RoleSearch search);
 
-        Task<ResponseStructure> UpdateRoleAsync(long id, string name, string remark);
+        Task<ResponseStructure> UpdateRoleAsync(RoleEdit input);
 
         Task<ResponseStructure<SysRoleFull>> GetRoleAsync(long id);
     }

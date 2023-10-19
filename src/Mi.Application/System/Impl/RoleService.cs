@@ -24,15 +24,15 @@ namespace Mi.Application.System.Impl
             _userRoleRepo = userRoleRepo;
         }
 
-        public async Task<ResponseStructure> AddRoleAsync(string name, string? remark)
+        public async Task<ResponseStructure> AddRoleAsync(RolePlus input)
         {
-            var isExist = await _roleRepository.AnyAsync(x => x.RoleName.ToLower() == name.ToLower());
+            var isExist = await _roleRepository.AnyAsync(x => x.RoleName.ToLower() == input.name.ToLower());
             if (isExist) return Back.Fail("角色名已存在");
 
             var role = new SysRole
             {
-                RoleName = name,
-                Remark = remark
+                RoleName = input.name,
+                Remark = input.remark
             };
             await _roleRepository.AddAsync(role);
 
@@ -62,29 +62,29 @@ namespace Mi.Application.System.Impl
             return new ResponseStructure<PagingModel<SysRoleFull>>(true, "查询成功", pageModel);
         }
 
-        public async Task<ResponseStructure> RemoveRoleAsync(long id)
+        public async Task<ResponseStructure> RemoveRoleAsync(PrimaryKey input)
         {
-            var count = await _userRoleRepo.CountAsync(x => x.RoleId == id);
+            var count = await _userRoleRepo.CountAsync(x => x.RoleId == input.id);
             if (count > 0) return Back.Fail("角色正在使用，请先移除角色下用户");
 
-            await _roleRepository.UpdateAsync(id, node => node.
+            await _roleRepository.UpdateAsync(input.id, node => node.
                 SetColumn(x => x.IsDeleted, 1));
             //移除角色下功能
-            await _dapperRepository.ExecuteAsync("delete from SysRoleFunction where RoleId=@id", new { id });
+            await _dapperRepository.ExecuteAsync("delete from SysRoleFunction where RoleId=@id", new { input.id });
 
             return Back.Success();
         }
 
-        public async Task<ResponseStructure> UpdateRoleAsync(long id, string name, string remark)
+        public async Task<ResponseStructure> UpdateRoleAsync(RoleEdit input)
         {
-            var isExist = await _roleRepository.AnyAsync(x => x.RoleName.ToLower() == name.ToLower());
-            var role = await _roleRepository.GetAsync(x => x.Id == id);
+            var isExist = await _roleRepository.AnyAsync(x => x.RoleName.ToLower() == input.name.ToLower());
+            var role = await _roleRepository.GetAsync(x => x.Id == input.id);
             if (role == null) return Back.NonExist();
-            if (isExist && role.RoleName != name) return Back.Fail("角色名已存在");
+            if (isExist && role.RoleName != input.name) return Back.Fail("角色名已存在");
 
-            await _roleRepository.UpdateAsync(id, node => node
-                .SetColumn(x => x.RoleName, name)
-                .SetColumn(x => x.Remark, remark));
+            await _roleRepository.UpdateAsync(input.id, node => node
+                .SetColumn(x => x.RoleName, input.name)
+                .SetColumn(x => x.Remark, input.remark));
 
             return Back.Success();
         }

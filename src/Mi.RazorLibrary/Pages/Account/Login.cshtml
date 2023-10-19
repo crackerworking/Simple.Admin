@@ -221,7 +221,8 @@
                 $.ajax({
                     type: 'post',
                     url: '/api/login/Do',
-                    data: loginData.field,
+                    contentType: 'application/json',
+                    data: JSON.stringify(loginData.field),
                     beforeSend: function (request) {
                         //layer.msg('登录中...', {
                         //    icon: 16,

@@ -3,6 +3,7 @@ using System.Security.Claims;
 
 using Mi.Application.Contracts.Public;
 using Mi.Application.Contracts.System.Models.Function;
+using Mi.Application.Contracts.System.Models.Permission;
 using Mi.Application.Contracts.System.Models.User;
 using Mi.Domain.Entities.System.Enum;
 using Mi.Domain.Services;
@@ -59,7 +60,7 @@ namespace Mi.Application.System.Impl
         public async Task<List<PaMenuModel>> GetSiderMenuAsync()
         {
             var topLevels = (await _functionService.GetFunctionsCacheAsync())
-                .Where(x => _miUser.FuncIds.Contains(x.Id) && x.ParentId <=0 && x.FunctionType == (int)EnumFunctionType.Menu).OrderBy(x => x.Sort);
+                .Where(x => _miUser.FuncIds.Contains(x.Id) && x.ParentId <= 0 && x.FunctionType == (int)EnumFunctionType.Menu).OrderBy(x => x.Sort);
             var list = new List<PaMenuModel>();
             foreach (var x in topLevels)
             {
@@ -114,19 +115,19 @@ namespace Mi.Application.System.Impl
             return new ResponseStructure<IList<UserRoleOption>>(true, list);
         }
 
-        public async Task<ResponseStructure> SetUserRoleAsync(long userId, List<long> roleIds)
+        public async Task<ResponseStructure> SetUserRoleAsync(SetUserRoleIn input)
         {
-            var user = await _userRepository.GetAsync(x => x.Id == userId);
+            var user = await _userRepository.GetAsync(x => x.Id == input.userId);
             if (user == null) return Back.Fail("用户不存在");
 
-            await _dapperRepository.ExecuteAsync("delete from SysUserRole where UserId=@id", new { id = userId });
+            await _dapperRepository.ExecuteAsync("delete from SysUserRole where UserId=@id", new { id = input.userId });
             var list = new List<SysUserRole>();
-            foreach (var roleId in roleIds)
+            foreach (var roleId in input.roleIds)
             {
                 list.Add(new SysUserRole
                 {
                     Id = SnowflakeIdHelper.Next(),
-                    UserId = userId,
+                    UserId = input.userId,
                     RoleId = roleId
                 });
             }
@@ -135,18 +136,18 @@ namespace Mi.Application.System.Impl
             return Back.Success();
         }
 
-        public async Task<ResponseStructure> RegisterAsync(string userName, string password)
+        public async Task<ResponseStructure> RegisterAsync(RegisterIn input)
         {
-            if (!userName.RegexValidate(PatternConst.UserName)) return Back.Fail("用户名只支持大小写字母和数字，最短4位，最长12位");
-            var count = await _dapperRepository.ExecuteScalarAsync<int>("select count(*) from SysUser where LOWER(UserName)=@name and IsDeleted=0", new { name = userName.ToLower() });
+            if (!input.userName.RegexValidate(PatternConst.UserName)) return Back.Fail("用户名只支持大小写字母和数字，最短4位，最长12位");
+            var count = await _dapperRepository.ExecuteScalarAsync<int>("select count(*) from SysUser where LOWER(UserName)=@name and IsDeleted=0", new { name = input.userName.ToLower() });
             if (count > 0) return Back.Fail("用户名已存在");
 
             var user = new SysUser();
-            user.UserName = userName;
-            user.NickName = userName;
+            user.UserName = input.userName;
+            user.NickName = input.userName;
             user.Signature = "个性签名";
             user.PasswordSalt = EncryptionHelper.GetPasswordSalt();
-            user.Password = EncryptionHelper.GenEncodingPassword(password, user.PasswordSalt);
+            user.Password = EncryptionHelper.GenEncodingPassword(input.password, user.PasswordSalt);
             user.Avatar = StringHelper.DefaultAvatar();
             await _userRepository.AddAsync(user);
 
@@ -155,20 +156,20 @@ namespace Mi.Application.System.Impl
                 inner join SysRoleFunction sr on s.id=sr.FunctionId
                 inner join SysUserRole ur on sr.RoleId=ur.RoleId
                 where s.IsDeleted=0 and s.AuthorizationCode = 'System:User:Passed'");
-            MessageFactory.Instance.WriteMessage("审核", $"系统有新用户('{userName}')注册，需要您及时审核！", ids);
+            MessageFactory.Instance.WriteMessage("审核", $"系统有新用户('{input.userName}')注册，需要您及时审核！", ids);
             return result;
         }
 
-        public async Task<ResponseStructure> LoginAsync(Guid guid, string userName, string password, string verifyCode)
+        public async Task<ResponseStructure> LoginAsync(LoginIn input)
         {
-            var validateFlag = await _captcha.ValidateAsync(guid.ToString(), verifyCode);
+            var validateFlag = await _captcha.ValidateAsync(input.guid.ToString(), input.code);
             if (!validateFlag) return Back.Fail("验证码错误");
 
-            var user = await _userRepository.GetAsync(x => x.UserName.ToLower() == userName.ToLower());
+            var user = await _userRepository.GetAsync(x => x.UserName.ToLower() == input.userName.ToLower());
             if (user == null) return Back.Fail("用户名不存在");
             if (user.IsEnabled == 0) return Back.Fail("没有登录权限，请联系管理员");
 
-            var flag = user.Password == EncryptionHelper.GenEncodingPassword(password, user.PasswordSalt);
+            var flag = user.Password == EncryptionHelper.GenEncodingPassword(input.password, user.PasswordSalt);
             if (!flag) return Back.Fail("用户名或密码错误");
 
             var roleNameArray = (await _userService.GetRolesAsync(user.Id)).Select(x => x.RoleName).ToList();
@@ -234,18 +235,18 @@ namespace Mi.Application.System.Impl
             return new UserModel();
         }
 
-        public async Task<ResponseStructure> SetRoleFunctionsAsync(long id, IList<long> funcIds)
+        public async Task<ResponseStructure> SetRoleFunctionsAsync(SetRoleFunctionsIn input)
         {
-            var role = _roleRepository.GetAsync(x => x.Id == id);
+            var role = _roleRepository.GetAsync(x => x.Id == input.id);
             if (role == null || role.Id <= 0) return Back.Fail("角色不存在");
 
-            await _dapperRepository.ExecuteAsync("delete from SysRoleFunction where RoleId=@id", new { id });
+            await _dapperRepository.ExecuteAsync("delete from SysRoleFunction where RoleId=@id", new { input.id });
 
             var powers = new List<SysRoleFunction>();
-            foreach (var item in funcIds)
+            foreach (var item in input.funcIds)
             {
                 var temp = new SysRoleFunction();
-                temp.RoleId = id;
+                temp.RoleId = input.id;
                 temp.FunctionId = item;
                 powers.Add(temp);
             }
@@ -262,9 +263,9 @@ namespace Mi.Application.System.Impl
             await _context.SignOutAsync();
         }
 
-        public async Task<ResponseStructure<IList<long>>> GetRoleFunctionIdsAsync(long id)
+        public async Task<ResponseStructure<IList<long>>> GetRoleFunctionIdsAsync(PrimaryKey input)
         {
-            var ids = (await _roleFunctionRepo.GetListAsync(x => x.RoleId == id)).Select(x => x.FunctionId).ToList();
+            var ids = (await _roleFunctionRepo.GetListAsync(x => x.RoleId == input.id)).Select(x => x.FunctionId).ToList();
 
             return new ResponseStructure<IList<long>>(ids);
         }

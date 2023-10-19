@@ -1,11 +1,12 @@
-﻿using Mi.Application.Contracts.System.Models.User;
+﻿using Mi.Application.Contracts.System.Models.Permission;
+using Mi.Application.Contracts.System.Models.User;
 using Mi.Domain.Shared.Models.UI;
 
 namespace Mi.Application.Contracts.System
 {
     public interface IPermissionService
     {
-        Task<ResponseStructure> SetUserRoleAsync(long userId, List<long> roleIds);
+        Task<ResponseStructure> SetUserRoleAsync(SetUserRoleIn input);
 
         Task<ResponseStructure<IList<UserRoleOption>>> GetUserRolesAsync(long userId);
 
@@ -15,13 +16,13 @@ namespace Mi.Application.Contracts.System
         /// <returns></returns>
         Task<List<PaMenuModel>> GetSiderMenuAsync();
 
-        Task<ResponseStructure<IList<long>>> GetRoleFunctionIdsAsync(long id);
+        Task<ResponseStructure<IList<long>>> GetRoleFunctionIdsAsync(PrimaryKey input);
 
-        Task<ResponseStructure> SetRoleFunctionsAsync(long id, IList<long> funcIds);
+        Task<ResponseStructure> SetRoleFunctionsAsync(SetRoleFunctionsIn input);
 
-        Task<ResponseStructure> RegisterAsync(string userName, string password);
+        Task<ResponseStructure> RegisterAsync(RegisterIn input);
 
-        Task<ResponseStructure> LoginAsync(Guid guid, string userName, string password, string verifyCode);
+        Task<ResponseStructure> LoginAsync(LoginIn input);
 
         Task LogoutAsync();
 

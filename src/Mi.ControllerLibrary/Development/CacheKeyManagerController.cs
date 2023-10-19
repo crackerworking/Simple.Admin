@@ -1,11 +1,10 @@
 ﻿using Mi.Application.Contracts.Cache;
 using Mi.Application.Contracts.Cache.Models;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.ControllerLibrary.Development
 {
-    [ApiRoute]
-    [AllowAnonymous]
-    public class CacheKeyManagerController : ControllerBase
+    public class CacheKeyManagerController : MiControllerBase
     {
         private readonly ICacheKeyManagerService _keyService;
 

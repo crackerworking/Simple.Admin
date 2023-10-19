@@ -1,5 +1,4 @@
 ﻿using Mi.Application.Contracts.System.Models.Function;
-using Mi.Domain.Shared.Options;
 
 namespace Mi.Application.Contracts.System
 {
@@ -13,7 +12,7 @@ namespace Mi.Application.Contracts.System
 
         Task<SysFunctionFull> GetAsync(long id);
 
-        Task<ResponseStructure> RemoveFunctionAsync(IList<long> ids);
+        Task<ResponseStructure> RemoveFunctionAsync(PrimaryKeys input);
 
         Task<IList<SysFunctionFull>> GetFunctionsCacheAsync();
 

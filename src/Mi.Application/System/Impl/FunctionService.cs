@@ -129,11 +129,11 @@ namespace Mi.Application.System.Impl
             }).ToList();
         }
 
-        public async Task<ResponseStructure> RemoveFunctionAsync(IList<long> ids)
+        public async Task<ResponseStructure> RemoveFunctionAsync(PrimaryKeys input)
         {
-            if (ids.Count <= 0) return Back.Fail("id不能为空");
+            if (input.array_id.IsNull()) return Back.Fail("id不能为空");
 
-            var funcs = await _functionRepo.GetListAsync(x => ids.Contains(x.Id));
+            var funcs = await _functionRepo.GetListAsync(x => input.array_id.Contains(x.Id));
             foreach (var item in funcs)
             {
                 item.IsDeleted = 1;

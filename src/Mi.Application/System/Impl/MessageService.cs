@@ -91,10 +91,10 @@ namespace Mi.Application.System.Impl
             return new ResponseStructure<PagingModel<SysMessageFull>>(result);
         }
 
-        public async Task<ResponseStructure> ReadedAsync(IList<long> msgIds)
+        public async Task<ResponseStructure> ReadedAsync(PrimaryKeys input)
         {
-            if (msgIds.Count == 0) return Back.ParameterError(nameof(msgIds));
-            await _dapperRepository.ExecuteAsync("update SysMessage set ModifiedOn=@time,ModifiedBy=@user,Readed=1 where Id in @ids", new { time = DateTime.Now, user = _miUser.UserId, ids = msgIds });
+            if (input.array_id.IsNull()) return Back.ParameterError(nameof(input.array_id));
+            await _dapperRepository.ExecuteAsync("update SysMessage set ModifiedOn=@time,ModifiedBy=@user,Readed=1 where Id in @ids", new { time = DateTime.Now, user = _miUser.UserId, ids = input.array_id });
             return Back.Success();
         }
     }

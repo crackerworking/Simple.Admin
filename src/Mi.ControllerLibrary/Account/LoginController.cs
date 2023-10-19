@@ -1,35 +1,32 @@
 ﻿using Mi.Application.Contracts.System;
-
-using Microsoft.AspNetCore.Http;
+using Mi.Application.Contracts.System.Models.Permission;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.ControllerLibrary.Account
 {
-    [ApiRoute]
-    public class LoginController : ControllerBase
+    public class LoginController : MiControllerBase
     {
         private readonly IPermissionService _permissionService;
         private readonly ILogService _logService;
-        private readonly HttpContext _httpContext;
 
-        public LoginController(IPermissionService permissionService, IHttpContextAccessor httpContextAccessor
+        public LoginController(IPermissionService permissionService
             , ILogService logService)
         {
             _permissionService = permissionService;
             _logService = logService;
-            _httpContext = httpContextAccessor.HttpContext!;
         }
 
         [HttpPost]
-        public async Task<ResponseStructure> Do(Guid guid, string userName, string password, string code)
+        public async Task<ResponseStructure> Do([FromBody] LoginIn input)
         {
-            var result = await _permissionService.LoginAsync(guid, userName, password, code);
-            await _logService.WriteLoginLogAsync(userName, result.Code == response_type.Success, result.Message ?? "");
+            var result = await _permissionService.LoginAsync(input);
+            await _logService.WriteLoginLogAsync(input.userName, result.Code == response_type.Success, result.Message ?? "");
             return result;
         }
 
         [HttpPost]
-        public async Task<ResponseStructure> New(string userName, string password)
-            => await _permissionService.RegisterAsync(userName, password);
+        public async Task<ResponseStructure> New([FromBody] RegisterIn input)
+            => await _permissionService.RegisterAsync(input);
 
         public async Task<IActionResult> Exit()
         {

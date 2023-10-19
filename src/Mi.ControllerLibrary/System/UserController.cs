@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Mi.Application.Contracts.System;
+using Mi.Application.Contracts.System.Models.Permission;
 using Mi.Application.Contracts.System.Models.User;
 
 namespace Mi.ControllerLibrary.System
@@ -22,39 +23,38 @@ namespace Mi.ControllerLibrary.System
         [AuthorizeCode("System:User:Query")]
         public async Task<ResponseStructure> GetUserList([FromBody] UserSearch search)
         {
-            throw new Exception("测试");
             return await _userService.GetUserListAsync(search);
         }
 
         [HttpPost]
         [AuthorizeCode("System:User:Add")]
-        public async Task<ResponseStructure> AddUser([Required(ErrorMessage = "用户名不能为空")] string userName)
+        public async Task<ResponseStructure> AddUser([FromBody] UserPlus input)
         {
-            return await _userService.AddUserAsync(userName);
+            return await _userService.AddUserAsync(input);
         }
 
         [HttpPost]
         [AuthorizeCode("System:User:Remove")]
-        public async Task<ResponseStructure> RemoveUser(long userId)
+        public async Task<ResponseStructure> RemoveUser([FromBody] PrimaryKey input)
         {
-            return await _userService.RemoveUserAsync(userId);
+            return await _userService.RemoveUserAsync(input);
         }
 
         [HttpPost]
         [AuthorizeCode("System:User:UpdatePassword")]
-        public async Task<ResponseStructure> UpdatePassword(long userId)
+        public async Task<ResponseStructure> UpdatePassword([FromBody] PrimaryKey input)
         {
-            return await _userService.UpdatePasswordAsync(userId);
+            return await _userService.UpdatePasswordAsync(input);
         }
 
         [HttpPost]
         [AuthorizeCode("System:User:SetUserRole")]
-        public async Task<ResponseStructure> SetUserRole(long userId, List<long> roleIds)
-            => await _permissionService.SetUserRoleAsync(userId, roleIds);
+        public async Task<ResponseStructure> SetUserRole([FromBody] SetUserRoleIn input)
+            => await _permissionService.SetUserRoleAsync(input);
 
         [HttpPost]
         [AuthorizeCode("System:User:Passed")]
-        public async Task<ResponseStructure> PassedUser(long id)
-            => await _userService.PassedUserAsync(id);
+        public async Task<ResponseStructure> PassedUser([FromBody] PrimaryKey input)
+            => await _userService.PassedUserAsync(input);
     }
 }
