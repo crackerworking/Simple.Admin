@@ -34,8 +34,10 @@
 
             form.on('submit(user-save)', function (data) {
                 $.ajax({
-                    url: '/api/User/AddUser?userName=' + data.field.userName,
+                    url: '/api/User/AddUser',
+                    data: JSON.stringify({ userName: data.field.userName }),
                     dataType: 'json',
+                    contentType: 'application/json',
                     type: 'post',
                     success: function (result) {
                         if (MiUtils.ajaxSucceed(result.code)) {

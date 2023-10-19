@@ -1,11 +1,11 @@
 ﻿using Mi.Application.Contracts.System;
 using Mi.Application.Contracts.System.Models.Message;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.ControllerLibrary.Workspace
 {
-    [ApiRoute]
     [Authorize]
-    public class MessageController : ControllerBase
+    public class MessageController : MiControllerBase
     {
         private readonly IMessageService _messageService;
 

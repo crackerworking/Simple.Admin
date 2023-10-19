@@ -1,11 +1,11 @@
 ﻿using Mi.Application.Contracts.System;
 using Mi.Application.Contracts.System.Models.Function;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.ControllerLibrary.System
 {
-    [ApiRoute]
     [Authorize]
-    public class FunctionController : ControllerBase
+    public class FunctionController : MiControllerBase
     {
         private readonly IFunctionService _functionService;
 

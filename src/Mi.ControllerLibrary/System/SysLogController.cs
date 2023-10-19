@@ -1,11 +1,11 @@
 ﻿using Mi.Application.Contracts.System;
 using Mi.Application.Contracts.System.Models.Log;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.ControllerLibrary.System
 {
-    [ApiRoute]
     [Authorize]
-    public class SysLogController : ControllerBase
+    public class SysLogController : MiControllerBase
     {
         private readonly ILogService _logService;
 

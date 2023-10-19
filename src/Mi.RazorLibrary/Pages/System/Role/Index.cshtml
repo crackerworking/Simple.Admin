@@ -189,8 +189,10 @@
                     layer.close(index);
                     let loading = layer.load();
                     $.ajax({
-                        url: pageRootUrl + "RemoveRole?id=" + obj.data['id'],
+                        url: pageRootUrl + "RemoveRole",
                         dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ id: obj.data['id'] }),
                         type: 'post',
                         success: function (result) {
                             layer.close(loading);

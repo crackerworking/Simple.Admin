@@ -1,14 +1,12 @@
-﻿using System.Data;
-
-using Mi.Application.Contracts.System;
+﻿using Mi.Application.Contracts.System;
 using Mi.Application.Contracts.System.Models.Permission;
 using Mi.Application.Contracts.System.Models.Role;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.ControllerLibrary.System
 {
-    [ApiRoute]
     [Authorize]
-    public class RoleController : ControllerBase
+    public class RoleController : MiControllerBase
     {
         private readonly IRoleService _roleService;
         private readonly IPermissionService _permissionService;

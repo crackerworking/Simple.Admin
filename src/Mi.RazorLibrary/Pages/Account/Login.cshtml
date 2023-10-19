@@ -258,19 +258,25 @@
                     userName: data.field.re_userName,
                     password: data.field.re_password,
                 }
-                $.post('/api/Login/New', param, function (res) {
-                    if (MiUtils.ajaxSucceed(res.code)) {
-                        layer.msg(res.message, {
-                            icon: 1,
-                            time: 1000
-                        }, function () {
-                            window.location.reload();
-                        });
-                    } else {
-                        layer.msg(res.message, {
-                            icon: 2,
-                            time: 1000
-                        });
+                $.ajax({
+                    type: 'post',
+                    url: '/api/login/New',
+                    contentType: 'application/json',
+                    data: JSON.stringify(param),
+                    success:function (res) {
+                        if (MiUtils.ajaxSucceed(res.code)) {
+                            layer.msg(res.message, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                window.location.reload();
+                            });
+                        } else {
+                            layer.msg(res.message, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
                     }
                 })
             })

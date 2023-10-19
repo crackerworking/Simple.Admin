@@ -4,6 +4,7 @@ using Mi.Domain.Shared.Core;
 
 namespace Mi.ControllerLibrary.Development
 {
+    [Authorize]
     public class CacheKeyManagerController : MiControllerBase
     {
         private readonly ICacheKeyManagerService _keyService;

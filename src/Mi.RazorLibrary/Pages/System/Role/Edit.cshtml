@@ -41,10 +41,11 @@
             let common = layui.common;
 
             form.on('submit(role-save)', function (data) {
-                var str = $.param(data.field)
                 $.ajax({
-                    url: '/api/Role/@(Model.Role.Id > 0 ? "UpdateRole" : "AddRole")?' + str,
+                    url: '/api/Role/@(Model.Role.Id > 0 ? "UpdateRole" : "AddRole")',
                     dataType: 'json',
+                    data: JSON.stringify(data.field),
+                    contentType:'application/json',
                     type: 'post',
                     success: function (result) {
                         if (MiUtils.ajaxSucceed(result.code)) {

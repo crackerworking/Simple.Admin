@@ -22,7 +22,7 @@ namespace Mi.Application.Contracts.System.Models.Dict
         public string? Value { get; set; }
 
         public long ParentId { get; set; }
-        public string ParentKey { get; set; }
+        public string? ParentKey { get; set; }
         public string? Remark { get; set; }
         public int Sort { get; set; }
     }

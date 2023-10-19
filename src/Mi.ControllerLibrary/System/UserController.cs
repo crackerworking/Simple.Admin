@@ -3,12 +3,12 @@
 using Mi.Application.Contracts.System;
 using Mi.Application.Contracts.System.Models.Permission;
 using Mi.Application.Contracts.System.Models.User;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.ControllerLibrary.System
 {
-    [ApiRoute]
     [Authorize]
-    public class UserController : ControllerBase
+    public class UserController : MiControllerBase
     {
         private readonly IUserService _userService;
         private readonly IPermissionService _permissionService;

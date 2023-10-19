@@ -38,18 +38,16 @@
             let common = layui.common;
 
             form.on('submit(save)', function (data) {
-                let param = { userId: '@Model.Id' }
-                let i = 0
+                let ids = []
                 for (const key in data.field) {
                     if (key.indexOf('roleIds') != -1) {
-                        param[`roleIds[${i}]`] = data.field[key]
-                        delete data.field[key]
-                        i += 1
+                        ids.push(data.field[key])
                     }
                 }
                 $.ajax({
                     url: '/api/User/SetUserRole',
-                    data: param,
+                    data: JSON.stringify({ userId: '@Model.Id', roleIds: ids}),
+                    contentType: 'application/json',
                     dataType: 'json',
                     type: 'post',
                     success: function (result) {

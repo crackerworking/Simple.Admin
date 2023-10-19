@@ -4,9 +4,8 @@ using Mi.Domain.Shared.Models.UI;
 
 namespace Mi.ControllerLibrary.System
 {
-    [ApiRoute]
     [Authorize]
-    public class UiConfigController : ControllerBase
+    public class UiConfigController : MiControllerBase
     {
         private readonly IQuickDict _dictionaryApi;
         private readonly IUIConfigService _uiConfigService;

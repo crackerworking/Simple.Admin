@@ -1,13 +1,13 @@
 ﻿using Mi.Application.Contracts.System;
 using Mi.Application.Contracts.System.Models.Message;
 using Mi.Application.Contracts.System.Models.User;
+using Mi.Domain.Shared.Core;
 using Mi.Domain.Shared.Models.UI;
 
 namespace Mi.ControllerLibrary.System
 {
-    [ApiRoute]
     [Authorize]
-    public class PersonalController : ControllerBase
+    public class PersonalController : MiControllerBase
     {
         private readonly IPermissionService _permissionService;
         private readonly IUserService _userService;

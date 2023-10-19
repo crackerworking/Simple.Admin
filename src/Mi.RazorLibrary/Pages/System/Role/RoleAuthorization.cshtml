@@ -84,7 +84,7 @@
                     )
                         .then(() => {
                             let ids = this.$refs['treeRef'].getCheckedKeys()
-                            axios.post('/api/Role/SetRoleFunctions', Qs.stringify({ funcIds: ids, id: '@Model.Id' }))
+                            axios.post('/api/Role/SetRoleFunctions', { funcIds: ids, id: '@Model.Id' })
                                 .then(res => {
                                     if (MiUtils.ajaxSucceed(res.data.code)) {
                                         ElementPlus.ElMessage.success(res.data.message)
@@ -114,7 +114,7 @@
                         })
                 },
                 getDefaultKeys(){
-                    axios.post('/api/Role/GetRoleFunctionIds?id=' + '@Model.Id')
+                    axios.post('/api/Role/GetRoleFunctionIds', { id: '@Model.Id' })
                         .then(res=>{
                             if (MiUtils.ajaxSucceed(res.data.code)) {
                                 this.defaultKeys = res.data.result

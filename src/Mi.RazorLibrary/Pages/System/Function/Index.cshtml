@@ -173,7 +173,14 @@
                         }
                     )
                         .then(() => {
-                            axios.post(ROOT_PATH + 'RemoveFunction', Qs.stringify({ ids: row.id || ids }))
+                            let _ids = []
+                            if (row.id) {
+                                _ids.push(row.id)
+                            }
+                            else {
+                                _ids = ids
+                            }
+                            axios.post(ROOT_PATH + 'RemoveFunction', { array_id: _ids })
                                 .then(res => {
                                     if (MiUtils.ajaxSucceed(res.data.code)) {
                                         ElementPlus.ElMessage.success(res.data.message)

@@ -2,8 +2,8 @@
 
 namespace Mi.ControllerLibrary.Development
 {
-    [ApiRoute]
-    public class CommandController : Controller
+    [Authorize]
+    public class CommandController : MiControllerBase
     {
         private readonly IQuickDict _dictionaryApi;
 

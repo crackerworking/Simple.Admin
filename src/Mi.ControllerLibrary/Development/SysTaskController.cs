@@ -1,10 +1,11 @@
 ﻿using Mi.Application.Contracts.System;
 using Mi.Application.Contracts.System.Models.Tasks;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.ControllerLibrary.Development
 {
-    [ApiRoute]
-    public class SysTaskController : ControllerBase
+    [Authorize]
+    public class SysTaskController : MiControllerBase
     {
         private readonly ISysTaskService _sysTaskService;
 

@@ -1,12 +1,12 @@
 ﻿using Mi.Application.Contracts.Public;
+using Mi.Domain.Shared.Core;
 using Mi.Domain.Shared.Models.UI;
 
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Mi.ControllerLibrary
 {
-    [ApiRoute]
-    public class PublicController : ControllerBase
+    public class PublicController : MiControllerBase
     {
         private readonly IPublicService _publicService;
         private readonly IMemoryCache _memoryCache;

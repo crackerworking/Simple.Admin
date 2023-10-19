@@ -131,7 +131,8 @@
                     layer.close(index);
                     let loading = layer.load();
                     $.ajax({
-                        url: '/api/Personal/SetPassword?password=' + data.field.pwd,
+                        url: '/api/Personal/SetPassword',
+                        data: JSON.stringify({ password: data.field.pwd }),
                         dataType: 'json',
                         type: 'post',
                         contentType: 'application/json',

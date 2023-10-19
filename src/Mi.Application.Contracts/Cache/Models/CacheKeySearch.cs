@@ -2,8 +2,8 @@
 {
     public class CacheKeySearch
     {
-        public string vague { get; set; }
+        public string? vague { get; set; }
 
-        public string cacheType { get; set; }
+        public string? cacheType { get; set; }
     }
 }

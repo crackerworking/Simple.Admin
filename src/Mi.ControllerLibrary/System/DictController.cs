@@ -1,11 +1,11 @@
 ﻿using Mi.Application.Contracts.System;
 using Mi.Application.Contracts.System.Models.Dict;
+using Mi.Domain.Shared.Core;
 
 namespace Mi.ControllerLibrary.System
 {
-    [ApiRoute]
     [Authorize]
-    public class DictController : ControllerBase
+    public class DictController : MiControllerBase
     {
         private readonly IDictService _dictService;
 
