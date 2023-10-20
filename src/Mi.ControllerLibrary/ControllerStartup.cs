@@ -4,6 +4,8 @@ using Mi.Domain.Shared.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
+using NSwag;
+
 namespace Mi.ControllerLibrary
 {
     [Sort(99)]
@@ -13,19 +15,32 @@ namespace Mi.ControllerLibrary
         {
             if (App.IsDevelopment)
             {
-                // Add OpenAPI 3.0 document serving middleware
-                // Available at: http://localhost:<port>/swagger/v1/swagger.json
                 app.UseOpenApi();
-
-                // Add web UIs to interact with the document
-                // Available at: http://localhost:<port>/swagger
                 app.UseSwaggerUi3();
             }
         }
 
         public override void ConfigureServices(IServiceCollection services)
         {
-            services.AddOpenApiDocument();
+            services.AddOpenApiDocument(options =>
+            {
+                options.PostProcess = document =>
+                {
+                    document.Info = new OpenApiInfo
+                    {
+                        Version = "v1",
+                        Title = "Mi API",
+                        Description = "An ASP.NET Core Web API for admin",
+                        TermsOfService = "https://github.com/cracker-beep",
+                        Contact = new OpenApiContact
+                        {
+                            Name = "Contact us",
+                            Url = "crackerwork@outlook.com"
+                        }
+                    };
+                };
+                options.UseControllerSummaryAsTagDescription = true;
+            });
         }
     }
 }

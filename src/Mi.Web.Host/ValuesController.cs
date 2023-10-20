@@ -1,12 +1,11 @@
 ﻿using Mi.Domain.Helper;
-using Mi.Domain.Shared.Attributes;
+using Mi.Domain.Shared.Core;
 
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mi.Web.Host
 {
-    [ApiRoute]
-    public class ValuesController : ControllerBase
+    public class ValuesController : MiControllerBase
     {
         [HttpGet]
         public string Hello() => "hello";
