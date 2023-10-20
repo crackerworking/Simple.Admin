@@ -21,6 +21,10 @@ namespace Mi.Domain.Tasks
         public const string SYS_TASK_INS = nameof(SYS_TASK_INS);
 
         private readonly ConcurrentDictionary<string, TaskSchedulerNodeBase> _keyValuePairs = new ConcurrentDictionary<string, TaskSchedulerNodeBase>();
+
+        /// <summary>
+        /// 所有任务，包含已禁用的
+        /// </summary>
         private List<SysTask> _tasks = new List<SysTask>();
 
         public void Run()
@@ -72,7 +76,7 @@ namespace Mi.Domain.Tasks
         {
             using var p = App.Provider.CreateScope();
             var repo = p.ServiceProvider.GetRequiredService<IRepository<SysTask>>();
-            _tasks = await repo.GetListAsync(x => x.IsDeleted == 0 && x.IsEnabled == 1);
+            _tasks = await repo.GetListAsync(x => x.IsDeleted == 0);
         }
 
         /// <summary>

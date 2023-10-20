@@ -16,6 +16,11 @@ namespace Mi.ControllerLibrary.Account
             _logService = logService;
         }
 
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ResponseStructure> Do([FromBody] LoginIn input)
         {
@@ -24,10 +29,19 @@ namespace Mi.ControllerLibrary.Account
             return result;
         }
 
+        /// <summary>
+        /// 注册
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ResponseStructure> New([FromBody] RegisterIn input)
             => await _permissionService.RegisterAsync(input);
 
+        /// <summary>
+        /// 注销
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Exit()
         {
             await _permissionService.LogoutAsync();

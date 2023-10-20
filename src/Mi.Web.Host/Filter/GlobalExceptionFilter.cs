@@ -1,6 +1,7 @@
 ﻿using Mi.Application.Contracts.System;
 using Mi.Domain.Exceptions;
 using Mi.Domain.Helper;
+using Mi.Domain.Shared;
 using Mi.Domain.Shared.Response;
 
 using Microsoft.AspNetCore.Mvc;
@@ -34,8 +35,12 @@ namespace Mi.Web.Host.Filter
                 _logger.LogError(context.Exception, context.Exception.Message);
                 if (context.HttpContext.Items.TryGetValue("RequestId", out var temp))
                 {
-                    var guid = (string?)temp;
-                    _logService.SetExceptionAsync(guid ?? Guid.NewGuid().ToString(), context.Exception.Message);
+                    var enabled = Convert.ToBoolean(App.Configuration["ActionLog"]);
+                    if (enabled)
+                    {
+                        var guid = (string?)temp;
+                        _logService.SetExceptionAsync(guid ?? Guid.NewGuid().ToString(), context.Exception.Message);
+                    }
                 }
                 context.ExceptionHandled = true;
             }

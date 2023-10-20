@@ -14,12 +14,21 @@ namespace Mi.ControllerLibrary.Development
             _sysTaskService = sysTaskService;
         }
 
+        /// <summary>
+        /// 定时任务列表
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public Task<ResponseStructure<List<TaskItem>>> GetListAsync()
         {
             return _sysTaskService.GetListAsync();
         }
 
+        /// <summary>
+        /// 更新定时任务配置
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [HttpPost]
         public Task<ResponseStructure> UpdateAsync([FromBody] TaskEdit input)
         {

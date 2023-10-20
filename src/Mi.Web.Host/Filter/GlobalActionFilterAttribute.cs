@@ -3,6 +3,7 @@
 using Mi.Application.Contracts.System;
 using Mi.ControllerLibrary;
 using Mi.ControllerLibrary.Account;
+using Mi.Domain.Shared;
 using Mi.Domain.Shared.Options;
 using Mi.Domain.Shared.Response;
 
@@ -41,6 +42,8 @@ namespace Mi.Web.Host.Filter
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
+            var enabled = Convert.ToBoolean(App.Configuration["ActionLog"]);
+            if (!enabled) goto completed;
             if (!IGNORE_CONTROLLERS.Contains(context.Controller.ToString()))
             {
                 var httpContext = context.HttpContext;
@@ -56,6 +59,8 @@ namespace Mi.Web.Host.Filter
                 httpContext.Items.Add("RequestId", guid);
                 await _logService.WriteLogAsync(url, param ?? "", context.ActionDescriptor.DisplayName, guid, httpContext.Request.ContentType, true);
             }
+
+        completed:
             await next();
         }
     }

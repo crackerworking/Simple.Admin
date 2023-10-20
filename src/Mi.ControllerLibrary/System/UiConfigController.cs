@@ -16,6 +16,11 @@ namespace Mi.ControllerLibrary.System
             _uiConfigService = uiConfigService;
         }
 
+        /// <summary>
+        /// 更新UI配置
+        /// </summary>
+        /// <param name="operation"></param>
+        /// <returns></returns>
         [HttpPost, AuthorizeCode("System:SetConfig")]
         public async Task<ResponseStructure> SetUiConfig([FromBody] Dictionary<string, string> operation)
         {
@@ -23,6 +28,10 @@ namespace Mi.ControllerLibrary.System
             return new ResponseStructure(response_type.Success, "success");
         }
 
+        /// <summary>
+        /// 获取UI配置
+        /// </summary>
+        /// <returns></returns>
         [HttpPost, AuthorizeCode("System:GetConfig")]
         public async Task<ResponseStructure<SysConfigModel>> GetUiConfig() => await _uiConfigService.GetUiConfigAsync();
     }

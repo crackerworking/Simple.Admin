@@ -74,7 +74,7 @@ namespace Mi.Web.Host
 
             app.MapHub<NoticeHub>("/noticeHub");
 
-            //SystemTaskScheduler.Instance.Run();
+            SystemTaskScheduler.Instance.Run();
             app.Run();
         }
 

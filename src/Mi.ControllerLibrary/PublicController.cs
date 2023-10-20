@@ -17,6 +17,11 @@ namespace Mi.ControllerLibrary
             _memoryCache = memoryCache;
         }
 
+        /// <summary>
+        /// 登录验证码
+        /// </summary>
+        /// <param name="guid">验证码缓存key</param>
+        /// <returns></returns>
         [HttpGet]
         [AllowAnonymous]
         public async Task<FileResult> LoginCaptcha(Guid guid)
@@ -32,6 +37,10 @@ namespace Mi.ControllerLibrary
             return _memoryCache.Get<string>(guid.ToString())!;
         }
 
+        /// <summary>
+        /// pear-admin需要配置
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [AllowAnonymous]
         public async Task<PaConfigModel> Config()

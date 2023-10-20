@@ -14,12 +14,22 @@ namespace Mi.ControllerLibrary.System
             _logService = logService;
         }
 
+        /// <summary>
+        /// 登录日志列表
+        /// </summary>
+        /// <param name="search"></param>
+        /// <returns></returns>
         [HttpPost, AuthorizeCode("System:LoginLog:Query")]
         public async Task<ResponseStructure<PagingModel<SysLoginLogFull>>> GetLoginLogList([FromBody] LoginLogSearch search)
         {
             return await _logService.GetLoginLogListAsync(search);
         }
 
+        /// <summary>
+        /// 操作日志列表
+        /// </summary>
+        /// <param name="search"></param>
+        /// <returns></returns>
         [HttpPost, AuthorizeCode("System:ActionLog:Query")]
         public async Task<ResponseStructure<PagingModel<SysLogFull>>> GetLogList([FromBody] LogSearch search) => await _logService.GetLogListAsync(search);
     }

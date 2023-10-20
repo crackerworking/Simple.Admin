@@ -14,14 +14,29 @@ namespace Mi.ControllerLibrary.Development
             _keyService = keyService;
         }
 
+        /// <summary>
+        /// 所有缓存key
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [HttpPost]
         [AuthorizeCode("Development:CacheKey:Query")]
         public async Task<ResponseStructure<IList<Option>>> GetAllKeys([FromBody] CacheKeySearch input) => await _keyService.GetAllKeysAsync(input);
 
+        /// <summary>
+        /// 移除指定缓存
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [HttpPost]
         [AuthorizeCode("Development:CacheKey:Remove")]
         public async Task<ResponseStructure> RemoveKey([FromBody] CacheKeyIn input) => await _keyService.RemoveKeyAsync(input);
 
+        /// <summary>
+        /// 获取缓存数据
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [HttpPost]
         [AuthorizeCode("Development:CacheKey:GetData")]
         public async Task<ResponseStructure<string>> GetData([FromBody] CacheKeyIn input) => await _keyService.GetDataAsync(input);
