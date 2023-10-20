@@ -48,7 +48,7 @@ namespace Mi.Web.Host.Filter
             }
         }
 
-        private async Task<string> LogParamsAsync(HttpContext httpContext)
+        private static async Task<string> LogParamsAsync(HttpContext httpContext)
         {
             var sb = new StringBuilder();
             sb.AppendLine($"[{httpContext.Request.Method}] -- {httpContext.Request.Path}");
@@ -61,7 +61,7 @@ namespace Mi.Web.Host.Filter
             }
             if (!param.IsNull())
             {
-                sb.AppendLine("params：");
+                sb.AppendLine("<!-- request params -->");
                 sb.Append(param);
             }
             return sb.ToString();

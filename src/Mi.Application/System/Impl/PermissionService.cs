@@ -1,11 +1,11 @@
 ﻿using System.Data;
 using System.Security.Claims;
+using System.Text;
 
 using Mi.Application.Contracts.Public;
 using Mi.Application.Contracts.System.Models.Function;
 using Mi.Application.Contracts.System.Models.Permission;
 using Mi.Application.Contracts.System.Models.User;
-using Mi.Domain.DataAccess;
 using Mi.Domain.Entities.System.Enum;
 using Mi.Domain.Services;
 using Mi.Domain.Shared.Core;
@@ -255,10 +255,17 @@ namespace Mi.Application.System.Impl
                     var temp = new SysRoleFunction
                     {
                         RoleId = input.id,
-                        FunctionId = item
+                        FunctionId = item,
+                        Id = SnowflakeIdHelper.Next()
                     };
                     powers.Add(temp);
                 }
+
+#if DEBUG
+                var sb = new StringBuilder();
+                powers.ForEach(x => sb.AppendLine(x.Id.ToString()));
+                FileLogging.Instance.Write(nameof(SetRoleFunctionsAsync), sb.ToString());
+#endif
 
                 if (powers.Count > 0) await _roleFunctionRepo.AddRangeAsync(powers);
 
