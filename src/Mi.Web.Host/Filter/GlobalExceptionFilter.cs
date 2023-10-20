@@ -11,12 +11,10 @@ namespace Mi.Web.Host.Filter
 {
     public class GlobalExceptionFilter : IExceptionFilter
     {
-        private readonly ILogger<GlobalExceptionFilter> _logger;
         private readonly ILogService _logService;
 
-        public GlobalExceptionFilter(ILogger<GlobalExceptionFilter> logger, ILogService logService)
+        public GlobalExceptionFilter(ILogService logService)
         {
-            _logger = logger;
             _logService = logService;
         }
 
@@ -32,7 +30,7 @@ namespace Mi.Web.Host.Filter
                 {
                     context.Result = new ObjectResult(new ResponseStructure(response_type.Error, context.Exception.Message));
                 }
-                _logger.LogError(context.Exception, context.Exception.Message);
+                FileLogging.Instance.WriteException(context.Exception, context.HttpContext.Request.Path);
                 if (context.HttpContext.Items.TryGetValue("RequestId", out var temp))
                 {
                     var enabled = Convert.ToBoolean(App.Configuration["ActionLog"]);

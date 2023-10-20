@@ -13,6 +13,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0-rc.2.23479.6" />
 		<PackageReference Include="Quartz.AspNetCore" Version="3.7.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00968" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.0.0" />
 		<PackageReference Include="UAParser" Version="3.1.47" />
 	</ItemGroup>

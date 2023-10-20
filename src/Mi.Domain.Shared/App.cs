@@ -6,12 +6,24 @@ namespace Mi.Domain.Shared
 {
     public sealed class App
     {
+        /// <summary>
+        /// 是否开发环境
+        /// </summary>
         public static bool IsDevelopment { get; private set; }
 
+        /// <summary>
+        /// wwwroot磁盘绝对地址
+        /// </summary>
         public static string WebRoot { get; private set; }
 
+        /// <summary>
+        /// appsettings.json配置
+        /// </summary>
         public static IConfiguration Configuration { get; private set; }
 
+        /// <summary>
+        /// 服务提供
+        /// </summary>
         public static IServiceProvider Provider { get; private set; }
 
         /// <summary>
