@@ -1,5 +1,6 @@
 ﻿using Mi.Domain.Extension;
 using Mi.Domain.Shared;
+using Mi.Domain.Shared.Options;
 
 using Serilog;
 using Serilog.Core;
@@ -14,6 +15,29 @@ namespace Mi.Domain.Helper
         private static Lazy<FileLogging> _lazy => new Lazy<FileLogging>(() => new FileLogging());
 
         public static FileLogging Instance => _lazy.Value;
+
+        /// <summary>
+        /// 获取每天日志
+        /// </summary>
+        /// <param name="time">时间，只取日期部分</param>
+        /// <returns>name:日志文件名，value:绝对路径</returns>
+        public static List<Option> GetEveryDayLogs(DateTime time)
+        {
+            var path = Path.Combine(_BasePath, time.ToString());
+            if (!Directory.Exists(path)) return new List<Option>();
+
+            var list = new List<Option>();
+            foreach (var full in Directory.GetFiles(path))
+            {
+                var file = new FileInfo(full);
+                list.Add(new Option
+                {
+                    Name = file.Name,
+                    Value = full
+                });
+            }
+            return list;
+        }
 
         /// <summary>
         /// 消息日志，日志级别 <![CDATA[Information]]>
@@ -34,7 +58,7 @@ namespace Mi.Domain.Helper
         /// <param name="values">日志内容替换</param>
         public void WriteException(Exception ex, string content, params object[] values)
         {
-            var log = CreateLogger("exception", RollingInterval.Day);
+            var log = CreateLogger("exception");
             log.Error(ex, content, values);
         }
 
@@ -44,14 +68,36 @@ namespace Mi.Domain.Helper
         /// <param name="name">日志文件名</param>
         /// <param name="rollingInterval">周期</param>
         /// <returns></returns>
-        private Logger CreateLogger(string name, RollingInterval rollingInterval = RollingInterval.Infinite)
+        private Logger CreateLogger(string name, RollingInterval rollingInterval = RollingInterval.Day)
         {
-            var path = App.Configuration["LogFilePath"];
-            if (path.IsNull()) path = Path.Combine(App.WebRoot, "logs");
+            var dir = new List<string> { _BasePath };
+            if (rollingInterval == RollingInterval.Day)
+            {
+                dir.Add(DateTime.Now.ToString("yyyy-MM-dd"));
+            }
+            if (rollingInterval == RollingInterval.Month)
+            {
+                dir.Add(DateTime.Now.ToString("yyyy-MM"));
+            }
+
+            var path = Path.Combine(dir.ToArray());
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             var log = new LoggerConfiguration().WriteTo.File(Path.Combine(path, name + ".log"), rollingInterval: rollingInterval).CreateLogger();
             return log;
+        }
+
+        /// <summary>
+        /// 日志基础目录
+        /// </summary>
+        private static string _BasePath
+        {
+            get
+            {
+                var path = App.Configuration["LogFilePath"];
+                if (path.IsNull()) return Path.Combine(App.WebRoot, "logs");
+                return path;
+            }
         }
     }
 }

@@ -28,7 +28,6 @@ namespace Mi.ControllerLibrary.System
         [AuthorizeCode("System:User:Query")]
         public async Task<ResponseStructure> GetUserList([FromBody] UserSearch search)
         {
-            throw new NotImplementedException();
             return await _userService.GetUserListAsync(search);
         }
 

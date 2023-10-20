@@ -1,5 +1,8 @@
-﻿using Mi.Application.Contracts.System;
+﻿using System.Text;
+
+using Mi.Application.Contracts.System;
 using Mi.Domain.Exceptions;
+using Mi.Domain.Extension;
 using Mi.Domain.Helper;
 using Mi.Domain.Shared;
 using Mi.Domain.Shared.Response;
@@ -18,7 +21,7 @@ namespace Mi.Web.Host.Filter
             _logService = logService;
         }
 
-        public void OnException(ExceptionContext context)
+        public async void OnException(ExceptionContext context)
         {
             if (!context.ExceptionHandled)
             {
@@ -30,18 +33,38 @@ namespace Mi.Web.Host.Filter
                 {
                     context.Result = new ObjectResult(new ResponseStructure(response_type.Error, context.Exception.Message));
                 }
-                FileLogging.Instance.WriteException(context.Exception, context.HttpContext.Request.Path);
+                var req = await LogParamsAsync(context.HttpContext);
+                FileLogging.Instance.WriteException(context.Exception, req);
                 if (context.HttpContext.Items.TryGetValue("RequestId", out var temp))
                 {
                     var enabled = Convert.ToBoolean(App.Configuration["ActionLog"]);
                     if (enabled)
                     {
                         var guid = (string?)temp;
-                        _logService.SetExceptionAsync(guid ?? Guid.NewGuid().ToString(), context.Exception.Message);
+                        _logService.SetExceptionAsync(guid ?? Guid.NewGuid().ToString(), context.Exception.Message).ConfigureAwait(true).GetAwaiter();
                     }
                 }
                 context.ExceptionHandled = true;
             }
+        }
+
+        private async Task<string> LogParamsAsync(HttpContext httpContext)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"[{httpContext.Request.Method}] -- {httpContext.Request.Path}");
+            string? param = httpContext.Request.QueryString.Value;
+            if (httpContext.Request.ContentType == "application/json")
+            {
+                httpContext.Request.Body.Position = 0;
+                using var reader = new StreamReader(httpContext.Request.Body, Encoding.UTF8);
+                param = await reader.ReadToEndAsync();
+            }
+            if (!param.IsNull())
+            {
+                sb.AppendLine("params：");
+                sb.Append(param);
+            }
+            return sb.ToString();
         }
     }
 }
