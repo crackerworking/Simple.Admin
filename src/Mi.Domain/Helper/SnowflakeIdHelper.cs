@@ -124,6 +124,7 @@ namespace Mi.Domain.Helper
                         | datacenterId << datacenterIdShift
                         | workerId << workerIdShift
                         | sequence;
+                Console.WriteLine("snow-id: {0,10}",id);
                 return id;
             }
         }

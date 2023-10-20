@@ -1,9 +1,8 @@
-﻿using Mi.Domain.Entities.System;
+﻿using Mi.Domain.DataAccess;
+using Mi.Domain.Entities.System;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Mi.DataDriver.EntityFrameworkCore
 {
@@ -43,6 +42,7 @@ namespace Mi.DataDriver.EntityFrameworkCore
             {
                 options.UseSqlite(connectionString);
             }, ServiceLifetime.Scoped);
+            services.AddScoped<ITransactionContext, TransactionContext>();
         }
     }
 }

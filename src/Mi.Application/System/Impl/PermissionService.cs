@@ -5,6 +5,7 @@ using Mi.Application.Contracts.Public;
 using Mi.Application.Contracts.System.Models.Function;
 using Mi.Application.Contracts.System.Models.Permission;
 using Mi.Application.Contracts.System.Models.User;
+using Mi.Domain.DataAccess;
 using Mi.Domain.Entities.System.Enum;
 using Mi.Domain.Services;
 using Mi.Domain.Shared.Core;
@@ -29,6 +30,7 @@ namespace Mi.Application.System.Impl
         private readonly IDapperRepository _dapperRepository;
         private readonly IRepository<SysRoleFunction> _roleFunctionRepo;
         private readonly ICaptcha _captcha;
+        private readonly ITransactionContext _transactionContext;
 
         public PermissionService(IRepository<SysUser> userRepository
             , IRepository<SysRole> roleRepository
@@ -41,7 +43,8 @@ namespace Mi.Application.System.Impl
             , IRepository<SysUserRole> userRoleRepo
             , IDapperRepository dapperRepository
             , IRepository<SysRoleFunction> roleFunctionRepo
-            , ICaptcha captcha)
+            , ICaptcha captcha
+            , ITransactionContext transactionContext)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
@@ -55,6 +58,7 @@ namespace Mi.Application.System.Impl
             _dapperRepository = dapperRepository;
             _roleFunctionRepo = roleFunctionRepo;
             _captcha = captcha;
+            _transactionContext = transactionContext;
         }
 
         public async Task<List<PaMenuModel>> GetSiderMenuAsync()
@@ -240,20 +244,33 @@ namespace Mi.Application.System.Impl
             var role = _roleRepository.GetAsync(x => x.Id == input.id);
             if (role == null || role.Id <= 0) return Back.Fail("角色不存在");
 
-            await _dapperRepository.ExecuteAsync("delete from SysRoleFunction where RoleId=@id", new { input.id });
-
-            var powers = new List<SysRoleFunction>();
-            foreach (var item in input.funcIds)
+            try
             {
-                var temp = new SysRoleFunction();
-                temp.RoleId = input.id;
-                temp.FunctionId = item;
-                powers.Add(temp);
-            }
+                _transactionContext.Begin();
+                await _dapperRepository.ExecuteAsync("delete from SysRoleFunction where RoleId=@id", new { input.id });
 
-            if (powers.Count > 0) await _roleFunctionRepo.AddRangeAsync(powers);
-            //正则移除所有角色功能缓存
-            _cache.RemoveByPattern(StringHelper.UserFunctionCachePattern());
+                var powers = new List<SysRoleFunction>();
+                foreach (var item in input.funcIds)
+                {
+                    var temp = new SysRoleFunction
+                    {
+                        RoleId = input.id,
+                        FunctionId = item
+                    };
+                    powers.Add(temp);
+                }
+
+                if (powers.Count > 0) await _roleFunctionRepo.AddRangeAsync(powers);
+
+                _transactionContext.Commit();
+                //正则移除所有角色功能缓存
+                _cache.RemoveByPattern(StringHelper.UserFunctionCachePattern());
+            }
+            catch (Exception)
+            {
+                _transactionContext.Rollback();
+                throw;
+            }
 
             return Back.Success();
         }
