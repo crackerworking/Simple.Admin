@@ -19,6 +19,7 @@ namespace Mi.ControllerLibrary.Development
         /// </summary>
         /// <returns></returns>
         [HttpPost]
+        [AuthorizeCode("SysTask:GetList")]
         public Task<MessageModel<List<TaskItem>>> GetListAsync()
         {
             return _sysTaskService.GetListAsync();
@@ -30,6 +31,7 @@ namespace Mi.ControllerLibrary.Development
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
+        [AuthorizeCode("SysTask:Update")]
         public Task<MessageModel> UpdateAsync([FromBody] TaskEdit input)
         {
             return _sysTaskService.UpdateAsync(input);

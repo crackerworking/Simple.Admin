@@ -49,13 +49,6 @@ namespace Mi.Domain.Helper
             }
         }
 
-        public static long ToLong(string? str)
-        {
-            if (string.IsNullOrWhiteSpace(str)) return 0;
-            long.TryParse(str, out long result);
-            return result;
-        }
-
         public static string UserKey(string userName, string roleName) => $"{userName}_function_{roleName}";
 
         public static string UserDataString(long id, string userName, string roleName) => $"{id}_{userName}_{roleName.Replace(',', '&')}";
@@ -70,9 +63,7 @@ namespace Mi.Domain.Helper
 
         public static string DefaultAvatar()
         {
-            return "";
-            //var path = Path.Combine(EnvironmentHandler.WebRootPath, "admin", "images", "avatar.jpg");
-            //return FileHelper.GetBase64(path);
+            return "/admin/images/avatar.jpg";
         }
 
         /// <summary>
