@@ -104,7 +104,7 @@ namespace Mi.Application.System.Impl
             return flag ? 0 : 1;
         }
 
-        public async Task<ResponseStructure<IList<UserRoleOption>>> GetUserRolesAsync(long userId)
+        public async Task<MessageModel<IList<UserRoleOption>>> GetUserRolesAsync(long userId)
         {
             var roles = await _roleRepository.GetListAsync();
             var userRoles = await _userRoleRepo.GetListAsync(x => x.UserId == userId);
@@ -116,10 +116,10 @@ namespace Mi.Application.System.Impl
                 Remark = x.Remark
             }).ToList();
 
-            return new ResponseStructure<IList<UserRoleOption>>(true, list);
+            return new MessageModel<IList<UserRoleOption>>(true, list);
         }
 
-        public async Task<ResponseStructure> SetUserRoleAsync(SetUserRoleIn input)
+        public async Task<MessageModel> SetUserRoleAsync(SetUserRoleIn input)
         {
             var user = await _userRepository.GetAsync(x => x.Id == input.userId);
             if (user == null) return Back.Fail("用户不存在");
@@ -140,7 +140,7 @@ namespace Mi.Application.System.Impl
             return Back.Success();
         }
 
-        public async Task<ResponseStructure> RegisterAsync(RegisterIn input)
+        public async Task<MessageModel> RegisterAsync(RegisterIn input)
         {
             if (!input.userName.RegexValidate(PatternConst.UserName)) return Back.Fail("用户名只支持大小写字母和数字，最短4位，最长12位");
             var count = await _dapperRepository.ExecuteScalarAsync<int>("select count(*) from SysUser where LOWER(UserName)=@name and IsDeleted=0", new { name = input.userName.ToLower() });
@@ -164,7 +164,7 @@ namespace Mi.Application.System.Impl
             return result;
         }
 
-        public async Task<ResponseStructure> LoginAsync(LoginIn input)
+        public async Task<MessageModel> LoginAsync(LoginIn input)
         {
             var validateFlag = await _captcha.ValidateAsync(input.guid.ToString(), input.code);
             if (!validateFlag) return Back.Fail("验证码错误");
@@ -239,7 +239,7 @@ namespace Mi.Application.System.Impl
             return new UserModel();
         }
 
-        public async Task<ResponseStructure> SetRoleFunctionsAsync(SetRoleFunctionsIn input)
+        public async Task<MessageModel> SetRoleFunctionsAsync(SetRoleFunctionsIn input)
         {
             var role = _roleRepository.GetAsync(x => x.Id == input.id);
             if (role == null || role.Id <= 0) return Back.Fail("角色不存在");
@@ -261,12 +261,6 @@ namespace Mi.Application.System.Impl
                     powers.Add(temp);
                 }
 
-#if DEBUG
-                var sb = new StringBuilder();
-                powers.ForEach(x => sb.AppendLine(x.Id.ToString()));
-                FileLogging.Instance.Write(nameof(SetRoleFunctionsAsync), sb.ToString());
-#endif
-
                 if (powers.Count > 0) await _roleFunctionRepo.AddRangeAsync(powers);
 
                 _transactionContext.Commit();
@@ -287,11 +281,11 @@ namespace Mi.Application.System.Impl
             await _context.SignOutAsync();
         }
 
-        public async Task<ResponseStructure<IList<long>>> GetRoleFunctionIdsAsync(PrimaryKey input)
+        public async Task<MessageModel<IList<long>>> GetRoleFunctionIdsAsync(PrimaryKey input)
         {
             var ids = (await _roleFunctionRepo.GetListAsync(x => x.RoleId == input.id)).Select(x => x.FunctionId).ToList();
 
-            return new ResponseStructure<IList<long>>(ids);
+            return new MessageModel<IList<long>>(ids);
         }
     }
 }

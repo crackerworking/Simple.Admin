@@ -34,7 +34,7 @@ namespace Mi.ControllerLibrary.System
         /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ResponseStructure<UserBaseInfo>> GetUserBaseInfo() => await _userService.GetUserBaseInfoAsync();
+        public async Task<MessageModel<UserBaseInfo>> GetUserBaseInfo() => await _userService.GetUserBaseInfoAsync();
 
         /// <summary>
         /// 设置用户基本信息
@@ -42,7 +42,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Personal:SetUserBaseInfo")]
-        public async Task<ResponseStructure> SetUserBaseInfo([FromBody] UserBaseInfo model) => await _userService.SetUserBaseInfoAsync(model);
+        public async Task<MessageModel> SetUserBaseInfo([FromBody] UserBaseInfo model) => await _userService.SetUserBaseInfoAsync(model);
 
         /// <summary>
         /// 设置用户密码
@@ -50,7 +50,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Personal:SetPassword")]
-        public async Task<ResponseStructure> SetPassword([FromBody] SetPasswordIn input) => await _userService.SetPasswordAsync(input);
+        public async Task<MessageModel> SetPassword([FromBody] SetPasswordIn input) => await _userService.SetPasswordAsync(input);
 
         /// <summary>
         /// 顶部导航栏未读消息

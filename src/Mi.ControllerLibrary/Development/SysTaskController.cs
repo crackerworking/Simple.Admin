@@ -19,7 +19,7 @@ namespace Mi.ControllerLibrary.Development
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public Task<ResponseStructure<List<TaskItem>>> GetListAsync()
+        public Task<MessageModel<List<TaskItem>>> GetListAsync()
         {
             return _sysTaskService.GetListAsync();
         }
@@ -30,7 +30,7 @@ namespace Mi.ControllerLibrary.Development
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        public Task<ResponseStructure> UpdateAsync([FromBody] TaskEdit input)
+        public Task<MessageModel> UpdateAsync([FromBody] TaskEdit input)
         {
             return _sysTaskService.UpdateAsync(input);
         }

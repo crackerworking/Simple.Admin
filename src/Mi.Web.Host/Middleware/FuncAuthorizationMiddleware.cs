@@ -56,7 +56,7 @@ namespace Mi.Web.Host.Middleware
                             return;
                         }
 
-                        await context.Response.WriteAsJsonAsync(new ResponseStructure(response_type.Forbidden, "权限不足，无法访问或操作"));
+                        await context.Response.WriteAsJsonAsync(new MessageModel(response_type.Forbidden, "权限不足，无法访问或操作"));
                         return;
                     }
                 }

@@ -9,34 +9,34 @@ namespace Mi.Application.Contracts.System
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> AddRoleAsync(RolePlus input);
+        Task<MessageModel> AddRoleAsync(RolePlus input);
 
         /// <summary>
         /// 移除角色
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> RemoveRoleAsync(PrimaryKey input);
+        Task<MessageModel> RemoveRoleAsync(PrimaryKey input);
 
         /// <summary>
         /// 角色列表
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
-        Task<ResponseStructure<PagingModel<SysRoleFull>>> GetRoleListAsync(RoleSearch search);
+        Task<MessageModel<PagingModel<SysRoleFull>>> GetRoleListAsync(RoleSearch search);
 
         /// <summary>
         /// 更新角色信息
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> UpdateRoleAsync(RoleEdit input);
+        Task<MessageModel> UpdateRoleAsync(RoleEdit input);
 
         /// <summary>
         /// 单个角色
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<ResponseStructure<SysRoleFull>> GetRoleAsync(long id);
+        Task<MessageModel<SysRoleFull>> GetRoleAsync(long id);
     }
 }

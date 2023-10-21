@@ -4,33 +4,33 @@ namespace Mi.Domain.Helper
 {
     public static class Back
     {
-        public static ResponseStructure Success(string? message = default)
+        public static MessageModel Success(string? message = default)
         {
             message ??= "success";
-            return new ResponseStructure(response_type.Success, message);
+            return new MessageModel(response_type.Success, message);
         }
 
-        public static ResponseStructure Fail(string? message = default)
+        public static MessageModel Fail(string? message = default)
         {
             message ??= "fail";
-            return new ResponseStructure(response_type.Fail, message);
+            return new MessageModel(response_type.Fail, message);
         }
 
-        public static ResponseStructure NonExist(string? message = default)
+        public static MessageModel NonExist(string? message = default)
         {
             message ??= "data does not exist.";
-            return new ResponseStructure(response_type.NonExist, message);
+            return new MessageModel(response_type.NonExist, message);
         }
 
-        public static ResponseStructure SuccessOrFail(bool flag, string? message = default)
+        public static MessageModel SuccessOrFail(bool flag, string? message = default)
         {
             return flag ? Success(message) : Fail(message);
         }
 
-        public static ResponseStructure ParameterError(string? message = default)
+        public static MessageModel ParameterError(string? message = default)
         {
             message ??= "Parameter error.";
-            return new ResponseStructure(response_type.ParameterError, message);
+            return new MessageModel(response_type.ParameterError, message);
         }
     }
 }

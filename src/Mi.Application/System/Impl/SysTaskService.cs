@@ -29,15 +29,15 @@ namespace Mi.Application.System.Impl
             return model;
         }
 
-        public async Task<ResponseStructure<List<TaskItem>>> GetListAsync()
+        public async Task<MessageModel<List<TaskItem>>> GetListAsync()
         {
             var raw = await _repo.GetListAsync();
             var list = _mapper.Map<List<TaskItem>>(raw);
 
-            return new ResponseStructure<List<TaskItem>>(list);
+            return new MessageModel<List<TaskItem>>(list);
         }
 
-        public async Task<ResponseStructure> UpdateAsync(TaskEdit input)
+        public async Task<MessageModel> UpdateAsync(TaskEdit input)
         {
             var model = await _repo.GetAsync(x => x.Id == input.Id);
             if (model == null) return Back.NonExist();

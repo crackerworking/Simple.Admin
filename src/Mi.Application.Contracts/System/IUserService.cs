@@ -10,42 +10,42 @@ namespace Mi.Application.Contracts.System
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
-        Task<ResponseStructure<PagingModel<UserItem>>> GetUserListAsync(UserSearch search);
+        Task<MessageModel<PagingModel<UserItem>>> GetUserListAsync(UserSearch search);
 
         /// <summary>
         /// 新增用户
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure<string>> AddUserAsync(UserPlus input);
+        Task<MessageModel<string>> AddUserAsync(UserPlus input);
 
         /// <summary>
         /// 移除用户
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> RemoveUserAsync(PrimaryKey input);
+        Task<MessageModel> RemoveUserAsync(PrimaryKey input);
 
         /// <summary>
         /// 更新用户密码
         /// </summary>
         /// <param name="input"></param>
         /// <returns>一个随机密码</returns>
-        Task<ResponseStructure<string>> UpdatePasswordAsync(PrimaryKey input);
+        Task<MessageModel<string>> UpdatePasswordAsync(PrimaryKey input);
 
         /// <summary>
         /// 单个用户
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task<ResponseStructure<SysUserFull>> GetUserAsync(long userId);
+        Task<MessageModel<SysUserFull>> GetUserAsync(long userId);
 
         /// <summary>
         /// 允许登录
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> PassedUserAsync(PrimaryKey input);
+        Task<MessageModel> PassedUserAsync(PrimaryKey input);
 
         /// <summary>
         /// 用户关联所有角色
@@ -58,21 +58,21 @@ namespace Mi.Application.Contracts.System
         /// 用户基本信息
         /// </summary>
         /// <returns></returns>
-        Task<ResponseStructure<UserBaseInfo>> GetUserBaseInfoAsync();
+        Task<MessageModel<UserBaseInfo>> GetUserBaseInfoAsync();
 
         /// <summary>
         /// 设置用户基本信息
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        Task<ResponseStructure> SetUserBaseInfoAsync(UserBaseInfo model);
+        Task<MessageModel> SetUserBaseInfoAsync(UserBaseInfo model);
 
         /// <summary>
         /// 设置用户密码
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> SetPasswordAsync(SetPasswordIn input);
+        Task<MessageModel> SetPasswordAsync(SetPasswordIn input);
 
         /// <summary>
         /// 当前登录用户所有权限编码

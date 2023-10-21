@@ -20,7 +20,7 @@ namespace Mi.ControllerLibrary.Workspace
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("Workspace:Message:Readed")]
-        public async Task<ResponseStructure> Readed([FromBody] PrimaryKeys input) => await _messageService.ReadedAsync(input);
+        public async Task<MessageModel> Readed([FromBody] PrimaryKeys input) => await _messageService.ReadedAsync(input);
 
         /// <summary>
         /// 消息列表
@@ -28,6 +28,6 @@ namespace Mi.ControllerLibrary.Workspace
         /// <param name="search"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("Workspace:Message:Query")]
-        public async Task<ResponseStructure<PagingModel<SysMessageFull>>> GetMessageList([FromBody] MessageSearch search) => await _messageService.GetMessageListAsync(search);
+        public async Task<MessageModel<PagingModel<SysMessageFull>>> GetMessageList([FromBody] MessageSearch search) => await _messageService.GetMessageListAsync(search);
     }
 }

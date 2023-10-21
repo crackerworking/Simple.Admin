@@ -26,7 +26,7 @@ namespace Mi.ControllerLibrary.System
         /// <returns></returns>
         [HttpPost]
         [AuthorizeCode("System:User:Query")]
-        public async Task<ResponseStructure> GetUserList([FromBody] UserSearch search)
+        public async Task<MessageModel> GetUserList([FromBody] UserSearch search)
         {
             return await _userService.GetUserListAsync(search);
         }
@@ -38,7 +38,7 @@ namespace Mi.ControllerLibrary.System
         /// <returns></returns>
         [HttpPost]
         [AuthorizeCode("System:User:Add")]
-        public async Task<ResponseStructure> AddUser([FromBody] UserPlus input)
+        public async Task<MessageModel> AddUser([FromBody] UserPlus input)
         {
             return await _userService.AddUserAsync(input);
         }
@@ -50,7 +50,7 @@ namespace Mi.ControllerLibrary.System
         /// <returns></returns>
         [HttpPost]
         [AuthorizeCode("System:User:Remove")]
-        public async Task<ResponseStructure> RemoveUser([FromBody] PrimaryKey input)
+        public async Task<MessageModel> RemoveUser([FromBody] PrimaryKey input)
         {
             return await _userService.RemoveUserAsync(input);
         }
@@ -62,7 +62,7 @@ namespace Mi.ControllerLibrary.System
         /// <returns>一个随机密码</returns>
         [HttpPost]
         [AuthorizeCode("System:User:UpdatePassword")]
-        public async Task<ResponseStructure> UpdatePassword([FromBody] PrimaryKey input)
+        public async Task<MessageModel> UpdatePassword([FromBody] PrimaryKey input)
         {
             return await _userService.UpdatePasswordAsync(input);
         }
@@ -74,7 +74,7 @@ namespace Mi.ControllerLibrary.System
         /// <returns></returns>
         [HttpPost]
         [AuthorizeCode("System:User:SetUserRole")]
-        public async Task<ResponseStructure> SetUserRole([FromBody] SetUserRoleIn input)
+        public async Task<MessageModel> SetUserRole([FromBody] SetUserRoleIn input)
             => await _permissionService.SetUserRoleAsync(input);
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Mi.ControllerLibrary.System
         /// <returns></returns>
         [HttpPost]
         [AuthorizeCode("System:User:Passed")]
-        public async Task<ResponseStructure> PassedUser([FromBody] PrimaryKey input)
+        public async Task<MessageModel> PassedUser([FromBody] PrimaryKey input)
             => await _userService.PassedUserAsync(input);
     }
 }

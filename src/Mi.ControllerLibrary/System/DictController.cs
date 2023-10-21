@@ -20,7 +20,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="search"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Dict:Query")]
-        public async Task<ResponseStructure<PagingModel<DictItem>>> GetDictList([FromBody] DictSearch search)
+        public async Task<MessageModel<PagingModel<DictItem>>> GetDictList([FromBody] DictSearch search)
             => await _dictService.GetDictListAsync(search);
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Dict:Add")]
-        public async Task<ResponseStructure> AddAsync([FromBody] DictPlus operation)
+        public async Task<MessageModel> AddAsync([FromBody] DictPlus operation)
             => await _dictService.AddAsync(operation);
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Dict:Update")]
-        public async Task<ResponseStructure> UpdateAsync([FromBody] DictEdit operation)
+        public async Task<MessageModel> UpdateAsync([FromBody] DictEdit operation)
             => await _dictService.UpdateAsync(operation);
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Dict:Remove")]
-        public async Task<ResponseStructure> RemoveDict([FromBody] PrimaryKeys input)
+        public async Task<MessageModel> RemoveDict([FromBody] PrimaryKeys input)
             => await _dictService.RemoveDictAsync(input);
 
         /// <summary>

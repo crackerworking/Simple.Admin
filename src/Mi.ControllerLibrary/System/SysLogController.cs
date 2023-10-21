@@ -20,7 +20,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="search"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:LoginLog:Query")]
-        public async Task<ResponseStructure<PagingModel<SysLoginLogFull>>> GetLoginLogList([FromBody] LoginLogSearch search)
+        public async Task<MessageModel<PagingModel<SysLoginLogFull>>> GetLoginLogList([FromBody] LoginLogSearch search)
         {
             return await _logService.GetLoginLogListAsync(search);
         }
@@ -31,6 +31,6 @@ namespace Mi.ControllerLibrary.System
         /// <param name="search"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:ActionLog:Query")]
-        public async Task<ResponseStructure<PagingModel<SysLogFull>>> GetLogList([FromBody] LogSearch search) => await _logService.GetLogListAsync(search);
+        public async Task<MessageModel<PagingModel<SysLogFull>>> GetLogList([FromBody] LogSearch search) => await _logService.GetLogListAsync(search);
     }
 }

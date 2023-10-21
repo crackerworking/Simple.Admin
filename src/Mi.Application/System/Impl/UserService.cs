@@ -24,11 +24,11 @@ namespace Mi.Application.System.Impl
             _mapper = mapper;
         }
 
-        public async Task<ResponseStructure<string>> AddUserAsync(UserPlus input)
+        public async Task<MessageModel<string>> AddUserAsync(UserPlus input)
         {
-            if (!input.userName.RegexValidate(PatternConst.UserName)) return new ResponseStructure<string>(false, "用户名只支持大小写字母和数字，最短4位，最长12位", null);
+            if (!input.userName.RegexValidate(PatternConst.UserName)) return new MessageModel<string>(false, "用户名只支持大小写字母和数字，最短4位，最长12位", null);
             var count = await _dapperRepo.ExecuteScalarAsync<int>("select count(*) from SysUser where LOWER(UserName)=@name and IsDeleted=0", new { name = input.userName.ToLower() });
-            if (count > 0) return new ResponseStructure<string>(false, "用户名已存在", null);
+            if (count > 0) return new MessageModel<string>(false, "用户名已存在", null);
 
             var user = new SysUser
             {
@@ -44,7 +44,7 @@ namespace Mi.Application.System.Impl
 
             var flag = await _userRepo.AddAsync(user);
 
-            return new ResponseStructure<string>(flag > 0, password);
+            return new MessageModel<string>(flag > 0, password);
         }
 
         public List<string?> GetAuthCode()
@@ -59,19 +59,19 @@ namespace Mi.Application.System.Impl
             return await _dapperRepo.QueryAsync<SysRoleFull>(sql.ToString(), new { id });
         }
 
-        public async Task<ResponseStructure<SysUserFull>> GetUserAsync(long userId)
+        public async Task<MessageModel<SysUserFull>> GetUserAsync(long userId)
         {
             var user = await _userRepo.GetAsync(x => x.Id == userId);
             var model = _mapper.Map<SysUserFull>(user);
 
-            return new ResponseStructure<SysUserFull>(true, "查询成功", model);
+            return new MessageModel<SysUserFull>(true, "查询成功", model);
         }
 
-        public async Task<ResponseStructure<UserBaseInfo>> GetUserBaseInfoAsync()
+        public async Task<MessageModel<UserBaseInfo>> GetUserBaseInfoAsync()
         {
             var user = await _userRepo.GetAsync(x => x.Id == _miUser.UserId);
             if (user == null) return Back.NonExist().As<UserBaseInfo>();
-            return new ResponseStructure<UserBaseInfo>(new UserBaseInfo
+            return new MessageModel<UserBaseInfo>(new UserBaseInfo
             {
                 Avatar = user.Avatar,
                 NickName = user.NickName,
@@ -81,7 +81,7 @@ namespace Mi.Application.System.Impl
             });
         }
 
-        public async Task<ResponseStructure<PagingModel<UserItem>>> GetUserListAsync(UserSearch search)
+        public async Task<MessageModel<PagingModel<UserItem>>> GetUserListAsync(UserSearch search)
         {
             var sql = @"select u.*,GROUP_CONCAT(r.RoleName) as RoleNameString from SysUser u 
                         left join SysUserRole ur on u.Id=ur.UserId
@@ -102,10 +102,10 @@ namespace Mi.Application.System.Impl
                     item.RoleNames = item.RoleNameString.Split(',');
                 }
             }
-            return new ResponseStructure<PagingModel<UserItem>>(true, "查询成功", pageModel);
+            return new MessageModel<PagingModel<UserItem>>(true, "查询成功", pageModel);
         }
 
-        public async Task<ResponseStructure> PassedUserAsync(PrimaryKey input)
+        public async Task<MessageModel> PassedUserAsync(PrimaryKey input)
         {
             var rows = await _userRepo.UpdateAsync(input.id, updatable => updatable
                 .SetColumn(x => x.IsEnabled, 1)
@@ -115,7 +115,7 @@ namespace Mi.Application.System.Impl
             return rows > 0 ? Back.Success() : Back.Fail();
         }
 
-        public async Task<ResponseStructure> RemoveUserAsync(PrimaryKey input)
+        public async Task<MessageModel> RemoveUserAsync(PrimaryKey input)
         {
             var flag = await _userRepo.UpdateAsync(input.id, updatable => updatable
                 .SetColumn(x => x.IsDeleted, 1)
@@ -125,7 +125,7 @@ namespace Mi.Application.System.Impl
             return Back.SuccessOrFail(flag > 0);
         }
 
-        public async Task<ResponseStructure> SetPasswordAsync(SetPasswordIn input)
+        public async Task<MessageModel> SetPasswordAsync(SetPasswordIn input)
         {
             var user = await _userRepo.GetAsync(x => x.Id == _miUser.UserId);
             if (user == null) return Back.NonExist();
@@ -136,7 +136,7 @@ namespace Mi.Application.System.Impl
             return Back.Success("修改成功，下次登录时请使用新密码");
         }
 
-        public async Task<ResponseStructure> SetUserBaseInfoAsync(UserBaseInfo model)
+        public async Task<MessageModel> SetUserBaseInfoAsync(UserBaseInfo model)
         {
             var user = await _userRepo.GetAsync(x => x.Id == _miUser.UserId);
             if (user == null) return Back.NonExist();
@@ -150,10 +150,10 @@ namespace Mi.Application.System.Impl
             return Back.Success();
         }
 
-        public async Task<ResponseStructure<string>> UpdatePasswordAsync(PrimaryKey input)
+        public async Task<MessageModel<string>> UpdatePasswordAsync(PrimaryKey input)
         {
             var user = await _userRepo.GetAsync(x => x.Id == input.id);
-            if (user == null || user.Id <= 0) return new ResponseStructure<string>(false, "用户不存在", "");
+            if (user == null || user.Id <= 0) return new MessageModel<string>(false, "用户不存在", "");
 
             var password = StringHelper.GetRandomString(6);
             var flag = await _userRepo.UpdateAsync(input.id, updatable => updatable
@@ -161,7 +161,7 @@ namespace Mi.Application.System.Impl
                 .SetColumn(x => x.ModifiedBy, _miUser.UserId)
                 .SetColumn(x => x.ModifiedOn, DateTime.Now));
 
-            return new ResponseStructure<string>(flag > 0, password);
+            return new MessageModel<string>(flag > 0, password);
         }
     }
 }

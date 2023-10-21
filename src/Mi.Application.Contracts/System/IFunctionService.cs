@@ -9,14 +9,14 @@ namespace Mi.Application.Contracts.System
         /// </summary>
         /// <param name="operation"></param>
         /// <returns></returns>
-        Task<ResponseStructure> AddOrUpdateFunctionAsync(FunctionOperation operation);
+        Task<MessageModel> AddOrUpdateFunctionAsync(FunctionOperation operation);
 
         /// <summary>
         /// 列表（带树形）
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
-        Task<ResponseStructure<IList<FunctionItem>>> GetFunctionListAsync(FunctionSearch search);
+        Task<MessageModel<IList<FunctionItem>>> GetFunctionListAsync(FunctionSearch search);
 
         /// <summary>
         /// 树形下拉选项
@@ -36,7 +36,7 @@ namespace Mi.Application.Contracts.System
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> RemoveFunctionAsync(PrimaryKeys input);
+        Task<MessageModel> RemoveFunctionAsync(PrimaryKeys input);
 
         /// <summary>
         /// 所有功能（带缓存）

@@ -22,10 +22,10 @@ namespace Mi.ControllerLibrary.System
         /// <param name="operation"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:SetConfig")]
-        public async Task<ResponseStructure> SetUiConfig([FromBody] Dictionary<string, string> operation)
+        public async Task<MessageModel> SetUiConfig([FromBody] Dictionary<string, string> operation)
         {
             await _dictionaryApi.SetAsync(operation);
-            return new ResponseStructure(response_type.Success, "success");
+            return new MessageModel(response_type.Success, "success");
         }
 
         /// <summary>
@@ -33,6 +33,6 @@ namespace Mi.ControllerLibrary.System
         /// </summary>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:GetConfig")]
-        public async Task<ResponseStructure<SysConfigModel>> GetUiConfig() => await _uiConfigService.GetUiConfigAsync();
+        public async Task<MessageModel<SysConfigModel>> GetUiConfig() => await _uiConfigService.GetUiConfigAsync();
     }
 }

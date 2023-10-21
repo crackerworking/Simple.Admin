@@ -55,7 +55,7 @@ namespace Mi.Application.System.Impl
             else return $"{Math.Ceiling(val.TotalDays)}天前";
         }
 
-        public async Task<ResponseStructure<PagingModel<SysMessageFull>>> GetMessageListAsync(MessageSearch search)
+        public async Task<MessageModel<PagingModel<SysMessageFull>>> GetMessageListAsync(MessageSearch search)
         {
             var sql = "select * from SysMessage where IsDeleted=0 and ReceiveUser=@userId";
             var parameter = new DynamicParameters();
@@ -88,10 +88,10 @@ namespace Mi.Application.System.Impl
             }
 
             var result = await _dapperRepository.QueryPagedAsync<SysMessageFull>(sql, search.Page, search.Size, " Readed asc,CreatedOn desc ", parameter);
-            return new ResponseStructure<PagingModel<SysMessageFull>>(result);
+            return new MessageModel<PagingModel<SysMessageFull>>(result);
         }
 
-        public async Task<ResponseStructure> ReadedAsync(PrimaryKeys input)
+        public async Task<MessageModel> ReadedAsync(PrimaryKeys input)
         {
             if (input.array_id.IsNull()) return Back.ParameterError(nameof(input.array_id));
             await _dapperRepository.ExecuteAsync("update SysMessage set ModifiedOn=@time,ModifiedBy=@user,Readed=1 where Id in @ids", new { time = DateTime.Now, user = _miUser.UserId, ids = input.array_id });

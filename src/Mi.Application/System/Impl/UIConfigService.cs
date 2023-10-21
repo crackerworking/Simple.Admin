@@ -11,7 +11,7 @@ namespace Mi.Application.System.Impl
             _quickDict = quickDict;
         }
 
-        public async Task<ResponseStructure> SetUiConfigAsync(SysConfigModel operation)
+        public async Task<MessageModel> SetUiConfigAsync(SysConfigModel operation)
         {
             var dict = new Dictionary<string, string>();
             foreach (var prop in typeof(SysConfigModel).GetProperties())
@@ -22,7 +22,7 @@ namespace Mi.Application.System.Impl
             return Back.Success();
         }
 
-        public async Task<ResponseStructure<SysConfigModel>> GetUiConfigAsync()
+        public async Task<MessageModel<SysConfigModel>> GetUiConfigAsync()
         {
             var config = await _quickDict.GetManyAsync<SysConfigModel>(DictKeyConst.UiConfig);
             return Back.Success("查询成功").As(config);

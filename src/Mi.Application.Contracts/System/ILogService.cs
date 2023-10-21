@@ -31,14 +31,14 @@ namespace Mi.Application.Contracts.System
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
-        Task<ResponseStructure<PagingModel<SysLoginLogFull>>> GetLoginLogListAsync(LoginLogSearch search);
+        Task<MessageModel<PagingModel<SysLoginLogFull>>> GetLoginLogListAsync(LoginLogSearch search);
 
         /// <summary>
         /// 操作日志列表
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
-        Task<ResponseStructure<PagingModel<SysLogFull>>> GetLogListAsync(LogSearch search);
+        Task<MessageModel<PagingModel<SysLogFull>>> GetLogListAsync(LogSearch search);
 
         /// <summary>
         /// 设置操作日志异常（更新已有操作日志在<see cref="WriteLogAsync"/>之后）

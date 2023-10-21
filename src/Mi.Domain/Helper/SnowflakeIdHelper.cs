@@ -13,7 +13,8 @@ namespace Mi.Domain.Helper
             var dataCenterId = new Random().Next(1, 31);
             var workId = new Random().Next(1, 31);
             SnowflakeId snowflakeId = new(dataCenterId, workId);
-            return snowflakeId.NextId();
+            var id = snowflakeId.NextId();
+            return Math.Abs(id);
         }
     }
 
@@ -173,7 +174,7 @@ namespace Mi.Domain.Helper
         /// <returns></returns>
         private static long GetCurrentTimestamp()
         {
-            return (long)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
+            return (DateTime.UtcNow - Jan1st1970).Ticks;
         }
 
         private static readonly DateTime Jan1st1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);

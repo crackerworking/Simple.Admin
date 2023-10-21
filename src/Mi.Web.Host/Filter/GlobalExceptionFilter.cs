@@ -31,7 +31,7 @@ namespace Mi.Web.Host.Filter
                 }
                 else
                 {
-                    context.Result = new ObjectResult(new ResponseStructure(response_type.Error, context.Exception.Message));
+                    context.Result = new ObjectResult(new MessageModel(response_type.Error, context.Exception.Message));
                 }
                 var req = await LogParamsAsync(context.HttpContext);
                 FileLogging.Instance.WriteException(context.Exception, req);

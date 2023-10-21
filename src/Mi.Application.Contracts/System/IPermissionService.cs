@@ -11,14 +11,14 @@ namespace Mi.Application.Contracts.System
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> SetUserRoleAsync(SetUserRoleIn input);
+        Task<MessageModel> SetUserRoleAsync(SetUserRoleIn input);
 
         /// <summary>
         /// 获取用户角色
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        Task<ResponseStructure<IList<UserRoleOption>>> GetUserRolesAsync(long userId);
+        Task<MessageModel<IList<UserRoleOption>>> GetUserRolesAsync(long userId);
 
         /// <summary>
         /// 获取当前用户可查看的侧边菜单
@@ -31,28 +31,28 @@ namespace Mi.Application.Contracts.System
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure<IList<long>>> GetRoleFunctionIdsAsync(PrimaryKey input);
+        Task<MessageModel<IList<long>>> GetRoleFunctionIdsAsync(PrimaryKey input);
 
         /// <summary>
         /// 设置角色功能
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> SetRoleFunctionsAsync(SetRoleFunctionsIn input);
+        Task<MessageModel> SetRoleFunctionsAsync(SetRoleFunctionsIn input);
 
         /// <summary>
         /// 注册
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> RegisterAsync(RegisterIn input);
+        Task<MessageModel> RegisterAsync(RegisterIn input);
 
         /// <summary>
         /// 登录
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> LoginAsync(LoginIn input);
+        Task<MessageModel> LoginAsync(LoginIn input);
 
         /// <summary>
         /// 注销

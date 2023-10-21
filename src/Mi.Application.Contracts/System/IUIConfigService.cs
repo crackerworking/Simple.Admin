@@ -10,12 +10,12 @@ namespace Mi.Application.Contracts.System
         /// </summary>
         /// <param name="operation"></param>
         /// <returns></returns>
-        Task<ResponseStructure> SetUiConfigAsync(SysConfigModel operation);
+        Task<MessageModel> SetUiConfigAsync(SysConfigModel operation);
 
         /// <summary>
         /// 读取UI配置
         /// </summary>
         /// <returns></returns>
-        Task<ResponseStructure<SysConfigModel>> GetUiConfigAsync();
+        Task<MessageModel<SysConfigModel>> GetUiConfigAsync();
     }
 }

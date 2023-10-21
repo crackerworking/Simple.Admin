@@ -28,7 +28,7 @@ namespace Mi.Application.System.Impl
 
         private IList<SysFunctionFull> _allFunctions => GetFunctionsCacheAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
-        public async Task<ResponseStructure> AddOrUpdateFunctionAsync(FunctionOperation operation)
+        public async Task<MessageModel> AddOrUpdateFunctionAsync(FunctionOperation operation)
         {
             if (string.IsNullOrWhiteSpace(operation.Icon) && operation.FunctionType == (int)EnumFunctionType.Menu)
             {
@@ -65,7 +65,7 @@ namespace Mi.Application.System.Impl
             return _mapper.Map<SysFunctionFull>(model);
         }
 
-        public async Task<ResponseStructure<IList<FunctionItem>>> GetFunctionListAsync(FunctionSearch search)
+        public async Task<MessageModel<IList<FunctionItem>>> GetFunctionListAsync(FunctionSearch search)
         {
             var exp = PredicateBuilder.Instance.Create<SysFunctionFull>()
                 .AndIf(!string.IsNullOrEmpty(search.FunctionName), x => x.FunctionName.Contains(search.FunctionName!))
@@ -87,7 +87,7 @@ namespace Mi.Application.System.Impl
                 Children = GetFuncChildNode(x.Id)
             }).ToList();
 
-            return new ResponseStructure<IList<FunctionItem>>(await Task.FromResult(list));
+            return new MessageModel<IList<FunctionItem>>(await Task.FromResult(list));
         }
 
         private IList<FunctionItem> GetFuncChildNode(long id)
@@ -129,7 +129,7 @@ namespace Mi.Application.System.Impl
             }).ToList();
         }
 
-        public async Task<ResponseStructure> RemoveFunctionAsync(PrimaryKeys input)
+        public async Task<MessageModel> RemoveFunctionAsync(PrimaryKeys input)
         {
             if (input.array_id.IsNull()) return Back.Fail("id不能为空");
 

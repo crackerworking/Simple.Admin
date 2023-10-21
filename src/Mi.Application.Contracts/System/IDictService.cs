@@ -15,35 +15,35 @@ namespace Mi.Application.Contracts.System
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
-        Task<ResponseStructure<PagingModel<DictItem>>> GetDictListAsync(DictSearch search);
+        Task<MessageModel<PagingModel<DictItem>>> GetDictListAsync(DictSearch search);
 
         /// <summary>
         /// 新增字典
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> AddAsync(DictPlus input);
+        Task<MessageModel> AddAsync(DictPlus input);
 
         /// <summary>
         /// 更新字典
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> UpdateAsync(DictEdit input);
+        Task<MessageModel> UpdateAsync(DictEdit input);
 
         /// <summary>
         /// 移除字典
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> RemoveDictAsync(PrimaryKeys input);
+        Task<MessageModel> RemoveDictAsync(PrimaryKeys input);
 
         /// <summary>
         /// 获取单个字典
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<ResponseStructure<SysDictFull>> GetAsync(long id);
+        Task<MessageModel<SysDictFull>> GetAsync(long id);
 
         /// <summary>
         /// 获取已有子集的字典

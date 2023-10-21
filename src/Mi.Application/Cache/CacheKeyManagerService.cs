@@ -17,7 +17,7 @@ namespace Mi.Application.Cache
             _currentUser = currentUser;
         }
 
-        public async Task<ResponseStructure<IList<Option>>> GetAllKeysAsync(CacheKeySearch input)
+        public async Task<MessageModel<IList<Option>>> GetAllKeysAsync(CacheKeySearch input)
         {
             var keys = _cache.GetCacheKeys();
             var list = keys.Select(k => new Option
@@ -26,20 +26,20 @@ namespace Mi.Application.Cache
                 Value = k
             }).ToList();
 
-            return await Task.FromResult(new ResponseStructure<IList<Option>>(list));
+            return await Task.FromResult(new MessageModel<IList<Option>>(list));
         }
 
-        public async Task<ResponseStructure<string>> GetDataAsync(CacheKeyIn input)
+        public async Task<MessageModel<string>> GetDataAsync(CacheKeyIn input)
         {
-            if (_currentUser.IsDemo) return await Task.FromResult(new ResponseStructure<string>(Demo.Tip));
+            if (_currentUser.IsDemo) return await Task.FromResult(new MessageModel<string>(Demo.Tip));
 
             _cache.TryGetValue(input.key, out var value);
             var str = JsonSerializer.Serialize(value ?? "");
 
-            return await Task.FromResult(new ResponseStructure<string>(str));
+            return await Task.FromResult(new MessageModel<string>(str));
         }
 
-        public Task<ResponseStructure> RemoveKeyAsync(CacheKeyIn input)
+        public Task<MessageModel> RemoveKeyAsync(CacheKeyIn input)
         {
             if (_currentUser.IsDemo) return Task.FromResult(Back.Fail(Demo.Tip));
 

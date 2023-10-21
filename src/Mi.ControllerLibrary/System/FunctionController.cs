@@ -20,7 +20,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="search"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Function:Query")]
-        public async Task<ResponseStructure> GetFunctionList([FromBody] FunctionSearch search)
+        public async Task<MessageModel> GetFunctionList([FromBody] FunctionSearch search)
         {
             return await _functionService.GetFunctionListAsync(search);
         }
@@ -31,7 +31,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="operation"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Function:AddOrUpdate")]
-        public async Task<ResponseStructure> AddOrUpdateFunction([FromBody] FunctionOperation operation)
+        public async Task<MessageModel> AddOrUpdateFunction([FromBody] FunctionOperation operation)
             => await _functionService.AddOrUpdateFunctionAsync(operation);
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Function:Remove")]
-        public async Task<ResponseStructure> RemoveFunction([FromBody] PrimaryKeys input)
+        public async Task<MessageModel> RemoveFunction([FromBody] PrimaryKeys input)
             => await _functionService.RemoveFunctionAsync(input);
 
         /// <summary>

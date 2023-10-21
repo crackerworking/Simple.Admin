@@ -30,7 +30,7 @@ namespace Mi.Application.System.Impl
             _mapper = mapper;
         }
 
-        public async Task<ResponseStructure<PagingModel<SysLoginLogFull>>> GetLoginLogListAsync(LoginLogSearch search)
+        public async Task<MessageModel<PagingModel<SysLoginLogFull>>> GetLoginLogListAsync(LoginLogSearch search)
         {
             var exp = PredicateBuilder.Instance.Create<SysLoginLog>()
                 .AndIf(!string.IsNullOrEmpty(search.UserName), x => x.UserName.Contains(search.UserName!))
@@ -50,10 +50,10 @@ namespace Mi.Application.System.Impl
                 Rows = _mapper.Map<IEnumerable<SysLoginLogFull>>(model.Rows)
             };
 
-            return new ResponseStructure<PagingModel<SysLoginLogFull>>(clonedModel);
+            return new MessageModel<PagingModel<SysLoginLogFull>>(clonedModel);
         }
 
-        public async Task<ResponseStructure<PagingModel<SysLogFull>>> GetLogListAsync(LogSearch search)
+        public async Task<MessageModel<PagingModel<SysLogFull>>> GetLogListAsync(LogSearch search)
         {
             var exp = PredicateBuilder.Instance.Create<SysLog>()
                 .AndIf(!string.IsNullOrEmpty(search.UserName), x => x.UserName.Contains(search.UserName!))
@@ -75,7 +75,7 @@ namespace Mi.Application.System.Impl
                 Rows = _mapper.Map<IEnumerable<SysLogFull>>(model.Rows)
             };
 
-            return new ResponseStructure<PagingModel<SysLogFull>>(clonedModel);
+            return new MessageModel<PagingModel<SysLogFull>>(clonedModel);
         }
 
         public async Task<bool> SetExceptionAsync(string uniqueId, string errorMsg)

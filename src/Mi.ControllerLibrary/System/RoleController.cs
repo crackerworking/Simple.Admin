@@ -24,7 +24,7 @@ namespace Mi.ControllerLibrary.System
         /// <returns></returns>
         [HttpPost]
         [AuthorizeCode("System:Role:AddOrUpdate")]
-        public async Task<ResponseStructure> AddRole([FromBody] RolePlus input)
+        public async Task<MessageModel> AddRole([FromBody] RolePlus input)
             => await _roleService.AddRoleAsync(input);
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Role:Remove")]
-        public async Task<ResponseStructure> RemoveRole([FromBody] PrimaryKey input)
+        public async Task<MessageModel> RemoveRole([FromBody] PrimaryKey input)
              => await _roleService.RemoveRoleAsync(input);
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="search"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Role:Query")]
-        public async Task<ResponseStructure> GetRoleList([FromBody] RoleSearch search)
+        public async Task<MessageModel> GetRoleList([FromBody] RoleSearch search)
             => await _roleService.GetRoleListAsync(search);
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Mi.ControllerLibrary.System
         /// <returns></returns>
         [HttpPost]
         [AuthorizeCode("System:Role:AddOrUpdate")]
-        public async Task<ResponseStructure> UpdateRole([FromBody] RoleEdit input)
+        public async Task<MessageModel> UpdateRole([FromBody] RoleEdit input)
             => await _roleService.UpdateRoleAsync(input);
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Role:AssignFunctions")]
-        public async Task<ResponseStructure> SetRoleFunctions([FromBody] SetRoleFunctionsIn input)
+        public async Task<MessageModel> SetRoleFunctions([FromBody] SetRoleFunctionsIn input)
         {
             return await _permissionService.SetRoleFunctionsAsync(input);
         }
@@ -72,7 +72,7 @@ namespace Mi.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Role:AssignFunctions")]
-        public async Task<ResponseStructure<IList<long>>> GetRoleFunctionIds([FromBody] PrimaryKey input)
+        public async Task<MessageModel<IList<long>>> GetRoleFunctionIds([FromBody] PrimaryKey input)
             => await _permissionService.GetRoleFunctionIdsAsync(input);
     }
 }

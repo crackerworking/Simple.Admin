@@ -24,7 +24,7 @@ namespace Mi.Application.System.Impl
             _quickDict = quickDict;
         }
 
-        public async Task<ResponseStructure<PagingModel<DictItem>>> GetDictListAsync(DictSearch search)
+        public async Task<MessageModel<PagingModel<DictItem>>> GetDictListAsync(DictSearch search)
         {
             var sql = new StringBuilder(@"select d.*,(select count(*) from SysDict where id = d.ParentId) ChildCount,(select name from SysDict where id=d.ParentId) ParentName from SysDict d where d.IsDeleted = 0 ");
             var parameters = new DynamicParameters();
@@ -51,10 +51,10 @@ namespace Mi.Application.System.Impl
 
             var model = await _dapperRepository.QueryPagedAsync<DictItem>(sql.ToString(), search.Page, search.Size, param: parameters);
 
-            return new ResponseStructure<PagingModel<DictItem>>(true, model);
+            return new MessageModel<PagingModel<DictItem>>(true, model);
         }
 
-        public async Task<ResponseStructure> RemoveDictAsync(PrimaryKeys input)
+        public async Task<MessageModel> RemoveDictAsync(PrimaryKeys input)
         {
             var list = await _dictRepo.GetListAsync(x => input.array_id.Contains(x.Id));
             foreach (var item in list)
@@ -71,12 +71,12 @@ namespace Mi.Application.System.Impl
             return Back.SuccessOrFail(rows > 0);
         }
 
-        public async Task<ResponseStructure<SysDictFull>> GetAsync(long id)
+        public async Task<MessageModel<SysDictFull>> GetAsync(long id)
         {
             var dict = await _dictRepo.GetAsync(x => x.Id == id);
             var model = _mapper.Map<SysDictFull>(dict);
 
-            return new ResponseStructure<SysDictFull>(model);
+            return new MessageModel<SysDictFull>(model);
         }
 
         public async Task<List<SysDictFull>> GetAllAsync()
@@ -92,7 +92,7 @@ namespace Mi.Application.System.Impl
             return await _dapperRepository.QueryAsync<Option>(sql);
         }
 
-        public async Task<ResponseStructure> AddAsync(DictPlus input)
+        public async Task<MessageModel> AddAsync(DictPlus input)
         {
             var dict = _mapper.Map<SysDict>(input);
             dict.Id = SnowflakeIdHelper.Next();
@@ -108,7 +108,7 @@ namespace Mi.Application.System.Impl
             return Back.Success();
         }
 
-        public async Task<ResponseStructure> UpdateAsync(DictEdit input)
+        public async Task<MessageModel> UpdateAsync(DictEdit input)
         {
             var dict = await _dictRepo.GetAsync(x => x.Id == input.Id);
             if (dict == null) return Back.NonExist();

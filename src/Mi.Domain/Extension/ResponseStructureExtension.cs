@@ -4,14 +4,14 @@ namespace Mi.Domain.Extension
 {
     public static class ResponseStructureExtension
     {
-        public static bool IsOk(this ResponseStructure? response)
+        public static bool IsOk(this MessageModel? response)
         {
             return response != null && response.Code == response_type.Success;
         }
 
-        public static ResponseStructure<T> As<T>(this ResponseStructure model, T? result = default)
+        public static MessageModel<T> As<T>(this MessageModel model, T? result = default)
         {
-            return new ResponseStructure<T>(model.Code, model.Message ?? "", result);
+            return new MessageModel<T>(model.Code, model.Message ?? "", result);
         }
     }
 }

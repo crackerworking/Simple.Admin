@@ -24,7 +24,7 @@ namespace Mi.Web.Host
         /// <param name="option"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ResponseStructure<string>> ExecuteAsync([FromBody] Option option)
+        public async Task<MessageModel<string>> ExecuteAsync([FromBody] Option option)
         {
             var str = string.Empty;
 
@@ -40,7 +40,7 @@ namespace Mi.Web.Host
                     break;
             }
 
-            return new ResponseStructure<string>(str);
+            return new MessageModel<string>(str);
         }
 
         [HttpGet]

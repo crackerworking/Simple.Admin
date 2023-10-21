@@ -1,14 +1,17 @@
 ﻿namespace Mi.Domain.Shared.Response
 {
-    public class ResponseStructure
+    /// <summary>
+    /// MessageModel
+    /// </summary>
+    public class MessageModel
     {
         public response_type Code { get; set; }
         public string? Message { get; set; }
 
-        public ResponseStructure()
+        public MessageModel()
         { }
 
-        public ResponseStructure(response_type code, string? message)
+        public MessageModel(response_type code, string? message)
         {
             Code = code;
             Message = message;
@@ -20,7 +23,7 @@
         }
     }
 
-    public class ResponseStructure<T> : ResponseStructure
+    public class MessageModel<T> : MessageModel
     {
         public override bool IsOk()
         {
@@ -29,31 +32,31 @@
 
         public T? Result { get; set; }
 
-        public ResponseStructure()
+        public MessageModel()
         { }
 
-        public ResponseStructure(response_type code, string msg, T? result)
+        public MessageModel(response_type code, string msg, T? result)
         {
             Code = code;
             Message = msg;
             Result = result;
         }
 
-        public ResponseStructure(bool successed, string msg, T? result)
+        public MessageModel(bool successed, string msg, T? result)
         {
             Code = successed ? response_type.Success : response_type.Fail;
             Message = msg;
             Result = result;
         }
 
-        public ResponseStructure(bool successed, T? result)
+        public MessageModel(bool successed, T? result)
         {
             Code = successed ? response_type.Success : response_type.Fail;
             Message = "search " + (successed ? "success" : "fail");
             Result = result;
         }
 
-        public ResponseStructure(T? result)
+        public MessageModel(T? result)
         {
             Code = response_type.Success;
             Message = "success";

@@ -34,7 +34,7 @@ namespace Mi.Web.Host.Filter
                 if (result != null)
                 {
                     var msg = result.Where(x => !string.IsNullOrEmpty(x.Value)).FirstOrDefault()?.Value;
-                    context.Result = new ObjectResult(new ResponseStructure(response_type.ParameterError, msg));
+                    context.Result = new ObjectResult(new MessageModel(response_type.ParameterError, msg));
                     _logger.LogWarning($"请求地址：{context.HttpContext.Request.Path}，参数验证错误：{msg}");
                 }
             }

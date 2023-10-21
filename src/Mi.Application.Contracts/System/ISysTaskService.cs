@@ -9,14 +9,14 @@ namespace Mi.Application.Contracts.System
         /// 定时任务列表
         /// </summary>
         /// <returns></returns>
-        Task<ResponseStructure<List<TaskItem>>> GetListAsync();
+        Task<MessageModel<List<TaskItem>>> GetListAsync();
 
         /// <summary>
         /// 更新定时任务配置
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<ResponseStructure> UpdateAsync(TaskEdit input);
+        Task<MessageModel> UpdateAsync(TaskEdit input);
 
         /// <summary>
         /// 编辑数据
