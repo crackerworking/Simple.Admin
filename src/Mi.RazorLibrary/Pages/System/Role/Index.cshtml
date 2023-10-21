@@ -187,30 +187,7 @@
                     title: '提示'
                 }, function (index) {
                     layer.close(index);
-                    let loading = layer.load();
-                    $.ajax({
-                        url: pageRootUrl + "RemoveRole",
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ id: obj.data['id'] }),
-                        type: 'post',
-                        success: function (result) {
-                            layer.close(loading);
-                            if (MiUtils.ajaxSucceed(result.code)) {
-                                layer.msg(result.message, {
-                                    icon: 1,
-                                    time: 1000
-                                }, function () {
-                                    window.refresh()
-                                });
-                            } else {
-                                layer.msg(result.message, {
-                                    icon: 2,
-                                    time: 1000
-                                });
-                            }
-                        }
-                    })
+                    common.submit(pageRootUrl + "RemoveRole", { id: obj.data['id'] }, null, 'role-table')
                 });
             }
         })

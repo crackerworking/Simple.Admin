@@ -97,29 +97,7 @@
 
             form.on('submit(save)', function (data) {
                 data.field.parentKey = parentKey
-                $.ajax({
-                    url: '/api/Dict/@(Model.Dict.Id > 0 ? "Update" : "Add")',
-                    data: JSON.stringify(data.field),
-                    contentType:'application/json',
-                    dataType: 'json',
-                    type: 'post',
-                    success: function (result) {
-                        if (MiUtils.ajaxSucceed(result.code)) {
-                            layer.msg(result.message, {
-                                icon: 1,
-                                time: 1000
-                            }, function () {
-                                parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-                                parent.window.refresh()
-                            });
-                        } else {
-                            layer.msg(result.message, {
-                                icon: 2,
-                                time: 1000
-                            });
-                        }
-                    }
-                })
+                common.submit('/api/Dict/@(Model.Dict.Id > 0 ? "Update" : "Add")', data.field, null, 'dict-table')
                 return false;
             });
         })

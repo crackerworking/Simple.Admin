@@ -44,29 +44,7 @@
                         ids.push(data.field[key])
                     }
                 }
-                $.ajax({
-                    url: '/api/User/SetUserRole',
-                    data: JSON.stringify({ userId: '@Model.Id', roleIds: ids}),
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    type: 'post',
-                    success: function (result) {
-                        if (MiUtils.ajaxSucceed(result.code)) {
-                            layer.msg(result.message, {
-                                icon: 1,
-                                time: 1000
-                            }, function () {
-                                parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-                                parent.window.refresh()
-                            });
-                        } else {
-                            layer.msg(result.message, {
-                                icon: 2,
-                                time: 1000
-                            });
-                        }
-                    }
-                })
+                common.submit('/api/User/SetUserRole', { userId: '@Model.Id', roleIds: ids }, null, 'user-table')
                 return false;
             });
         })

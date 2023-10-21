@@ -187,20 +187,8 @@
                         title: '提示'
                     }, function (index) {
                         layer.close(index);
-                        $.post(pageRootUrl + 'PassedUser?id=' + obj.data['userId'], function (res) {
-                            if (MiUtils.ajaxSucceed(res.code)) {
-                                layer.msg(res.message, {
-                                    icon: 1,
-                                    time: 1000
-                                }, function () {
-                                    window.refresh()
-                                });
-                            } else {
-                                layer.msg(res.message, {
-                                    icon: 2,
-                                    time: 1000
-                                });
-                            }
+                        common.submit(pageRootUrl + 'PassedUser', { id: obj.data['userId'] }, null, null, function (){
+                            window.refresh()
                         })
                     })
                 }

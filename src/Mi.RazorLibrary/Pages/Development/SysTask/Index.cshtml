@@ -94,8 +94,8 @@
                 }, 'filter'],
                 parseData: function (res) {
                     return {
-                        "code": 0,
-                        "msg": 'success',
+                        "code": common.tableCode(res.code),
+                        "msg": res.message,
                         "count": res.result.length,
                         "data": res.result
                     };

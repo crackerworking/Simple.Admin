@@ -66,29 +66,7 @@
                     title: '提示'
                 }, function (index) {
                     layer.close(index);
-                    $.ajax({
-                        url: '/api/SysTask/Update',
-                        data: JSON.stringify(data.field),
-                        contentType: 'application/json',
-                        dataType: 'json',
-                        type: 'post',
-                        success: function (result) {
-                            if (MiUtils.ajaxSucceed(result.code)) {
-                                layer.msg(result.message, {
-                                    icon: 1,
-                                    time: 1000
-                                }, function () {
-                                    parent.layer.close(parent.layer.getFrameIndex(window.name)); //关闭当前页
-                                    parent.window.refresh()
-                                });
-                            } else {
-                                layer.msg(result.message, {
-                                    icon: 2,
-                                    time: 1000
-                                });
-                            }
-                        }
-                    })
+                    common.submit('/api/SysTask/Update', data.field, null, 'main-table')
                 });
                 return false;
             });

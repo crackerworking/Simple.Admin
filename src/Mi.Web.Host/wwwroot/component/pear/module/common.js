@@ -41,7 +41,7 @@ layui.define(['jquery', 'element', 'table'], function (exports) {
          * 提交 json 数据
          * @param href        必选 提交接口
          * @param data        可选 提交数据
-         * @param ajaxtype    可选 提交方式(默认为get)
+         * @param ajaxtype    可选 提交方式(默认为post)
          * @param table    可选 刷新父级表
          * @param callback    可选 自定义回调函数
          * @param dataType    可选 返回数据类型 智能猜测（可以是xml, json, script, 或 html）
@@ -63,24 +63,36 @@ layui.define(['jquery', 'element', 'table'], function (exports) {
             if (is_cache !== undefined) {
                 $.ajaxSetup({cache: is_cache});
             }
+            var _layerIndex = 999999;
             $.ajax({
                 url: href,
                 contentType: 'application/json',
-                type: ajaxtype || 'get',
-                success: callback != null ? callback : function (result) {
-                    if (result.code === 1) {
-                        layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                type: ajaxtype || 'post',
+                beforeSend: function () {
+                    _layerIndex = layer.load(0)
+                },
+                complete: function () {
+                    layer.close(_layerIndex);
+                },
+                success: function (result) {
+                    layer.close(_layerIndex);
+                    if (result.code === 10000) {
+                        layer.msg(result.message, {icon: 1, time: 1000}, function () {
                             let frameIndex = parent.layer.getFrameIndex(window.name);
                             if (frameIndex) {
                                 parent.layer.close(frameIndex);//关闭当前页
                             }
                             table && parent.layui.table.reload(table);
+                            if (callback) {
+                                callback()
+                            }
                         });
                     } else {
-                        layer.msg(result.msg, {icon: 2, time: 1000});
+                        layer.msg(result.message, {icon: 2, time: 1000});
                     }
                 },
                 error: function (xhr) {
+                    layer.close(_layerIndex);
                     if (xhr.status === 401) {
                         layer.msg('权限不足，您无法访问受限资源或数据', {icon: 5});
                         return;

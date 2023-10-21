@@ -129,29 +129,8 @@
                     title: '提示'
                 }, function (index) {
                     layer.close(index);
-                    let loading = layer.load();
-                    $.ajax({
-                        url: '/api/Personal/SetPassword',
-                        data: JSON.stringify({ password: data.field.pwd }),
-                        dataType: 'json',
-                        type: 'post',
-                        contentType: 'application/json',
-                        success: function (result) {
-                            layer.close(loading);
-                            if (MiUtils.ajaxSucceed(result.code)) {
-                                layer.msg(result.message, {
-                                    icon: 1,
-                                    time: 1000
-                                }, function () {
-                                    location.reload()
-                                });
-                            } else {
-                                layer.msg(result.message, {
-                                    icon: 2,
-                                    time: 1000
-                                });
-                            }
-                        }
+                    common.submit('/api/Personal/SetPassword', { password: data.field.pwd }, null, null, function () {
+                        location.reload()
                     })
                 });
                 return false;
@@ -160,27 +139,8 @@
             form.on('submit(infoSubmit)', function (data) {
                 let param = { ...data.field }
                 param.avatar = $('#userAvatar').attr('src')
-                $.ajax({
-                    url: '/api/Personal/SetUserBaseInfo',
-                    dataType: 'json',
-                    type: 'post',
-                    data: JSON.stringify(param),
-                    contentType: 'application/json',
-                    success: function (result) {
-                        if (MiUtils.ajaxSucceed(result.code)) {
-                            layer.msg(result.message, {
-                                icon: 1,
-                                time: 1000
-                            }, function () {
-                                location.reload()
-                            });
-                        } else {
-                            layer.msg(result.message, {
-                                icon: 2,
-                                time: 1000
-                            });
-                        }
-                    }
+                common.submit('/api/Personal/SetUserBaseInfo', param, null, null, function () {
+                    location.reload()
                 })
                 return false;
             });

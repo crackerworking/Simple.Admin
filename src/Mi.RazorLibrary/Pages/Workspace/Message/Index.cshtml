@@ -217,29 +217,8 @@
                     title: '提示'
                 }, function (index) {
                     layer.close(index);
-                    let loading = layer.load();
-                    $.ajax({
-                        url: pageRootUrl + "Readed",
-                        dataType: 'json',
-                        data: JSON.stringify({ array_id: _ids }),
-                        contentType: 'application/json',
-                        type: 'post',
-                        success: function (result) {
-                            layer.close(loading);
-                            if (MiUtils.ajaxSucceed(result.code)) {
-                                layer.msg(result.message, {
-                                    icon: 1,
-                                    time: 1000
-                                }, function () {
-                                    window.refresh()
-                                });
-                            } else {
-                                layer.msg(result.message, {
-                                    icon: 2,
-                                    time: 1000
-                                });
-                            }
-                        }
+                    common.submit(pageRootUrl + "Readed", { array_id: _ids }, null, null, function () {
+                        window.refresh()
                     })
                 });
             }
