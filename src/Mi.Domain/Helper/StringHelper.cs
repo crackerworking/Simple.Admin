@@ -8,6 +8,11 @@ namespace Mi.Domain.Helper
 {
     public class StringHelper
     {
+        /// <summary>
+        /// 随机字符串
+        /// </summary>
+        /// <param name="len"></param>
+        /// <returns></returns>
         public static string GetRandomString(int len)
         {
             string s = "123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ";
@@ -21,6 +26,10 @@ namespace Mi.Domain.Helper
             return reValue;
         }
 
+        /// <summary>
+        /// 随机数
+        /// </summary>
+        /// <returns></returns>
         public static int GetNewSeed()
         {
             byte[] rndBytes = new byte[4];
@@ -29,6 +38,11 @@ namespace Mi.Domain.Helper
             return BitConverter.ToInt32(rndBytes, 0);
         }
 
+        /// <summary>
+        /// mac地址
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="FriendlyException"></exception>
         public static string GetMacAddress()
         {
             try
@@ -49,55 +63,47 @@ namespace Mi.Domain.Helper
             }
         }
 
+        /// <summary>
+        /// 单用户功能缓存key
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
         public static string UserKey(string userName, string roleName) => $"{userName}_function_{roleName}";
 
+        /// <summary>
+        /// 用户Claim.UserData字符串
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userName"></param>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
         public static string UserDataString(long id, string userName, string roleName) => $"{id}_{userName}_{roleName.Replace(',', '&')}";
 
+        /// <summary>
+        /// 用户Claim.UserData
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static (long, string, string) GetUserData(string str)
         {
             var strArray = str.Split('_');
             return (long.Parse(strArray[0]), strArray[1], strArray[2]);
         }
 
+        /// <summary>
+        /// 用户功能缓存key正则匹配
+        /// </summary>
+        /// <returns></returns>
         public static string UserFunctionCachePattern() => "\\.*(_function_){1}\\.*";
 
+        /// <summary>
+        /// 默认头像地址
+        /// </summary>
+        /// <returns></returns>
         public static string DefaultAvatar()
         {
             return "/admin/images/avatar.jpg";
         }
-
-        /// <summary>
-        /// 命名变更
-        /// </summary>
-        /// <param name="str">源字符串</param>
-        /// <param name="flag">true 大驼峰转小写+下划线,false 反之</param>
-        /// <returns></returns>
-        public static string NameChanged(string str, bool flag = true)
-        {
-            string strItemTarget = "";
-            for (int j = 0; j < str.Length; j++)
-            {
-                string temp = str[j].ToString();
-                if (Regex.IsMatch(temp, "[A-Z]"))
-                {
-                    temp = "_" + temp.ToLower();
-                }
-                strItemTarget += temp;
-            }
-            return strItemTarget;
-        }
-
-        /// <summary>
-        /// 参数querystring模式
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public static string ParamString(Dictionary<string, string> param)
-        {
-            var str = string.Join('&', param.Select(x => $"{x.Key}={x.Value}"));
-            return "?" + str.Trim('&');
-        }
-
-        public static string CorpSecretKey(string corpSecret) => $"wx_work_{corpSecret}";
     }
 }

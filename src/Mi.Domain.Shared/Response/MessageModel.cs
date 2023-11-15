@@ -5,7 +5,14 @@
     /// </summary>
     public class MessageModel
     {
+        /// <summary>
+        /// 响应代码
+        /// </summary>
         public response_type Code { get; set; }
+
+        /// <summary>
+        /// 响应消息
+        /// </summary>
         public string? Message { get; set; }
 
         public MessageModel()
@@ -30,6 +37,9 @@
             return Code == response_type.Success && Result != null;
         }
 
+        /// <summary>
+        /// 响应数据
+        /// </summary>
         public T? Result { get; set; }
 
         public MessageModel()

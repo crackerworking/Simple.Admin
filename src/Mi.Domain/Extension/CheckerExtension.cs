@@ -1,5 +1,8 @@
 ﻿namespace Mi.Domain.Extension
 {
+    /// <summary>
+    /// 检查扩展
+    /// </summary>
     public static class CheckerExtension
     {
         // ============== array ==============

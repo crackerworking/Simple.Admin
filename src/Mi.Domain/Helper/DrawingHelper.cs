@@ -9,6 +9,13 @@ namespace Mi.Domain.Helper
 {
     public class DrawingHelper
     {
+        /// <summary>
+        /// 图片验证码
+        /// </summary>
+        /// <param name="verifyCode">验证码</param>
+        /// <param name="width">宽度</param>
+        /// <param name="height">高度</param>
+        /// <returns></returns>
         public static byte[] CreateByteByImgVerifyCode(string verifyCode, int width, int height)
         {
             using Image image = new Image<Rgba32>(width, height);

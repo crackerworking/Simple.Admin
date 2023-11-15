@@ -7,8 +7,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Mi.Domain.PipelineConfiguration
 {
+    /// <summary>
+    /// 接口-实现形式注入
+    /// </summary>
     public static class InterfaceInjectionSetup
     {
+        /// <summary>
+        /// 动态注入
+        /// </summary>
+        /// <param name="services"></param>
         public static void AddAutomaticInjection(this IServiceCollection services)
         {
             foreach (var assembly in App.LoadAssemblies())
@@ -22,6 +29,11 @@ namespace Mi.Domain.PipelineConfiguration
         private static readonly Type _transientType = typeof(ITransient);
         private static readonly List<Type> _containTypes = new List<Type> { _scopedType, _singletonType, _transientType };
 
+        /// <summary>
+        /// 加入程序集
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="assembly"></param>
         private static void JoinAssembly(IServiceCollection services, Assembly assembly)
         {
             if (assembly == null) return;
@@ -33,6 +45,11 @@ namespace Mi.Domain.PipelineConfiguration
             }
         }
 
+        /// <summary>
+        /// 单个注入
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="type"></param>
         private static void Add(IServiceCollection services, Type type)
         {
             var interfaceTypes = type.GetInterfaces().Where(t => !_containTypes.Contains(t)).ToList();
@@ -49,6 +66,12 @@ namespace Mi.Domain.PipelineConfiguration
             }
         }
 
+        /// <summary>
+        /// 注入
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="implType"></param>
+        /// <param name="serviceType"></param>
         private static void Execute(IServiceCollection services, Type implType, Type serviceType)
         {
             if (implType.IsAssignableTo(_scopedType))

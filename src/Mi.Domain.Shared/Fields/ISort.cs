@@ -1,5 +1,8 @@
 ﻿namespace Mi.Domain.Shared.Fields
 {
+    /// <summary>
+    /// 排序
+    /// </summary>
     public interface ISort
     {
         /// <summary>

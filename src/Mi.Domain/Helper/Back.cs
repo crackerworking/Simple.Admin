@@ -2,6 +2,9 @@
 
 namespace Mi.Domain.Helper
 {
+    /// <summary>
+    /// webapi返回
+    /// </summary>
     public static class Back
     {
         public static MessageModel Success(string? message = default)

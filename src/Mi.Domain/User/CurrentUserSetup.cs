@@ -1,6 +1,5 @@
 ﻿using Mi.Domain.Extension;
 using Mi.Domain.Shared.Core;
-using Mi.Domain.Shared.Models;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,15 +17,14 @@ namespace Mi.Domain.User
                 var result = new CurrentUser();
                 if (httpContext != null)
                 {
-                    var user = httpContext.Features.Get<UserModel>() ?? new UserModel();
-                    var user2 = httpContext.GetUser();
-                    if (user.PowerItems != null && user2 != null)
+                    var user = httpContext.GetUser();
+                    if (user.PowerItems != null && user != null)
                     {
                         result.FuncIds = user.PowerItems.Select(x => x.Id).ToList();
                         result.AuthCodes = user.PowerItems.Select(x => x.AuthCode).Where(x => !string.IsNullOrEmpty(x)).ToList();
-                        result.UserId = user2.UserId;
-                        result.UserName = user2.UserName;
-                        result.IsSuperAdmin = user2.IsSuperAdmin;
+                        result.UserId = user.UserId;
+                        result.UserName = user.UserName;
+                        result.IsSuperAdmin = user.IsSuperAdmin;
                     }
                 }
                 return result;

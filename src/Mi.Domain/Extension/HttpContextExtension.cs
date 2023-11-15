@@ -9,12 +9,22 @@ namespace Mi.Domain.Extension
 {
     public static class HttpContextExtension
     {
+        /// <summary>
+        /// 获取UserModel
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static UserModel GetUser(this HttpContext? context)
         {
             if (context == null) return new UserModel();
             return context.Features.Get<UserModel>() ?? new UserModel();
         }
 
+        /// <summary>
+        /// 用户UserKey
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static string GetUserKey(this HttpContext? context)
         {
             var userData = context.GetUserData();
@@ -27,6 +37,11 @@ namespace Mi.Domain.Extension
             return "";
         }
 
+        /// <summary>
+        /// 获取UserData
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static string GetUserData(this HttpContext? context)
         {
             if (context == null) return "";

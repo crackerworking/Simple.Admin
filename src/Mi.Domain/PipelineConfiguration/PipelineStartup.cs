@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Mi.Domain.PipelineConfiguration
 {
+    /// <summary>
+    /// 管道启动
+    /// </summary>
     public class PipelineStartup
     {
         private static List<Type> _types;
@@ -20,6 +23,10 @@ namespace Mi.Domain.PipelineConfiguration
             _types = GetAllTypes();
         }
 
+        /// <summary>
+        /// 配置服务
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             foreach (var type in _types)
@@ -29,6 +36,10 @@ namespace Mi.Domain.PipelineConfiguration
             }
         }
 
+        /// <summary>
+        /// 配置App
+        /// </summary>
+        /// <param name="app"></param>
         public void Configure(IApplicationBuilder app)
         {
             var dict = new Dictionary<Type, int>();
@@ -52,6 +63,10 @@ namespace Mi.Domain.PipelineConfiguration
             }
         }
 
+        /// <summary>
+        /// 反射获取继承 <see cref="Startup"/> 的启动类
+        /// </summary>
+        /// <returns></returns>
         private List<Type> GetAllTypes()
         {
             var list = new List<Type>();
