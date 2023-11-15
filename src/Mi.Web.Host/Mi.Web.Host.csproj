@@ -30,6 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Mi.Application\Mi.Application.csproj" />
     <ProjectReference Include="..\Mi.ControllerLibrary\Mi.ControllerLibrary.csproj" />
     <ProjectReference Include="..\Mi.DataDriver\Mi.DataDriver.csproj" />

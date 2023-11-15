@@ -27,7 +27,7 @@ namespace Mi.Web.Host
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddRazorPages();
+            builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
             builder.Services.AddSignalR();
             builder.Services.AddControllers(opt =>
             {
