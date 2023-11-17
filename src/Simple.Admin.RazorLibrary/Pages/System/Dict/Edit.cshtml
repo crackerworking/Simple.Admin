@@ -1,0 +1,105 @@
+﻿@page "/system/dict/edit"
+@model Simple.Admin.RazorLibrary.Pages.System.Dict.EditModel
+
+<div class="layui-form">
+    <input type="hidden" name="id" value="@Model.Dict.Id" />
+    <div class="mainBox">
+        <div class="main-container">
+            @if (Model.Options != null && Model.Options.Count > 0)
+            {
+                <div class="layui-form-item">
+                    <label class="layui-form-label">上级</label>
+                    <div class="layui-input-block">
+                        <select name="parentId" lay-search lay-filter="parent-key-select">
+                            <option value="">请选择字典上级</option>
+                            @foreach (var item in Model.Options.Where(x => x.Id != Model.Dict.Id))
+                            {
+                                @if(item.Id == Model.Dict.ParentId)
+                                {
+                                    <option selected="selected" value="@item.Id" data-key="@item.Key">@item.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Id" data-key="@item.Key">@item.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            }
+            <div class="layui-form-item">
+                <label class="layui-form-label mi-required-label">名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" value="@Model.Dict.Name" lay-verify="required" autocomplete="off" placeholder="请输入字典名称"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label mi-required-label">键名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="key" value="@Model.Dict.Key" lay-verify="required" autocomplete="off" placeholder="请输入字典键名"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">字典值</label>
+                <div class="layui-input-block">
+                    <input type="text" name="value" value="@Model.Dict.Value" autocomplete="off" placeholder="请输入字典值"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序</label>
+                <div class="layui-input-block">
+                    <input type="number" name="sort" value="@Model.Dict.Sort" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <input type="text" name="remark" value="@Model.Dict.Remark" autocomplete="off" placeholder="请输入备注"
+                           class="layui-input">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit
+                    lay-filter="save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        layui.use(['form', 'jquery', 'common'], function () {
+            let form = layui.form;
+            let $ = layui.jquery;
+            let common = layui.common;
+            let parentKey;
+
+            form.on('select(parent-key-select)',function(data){
+                let val = data.value;
+                let options = $('select[name="parentId"] option')
+                for (let i = 0; i < options.length;i++){
+                    if($(options[i]).val() == val){
+                        parentKey = $(options[i]).attr('data-key')
+                        break
+                    }
+                }
+            })
+
+            form.on('submit(save)', function (data) {
+                data.field.parentKey = parentKey
+                common.submit('/api/Dict/@(Model.Dict.Id > 0 ? "Update" : "Add")', data.field, null, 'dict-table')
+                return false;
+            });
+        })
+    </script>
+}

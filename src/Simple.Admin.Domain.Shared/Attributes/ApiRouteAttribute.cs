@@ -1,0 +1,15 @@
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Simple.Admin.Domain.Shared.Attributes
+{
+    /// <summary>
+    /// 接口路由
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
+    public class ApiRouteAttribute : RouteAttribute
+    {
+        public ApiRouteAttribute() : base("/api/[controller]/[action]")
+        {
+        }
+    }
+}

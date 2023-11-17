@@ -1,0 +1,1 @@
+﻿global using Simple.Admin.Application.Contracts.System;

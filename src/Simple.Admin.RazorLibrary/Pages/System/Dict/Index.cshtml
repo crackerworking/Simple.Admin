@@ -1,0 +1,272 @@
+﻿@page "/system/dict"
+@attribute [AuthorizeCode("System:Dict")]
+@attribute [Authorize]
+@model Simple.Admin.RazorLibrary.Pages.System.Dict.IndexModel
+@{
+    ViewData["PC"] = true;
+}
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div class="layui-form">
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">上级</label>
+                <div class="layui-input-inline">
+                    <select name="parentId" lay-search></select>
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">关键字</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="vague" class="layui-input" placeholder="字典名称/键名">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-inline">
+                    <input type="text" placeholder="请输入备注" name="remark" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <permission-button class-name="pear-btn pear-btn-primary pear-btn-md" lay-submit="true" lay-filter="dict-query" auth-code="System:Dict:Query">
+                    <i class="layui-icon layui-icon-search"></i>
+                    查询
+                </permission-button>
+                <permission-button class-name="pear-btn pear-btn-md" id="btnReset" auth-code="System:Dict:Query">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                    重置
+                </permission-button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--table-->
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="dict-table" lay-filter="dict-table"></table>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/html" id="dict-toolbar">
+        <permission-button class-name="pear-btn pear-btn-primary pear-btn-md" lay-event="add" auth-code="System:Dict:Add">
+            <i class="layui-icon layui-icon-add-1"></i>
+            新增
+        </permission-button>
+        <permission-button class-name="pear-btn pear-btn-danger pear-btn-md" lay-event="remove-many" auth-code="System:Dict:Remove">
+            <i class="layui-icon layui-icon-delete"></i>
+            批量删除
+        </permission-button>
+    </script>
+
+    <script type="text/html" id="dict-bar">
+        <permission-button class-name="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit" auth-code="System:Dict:Update">
+            <i class="layui-icon layui-icon-edit"></i>
+        </permission-button>
+        <permission-button class-name="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove" auth-code="System:Dict:Remove">
+            <i class="layui-icon layui-icon-delete"></i>
+        </permission-button>
+    </script>
+
+    <script>
+        layui.use(['table', 'form', 'jquery', 'common'], function () {
+            let table = layui.table;
+            let form = layui.form;
+            let $ = layui.jquery;
+            let common = layui.common;
+            let pageRootUrl = "/api/Dict/";
+
+            loadSelectOptions();
+
+            table.render({
+                elem: '#dict-table',
+                url: pageRootUrl + 'GetDictList',
+                page: true,
+                request: {
+                    limitName: 'size'
+                },
+                contentType: 'application/json',
+                method: 'post',
+                cols: [[
+                    {
+                        type: 'checkbox'
+                    },
+                    {
+                        type: 'numbers'
+                    },
+                    {
+                        title: '名称',
+                        field: 'name',
+                        align: 'center'
+                    },
+                    {
+                        title: '键名',
+                        field: 'key',
+                        align: 'center'
+                    },
+                    {
+                        title: '字典值',
+                        field: 'value',
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'value')
+                    },
+                    {
+                        title: '排序',
+                        field: 'sort',
+                        align: 'center'
+                    },
+                    {
+                        title: '备注',
+                        field: 'remark',
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'remark')
+                    },
+                    {
+                        title: '上级',
+                        field: 'parentName',
+                        align: 'center',
+                        templet: (d) => common.handleNullValue(d, 'parentName')
+                    },
+                    {
+                        title: '创建时间',
+                        field: 'createdOn',
+                        align: 'center'
+                    },
+                    {
+                        title: '操作',
+                        toolbar: '#dict-bar',
+                        align: 'center',
+                        width: 130
+                    }
+                ]],
+                skin: 'line',
+                toolbar: '#dict-toolbar',
+                defaultToolbar: [{
+                    title: '刷新',
+                    layEvent: 'refresh',
+                    icon: 'layui-icon-refresh',
+                }, 'filter'],
+                parseData: function (res) {
+                    let paging = common.pagingResult(res);
+                    return {
+                        "code": common.tableCode(res.code),
+                        "msg": res.message,
+                        "count": paging.total,
+                        "data": paging.data
+                    };
+                }
+            });
+
+            table.on('toolbar(dict-table)', function (obj) {
+                if (obj.event === 'add') {
+                    window.add();
+                } else if (obj.event === 'refresh') {
+                    window.refresh();
+                } else if (obj.event === 'remove-many') {
+                    window.batchRemove(obj)
+                }
+            });
+
+            table.on('tool(dict-table)', function (obj) {
+                if (obj.event === 'remove') {
+                    window.remove(obj);
+                } else if (obj.event === 'edit') {
+                    window.edit(obj);
+                }
+            });
+
+            form.on('submit(dict-query)', function (data) {
+                table.reload('dict-table', {
+                    where: data.field,
+                    page: {
+                        curr: 1
+                    }
+                })
+                return false;
+            });
+
+            $("#btnReset").click(function () {
+                $("input[name='dictName']").val('');
+                $("input[name='remark']").val('');
+                $("select[name='parentId']").val('')
+                form.render();
+                table.reload('dict-table', {
+                    where: {}
+                })
+            })
+
+            window.refresh = function (param) {
+                table.reload('dict-table');
+                loadSelectOptions()
+            }
+
+            window.add = function () {
+                layer.open({
+                    type: 2,
+                    title: '新增',
+                    shade: 0.1,
+                    area: ['500px', '490px'],
+                    content: "/System/Dict/" + 'Edit'
+                });
+            }
+
+            window.batchRemove = function (obj) {
+                var checkIds = common.checkField(obj, 'id');
+                if (!checkIds || checkIds.split(',').length === 0) {
+                    layer.msg('请选择一行数据', {
+                        icon: 2,
+                        time: 800
+                    });
+                    return
+                }
+                let ids = checkIds.split(',')
+
+                layer.confirm('确定要删除选中字典？', {
+                    icon: 3,
+                    title: '提示'
+                }, function (index) {
+                    layer.close(index);
+                    common.submit(pageRootUrl + "RemoveDict", { array_id: ids }, null, null, function () {
+                        window.refresh()
+                    })
+                });
+            }
+
+            window.edit = function (obj) {
+                layer.open({
+                    type: 2,
+                    title: '编辑',
+                    shade: 0.1,
+                    area: ['500px', '490px'],
+                    content: "/System/Dict/" + 'Edit?id=' + obj.data['id']
+                });
+            }
+
+            window.remove = function (obj) {
+                layer.confirm('确定要删除该字典？', {
+                    icon: 3,
+                    title: '提示'
+                }, function (index) {
+                    layer.close(index);
+                    common.submit(pageRootUrl + "RemoveDict", { array_id: [obj.data['id']] }, null, null, function () {
+                        window.refresh()
+                    })
+                });
+            }
+
+            function loadSelectOptions() {
+                $.post(pageRootUrl + 'GetParentList', function (res) {
+                    if (res && res.length) {
+                        let arr = []
+                        arr.push(`<option value=''>全部<option>`)
+                        for (const item of res) {
+                            arr.push(`<option value='${item.value}'>${item.name}</option>`)
+                        }
+                        $("select[name='parentId']").html(arr.join(''))
+                        form.render()
+                    }
+                })
+            }
+        })
+    </script>
+}

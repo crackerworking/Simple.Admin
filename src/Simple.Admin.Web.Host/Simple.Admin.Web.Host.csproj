@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="font\RedwoodMount-p7Jrd.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="font\RedwoodMount-p7Jrd.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Simple.Admin.Application\Simple.Admin.Application.csproj" />
+    <ProjectReference Include="..\Simple.Admin.ControllerLibrary\Simple.Admin.ControllerLibrary.csproj" />
+    <ProjectReference Include="..\Simple.Admin.DataDriver\Simple.Admin.DataDriver.csproj" />
+    <ProjectReference Include="..\Simple.Admin.RazorLibrary\Simple.Admin.RazorLibrary.csproj" />
+  </ItemGroup>
+
+</Project>

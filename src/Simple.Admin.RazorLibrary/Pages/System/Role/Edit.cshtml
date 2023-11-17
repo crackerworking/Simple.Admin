@@ -1,0 +1,49 @@
+﻿@page "/system/role/edit"
+@model Simple.Admin.RazorLibrary.Pages.System.Role.EditModel
+
+<div class="layui-form">
+    <input type="hidden" name="id" value="@Model.Role.Id"/>
+    <div class="mainBox">
+        <div class="main-container">
+            <div class="layui-form-item">
+                <label class="layui-form-label mi-required-label">角色名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="name" value="@Model.Role.RoleName" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <input type="text" name="remark" value="@Model.Role.Remark" autocomplete="off" placeholder="请输入备注"
+                           class="layui-input">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit
+                    lay-filter="role-save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        layui.use(['form', 'jquery', 'common'], function () {
+            let form = layui.form;
+            let $ = layui.jquery;
+            let common = layui.common;
+
+            form.on('submit(role-save)', function (data) {
+                common.submit('/api/Role/@(Model.Role.Id > 0 ? "UpdateRole" : "AddRole")', data.field, null, 'role-table')
+                return false;
+            });
+        })
+    </script>
+}
