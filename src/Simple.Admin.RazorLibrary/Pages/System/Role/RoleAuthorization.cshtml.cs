@@ -9,6 +9,7 @@ namespace Simple.Admin.RazorLibrary.Pages.System.Role
         public async Task OnGetAsync(long? id)
         {
             Id = id.GetValueOrDefault();
+            await Task.CompletedTask;
         }
     }
 }

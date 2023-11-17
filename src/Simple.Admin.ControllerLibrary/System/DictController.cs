@@ -29,7 +29,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// <summary>
         /// 新增字典
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="operation"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Dict:Add")]
         public async Task<MessageModel> AddAsync([FromBody] DictPlus operation)
@@ -38,7 +38,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// <summary>
         /// 更新字典
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="operation"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Dict:Update")]
         public async Task<MessageModel> UpdateAsync([FromBody] DictEdit operation)
