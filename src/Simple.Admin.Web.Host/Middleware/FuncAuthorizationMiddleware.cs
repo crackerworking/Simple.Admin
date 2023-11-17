@@ -1,14 +1,9 @@
-﻿using System.Reflection;
-
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 
 using Simple.Admin.Domain.Extension;
-using Simple.Admin.Domain.Shared;
 using Simple.Admin.Domain.Shared.Attributes;
-using Simple.Admin.Domain.Shared.GlobalVars;
 using Simple.Admin.Domain.Shared.Response;
 
 namespace Simple.Admin.Web.Host.Middleware
@@ -62,19 +57,6 @@ namespace Simple.Admin.Web.Host.Middleware
                 }
             }
             await defaultHandler.HandleAsync(next, context, policy, authorizeResult);
-        }
-
-        private List<Type> GetControllerTypesCache()
-        {
-            var cache = App.Provider.GetRequiredService<IMemoryCache>();
-            var types = cache.Get<List<Type>>(CacheConst.CONTROLLER_TYPES);
-            if (types == null)
-            {
-                var assembly = Assembly.Load("Simple.Admin.Admin");
-                types = assembly?.GetTypes().Where(x => x.BaseType != null && CONTROLLER_TYPES.Contains(x.BaseType)).ToList() ?? new List<Type>();
-                cache.Set(CacheConst.CONTROLLER_TYPES, types, CacheConst.Year);
-            }
-            return types;
         }
     }
 }
