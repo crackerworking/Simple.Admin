@@ -22,14 +22,6 @@ namespace Simple.Admin.ControllerLibrary.System
         }
 
         /// <summary>
-        /// 获取当前用户可查看的侧边菜单
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<List<PaMenuModel>> GetSiderMenu() => await _permissionService.GetSiderMenuAsync();
-
-        /// <summary>
         /// 用户基本信息
         /// </summary>
         /// <returns></returns>

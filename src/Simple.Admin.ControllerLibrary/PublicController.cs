@@ -36,16 +36,5 @@ namespace Simple.Admin.ControllerLibrary
         {
             return _memoryCache.Get<string>(guid.ToString())!;
         }
-
-        /// <summary>
-        /// pear-admin需要配置
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<PaConfigModel> Config()
-        {
-            return await _publicService.ReadConfigAsync();
-        }
     }
 }

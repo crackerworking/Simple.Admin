@@ -23,12 +23,6 @@ namespace Simple.Admin.Application.Contracts.System
         Task<MessageModel<IList<UserRoleOption>>> GetUserRolesAsync(long userId);
 
         /// <summary>
-        /// 获取当前用户可查看的侧边菜单
-        /// </summary>
-        /// <returns></returns>
-        Task<List<PaMenuModel>> GetSiderMenuAsync();
-
-        /// <summary>
         /// 获取角色功能
         /// </summary>
         /// <param name="input"></param>
@@ -54,7 +48,7 @@ namespace Simple.Admin.Application.Contracts.System
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<MessageModel> LoginAsync(LoginIn input);
+        Task<MessageModel<LoginOut>> LoginAsync(LoginIn input);
 
         /// <summary>
         /// 注销
