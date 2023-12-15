@@ -23,7 +23,7 @@ namespace Simple.Admin.ControllerLibrary.Account
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<MessageModel<LoginOut>> Do([FromBody] LoginIn input)
+        public async Task<MessageModel> Do([FromBody] LoginIn input)
         {
             var result = await _permissionService.LoginAsync(input);
             await _logService.WriteLoginLogAsync(input.userName, result.Code == response_type.Success, result.Message ?? "");
@@ -43,7 +43,6 @@ namespace Simple.Admin.ControllerLibrary.Account
         /// 注销
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
         public async Task<IActionResult> Exit()
         {
             await _permissionService.LogoutAsync();

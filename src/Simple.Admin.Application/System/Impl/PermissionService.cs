@@ -70,6 +70,35 @@ namespace Simple.Admin.Application.System.Impl
             _transactionContext = transactionContext;
         }
 
+        public async Task<List<PaMenuModel>> GetSiderMenuAsync()
+        {
+            var topLevels = (await _functionService.GetFunctionsCacheAsync())
+                .Where(x => _miUser.FuncIds.Contains(x.Id) && x.ParentId <= 0 && x.FunctionType == (int)EnumFunctionType.Menu).OrderBy(x => x.Sort);
+            var list = new List<PaMenuModel>();
+            foreach (var x in topLevels)
+            {
+                var children = (await GetPaChildrenAsync(x.Id)).ToList();
+                var temp = new PaMenuModel(x.Id, 0, x.FunctionName, x.Url, x.Icon, children);
+                list.Add(temp);
+            }
+
+            return list;
+        }
+
+        private async Task<IList<PaMenuModel>> GetPaChildrenAsync(long id)
+        {
+            var children = (await _functionService.GetFunctionsCacheAsync()).Where(x => _miUser.FuncIds.Contains(x.Id) && x.ParentId > 0 && x.FunctionType == (int)EnumFunctionType.Menu && x.ParentId == id).OrderBy(x => x.Sort);
+            var list = new List<PaMenuModel>();
+            foreach (var x in children)
+            {
+                var temp = (await GetPaChildrenAsync(x.Id)).ToList();
+                var type = await GetMenuTypeAsync(x.Children);
+                var menu = new PaMenuModel(x.Id, type, x.FunctionName, x.Url, x.Icon, temp);
+                list.Add(menu);
+            }
+            return list;
+        }
+
         /// <summary>
         /// 获取菜单类型 0目录 1菜单
         /// </summary>
@@ -102,7 +131,7 @@ namespace Simple.Admin.Application.System.Impl
         public async Task<MessageModel> SetUserRoleAsync(SetUserRoleIn input)
         {
             var user = await _userRepository.GetAsync(x => x.Id == input.userId);
-            if (user == null) return Back.Fail("用户不存在").As<LoginOut>();
+            if (user == null) return Back.Fail("用户不存在");
 
             await _dapperRepository.ExecuteAsync("delete from SysUserRole where UserId=@id", new { id = input.userId });
             var list = new List<SysUserRole>();
@@ -122,9 +151,9 @@ namespace Simple.Admin.Application.System.Impl
 
         public async Task<MessageModel> RegisterAsync(RegisterIn input)
         {
-            if (!input.userName.RegexValidate(PatternConst.UserName)) return Back.Fail("用户名只支持大小写字母和数字，最短4位，最长12位").As<LoginOut>();
+            if (!input.userName.RegexValidate(PatternConst.UserName)) return Back.Fail("用户名只支持大小写字母和数字，最短4位，最长12位");
             var count = await _dapperRepository.ExecuteScalarAsync<int>("select count(*) from SysUser where LOWER(UserName)=@name and IsDeleted=0", new { name = input.userName.ToLower() });
-            if (count > 0) return Back.Fail("用户名已存在").As<LoginOut>();
+            if (count > 0) return Back.Fail("用户名已存在");
 
             var user = new SysUser();
             user.UserName = input.userName;
@@ -144,17 +173,17 @@ namespace Simple.Admin.Application.System.Impl
             return result;
         }
 
-        public async Task<MessageModel<LoginOut>> LoginAsync(LoginIn input)
+        public async Task<MessageModel> LoginAsync(LoginIn input)
         {
             var validateFlag = await _captcha.ValidateAsync(input.guid.ToString(), input.code);
-            if (!validateFlag) return Back.Fail("验证码错误").As<LoginOut>();
+            if (!validateFlag) return Back.Fail("验证码错误");
 
             var user = await _userRepository.GetAsync(x => x.UserName.ToLower() == input.userName.ToLower());
-            if (user == null) return Back.Fail("用户名不存在").As<LoginOut>();
-            if (user.IsEnabled == 0) return Back.Fail("没有登录权限，请联系管理员").As<LoginOut>();
+            if (user == null) return Back.Fail("用户名不存在");
+            if (user.IsEnabled == 0) return Back.Fail("没有登录权限，请联系管理员");
 
             var flag = user.Password == EncryptionHelper.GenEncodingPassword(input.password, user.PasswordSalt);
-            if (!flag) return Back.Fail("用户名或密码错误").As<LoginOut>();
+            if (!flag) return Back.Fail("用户名或密码错误");
 
             var roleNameArray = (await _userService.GetRolesAsync(user.Id)).Select(x => x.RoleName).ToList();
             if (user.IsSuperAdmin == 1)
@@ -169,15 +198,10 @@ namespace Simple.Admin.Application.System.Impl
                 new (ClaimTypes.Role,roleNames),
                 new (ClaimTypes.UserData,StringHelper.UserDataString(user.Id,user.UserName,roleNames))
             };
-            //var claimIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            //await _context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimIdentity));
-            var model = new LoginOut
-            {
-                Token = IdentityUser.CreateToken(claims, 3),
-                UserName = user.UserName
-            };
+            var claimIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            await _context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimIdentity));
 
-            return Back.Success("登录成功").As(model);
+            return Back.Success("登录成功");
         }
 
         public async Task<UserModel> QueryUserModelCacheAsync(string userData)
@@ -227,7 +251,7 @@ namespace Simple.Admin.Application.System.Impl
         public async Task<MessageModel> SetRoleFunctionsAsync(SetRoleFunctionsIn input)
         {
             var role = _roleRepository.GetAsync(x => x.Id == input.id);
-            if (role == null || role.Id <= 0) return Back.Fail("角色不存在").As<LoginOut>();
+            if (role == null || role.Id <= 0) return Back.Fail("角色不存在");
 
             try
             {

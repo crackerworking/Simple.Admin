@@ -1,9 +1,8 @@
-using System.Text;
+using Simple.Admin.Domain.Json;
 
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 using Quartz.Impl;
 
@@ -12,7 +11,6 @@ using Simple.Admin.DataDriver.EntityFrameworkCore;
 using Simple.Admin.Domain.Extension;
 using Simple.Admin.Domain.Helper;
 using Simple.Admin.Domain.Hubs;
-using Simple.Admin.Domain.Json;
 using Simple.Admin.Domain.PipelineConfiguration;
 using Simple.Admin.Domain.Shared;
 using Simple.Admin.Domain.Shared.Models;
@@ -30,6 +28,7 @@ namespace Simple.Admin.Web.Host
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
             builder.Services.AddSignalR();
             builder.Services.AddControllers(opt =>
             {
@@ -43,22 +42,8 @@ namespace Simple.Admin.Web.Host
             });
             builder.Services.AddHttpContextAccessor();
 
-            // JWT
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-            {
-                var key = Encoding.ASCII.GetBytes(App.Configuration["JwtConfig:Secret"]!);
-
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true, //这将使用我们在 appsettings 中添加的 secret 来验证 JWT token 的第三部分，并验证 JWT token 是由我们生成的
-                    IssuerSigningKey = new SymmetricSecurityKey(key), //将密钥添加到我们的 JWT 加密算法中
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    RequireExpirationTime = false
-                };
-            });
+            builder.Services.AddAuthentication()
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => builder.Configuration.Bind("CookieSettings", options));
             builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, FuncAuthorizationMiddleware>();
 
             PipelineStartup.Instance.ConfigureServices(builder.Services);
@@ -67,11 +52,6 @@ namespace Simple.Admin.Web.Host
             var app = builder.Build();
 
             App.Running(app.Environment.IsDevelopment(), app.Environment.WebRootPath, app.Configuration, app.Services);
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseOpenApi();
-                app.UseSwaggerUi3();
-            }
 
             PipelineStartup.Instance.Configure(app);
 
@@ -90,6 +70,7 @@ namespace Simple.Admin.Web.Host
             app.UseMiddleware<UserMiddleware>();
             app.UseAuthorization();
 
+            app.MapRazorPages();
             app.MapControllerRoute("api-router", "/api/{controller}/{action}");
 
             app.MapHub<NoticeHub>("/noticeHub");
@@ -118,6 +99,10 @@ namespace Simple.Admin.Web.Host
                 var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
                 return httpContextAccessor.HttpContext!.Features.Get<MiHeader>() ?? new MiHeader();
             });
+
+            // UI Config
+            var uiConfig = configuration.GetSection("AdminUI");
+            services.Configure<PaConfigModel>(uiConfig);
 
             // quartz
             services.AddSingleton(sp =>

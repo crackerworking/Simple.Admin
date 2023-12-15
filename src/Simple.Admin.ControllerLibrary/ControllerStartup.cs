@@ -40,15 +40,6 @@ namespace Simple.Admin.ControllerLibrary
                     };
                 };
                 options.UseControllerSummaryAsTagDescription = true;
-                options.AddSecurity("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "请输入token，格式：Bearer XXXX",
-                    Name = "Authorization",
-                    In = OpenApiSecurityApiKeyLocation.Header,
-                    Type = OpenApiSecuritySchemeType.ApiKey,
-                    BearerFormat = "JWT",
-                    Scheme = "Bearer"
-                });
             });
         }
     }

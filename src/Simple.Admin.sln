@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.Admin.Web.Host", "Simple.Admin.Web.Host\Simple.Admin.Web.Host.csproj", "{37640B89-91C4-4221-80B9-621787AFC3AF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.Admin.RazorLibrary", "Simple.Admin.RazorLibrary\Simple.Admin.RazorLibrary.csproj", "{7B953DB4-1B3B-461A-AF2E-E0892BFB6EE2}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.Admin.Application.Contracts", "Simple.Admin.Application.Contracts\Simple.Admin.Application.Contracts.csproj", "{54DB1230-1095-4CB5-91C6-5AB9D775773D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.Admin.Domain", "Simple.Admin.Domain\Simple.Admin.Domain.csproj", "{41D47AD5-7539-415D-A151-BC3A1938CADF}"
@@ -32,6 +34,10 @@ Global
 		{37640B89-91C4-4221-80B9-621787AFC3AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37640B89-91C4-4221-80B9-621787AFC3AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37640B89-91C4-4221-80B9-621787AFC3AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B953DB4-1B3B-461A-AF2E-E0892BFB6EE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B953DB4-1B3B-461A-AF2E-E0892BFB6EE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B953DB4-1B3B-461A-AF2E-E0892BFB6EE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B953DB4-1B3B-461A-AF2E-E0892BFB6EE2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{54DB1230-1095-4CB5-91C6-5AB9D775773D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54DB1230-1095-4CB5-91C6-5AB9D775773D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54DB1230-1095-4CB5-91C6-5AB9D775773D}.Release|Any CPU.ActiveCfg = Release|Any CPU
