@@ -1,5 +1,3 @@
-using Simple.Admin.Domain.Json;
-
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +9,7 @@ using Simple.Admin.DataDriver.EntityFrameworkCore;
 using Simple.Admin.Domain.Extension;
 using Simple.Admin.Domain.Helper;
 using Simple.Admin.Domain.Hubs;
+using Simple.Admin.Domain.Json;
 using Simple.Admin.Domain.PipelineConfiguration;
 using Simple.Admin.Domain.Shared;
 using Simple.Admin.Domain.Shared.Models;
@@ -28,7 +27,7 @@ namespace Simple.Admin.Web.Host
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+            builder.Services.AddRazorPages();
             builder.Services.AddSignalR();
             builder.Services.AddControllers(opt =>
             {
