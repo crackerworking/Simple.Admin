@@ -1,6 +1,7 @@
 ﻿namespace Simple.Admin.Domain.Shared.Models.UI
 {
 #pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
+
     public class PaConfigModel
     {
         public PaConfigLogo logo { get; set; }
@@ -11,6 +12,7 @@
         public PaConfigOther other { get; set; }
         public PaConfigHeader header { get; set; }
     }
+
     public class PaConfigColor
     {
         public string id { get; set; }
@@ -73,6 +75,4 @@
         public bool allowCustom { get; set; }
         public bool banner { get; set; }
     }
-
-
 }

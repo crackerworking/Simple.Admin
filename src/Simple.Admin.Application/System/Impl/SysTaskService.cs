@@ -3,12 +3,7 @@
 using Quartz;
 using Quartz.Impl.Triggers;
 
-using Simple.Admin.Application.Contracts.System;
 using Simple.Admin.Application.Contracts.System.Models.Tasks;
-using Simple.Admin.Domain.DataAccess;
-using Simple.Admin.Domain.Entities.System;
-using Simple.Admin.Domain.Helper;
-using Simple.Admin.Domain.Shared.Response;
 using Simple.Admin.Domain.Tasks;
 
 namespace Simple.Admin.Application.System.Impl

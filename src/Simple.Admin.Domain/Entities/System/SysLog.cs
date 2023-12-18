@@ -1,6 +1,4 @@
-﻿using Simple.Admin.Domain.Entities;
-
-namespace Simple.Admin.Domain.Entities.System
+﻿namespace Simple.Admin.Domain.Entities.System
 {
     public class SysLog : EntityBase
     {

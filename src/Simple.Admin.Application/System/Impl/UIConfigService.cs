@@ -1,10 +1,4 @@
-﻿using Simple.Admin.Application.Contracts.System;
-using Simple.Admin.Domain.Extension;
-using Simple.Admin.Domain.Helper;
-using Simple.Admin.Domain.Shared.Core;
-using Simple.Admin.Domain.Shared.GlobalVars;
-using Simple.Admin.Domain.Shared.Models.UI;
-using Simple.Admin.Domain.Shared.Response;
+﻿using Simple.Admin.Domain.Shared.Core;
 
 namespace Simple.Admin.Application.System.Impl
 {

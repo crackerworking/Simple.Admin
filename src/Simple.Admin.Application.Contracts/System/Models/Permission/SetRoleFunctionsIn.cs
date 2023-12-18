@@ -4,6 +4,7 @@
     {
         //long id, IList<long> funcIds
         public long id { get; set; }
+
         public IList<long> funcIds { get; set; }
     }
 }

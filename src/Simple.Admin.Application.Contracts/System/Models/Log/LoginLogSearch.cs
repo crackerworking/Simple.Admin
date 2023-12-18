@@ -1,6 +1,4 @@
-﻿using Simple.Admin.Domain.Shared.Models;
-
-namespace Simple.Admin.Application.Contracts.System.Models.Log
+﻿namespace Simple.Admin.Application.Contracts.System.Models.Log
 {
     public class LoginLogSearch : PagingSearchModel
     {

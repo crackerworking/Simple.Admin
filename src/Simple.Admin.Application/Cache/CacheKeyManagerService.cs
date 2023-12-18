@@ -2,11 +2,7 @@
 
 using Simple.Admin.Application.Contracts.Cache;
 using Simple.Admin.Application.Contracts.Cache.Models;
-using Simple.Admin.Domain.Extension;
-using Simple.Admin.Domain.Helper;
 using Simple.Admin.Domain.Shared.Core;
-using Simple.Admin.Domain.Shared.Options;
-using Simple.Admin.Domain.Shared.Response;
 
 namespace Simple.Admin.Application.Cache
 {
@@ -35,8 +31,6 @@ namespace Simple.Admin.Application.Cache
 
         public async Task<MessageModel<string>> GetDataAsync(CacheKeyIn input)
         {
-            if (_currentUser.IsDemo) return await Task.FromResult(new MessageModel<string>(Demo.Tip));
-
             _cache.TryGetValue(input.key, out var value);
             var str = JsonSerializer.Serialize(value ?? "");
 

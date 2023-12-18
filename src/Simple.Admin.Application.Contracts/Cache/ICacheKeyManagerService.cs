@@ -1,6 +1,4 @@
 ﻿using Simple.Admin.Application.Contracts.Cache.Models;
-using Simple.Admin.Domain.Shared.Options;
-using Simple.Admin.Domain.Shared.Response;
 
 namespace Simple.Admin.Application.Contracts.Cache
 {

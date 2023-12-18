@@ -1,8 +1,7 @@
 ﻿using System.Net;
 
-using Simple.Admin.Domain.Shared.Models;
-
 using Simple.Admin.Domain.Extension;
+using Simple.Admin.Domain.Shared.Models;
 
 using UAParser;
 

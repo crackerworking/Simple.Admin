@@ -6,7 +6,6 @@ using Simple.Admin.Application.Contracts.System.Models.Function;
 using Simple.Admin.Application.Contracts.System.Models.Log;
 using Simple.Admin.Application.Contracts.System.Models.Role;
 using Simple.Admin.Application.Contracts.System.Models.Tasks;
-using Simple.Admin.Domain.Entities.System;
 using Simple.Admin.Domain.Shared.Core;
 
 namespace Simple.Admin.Application.System

@@ -1,8 +1,7 @@
 ﻿namespace Simple.Admin.Domain.Entities.System.Enum
 {
     /// <summary>
-    /// 功能类型
-    /// Menu = 10,Button = 20
+    /// 功能类型 Menu = 10,Button = 20
     /// </summary>
     public enum EnumFunctionType
     {

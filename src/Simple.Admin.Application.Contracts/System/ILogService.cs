@@ -1,6 +1,4 @@
 ﻿using Simple.Admin.Application.Contracts.System.Models.Log;
-using Simple.Admin.Domain.Shared.Models;
-using Simple.Admin.Domain.Shared.Response;
 
 namespace Simple.Admin.Application.Contracts.System
 {
@@ -43,7 +41,7 @@ namespace Simple.Admin.Application.Contracts.System
         Task<MessageModel<PagingModel<SysLogFull>>> GetLogListAsync(LogSearch search);
 
         /// <summary>
-        /// 设置操作日志异常（更新已有操作日志在<see cref="WriteLogAsync"/>之后）
+        /// 设置操作日志异常（更新已有操作日志在 <see cref="WriteLogAsync"/> 之后）
         /// </summary>
         /// <param name="uniqueId"></param>
         /// <param name="errorMsg"></param>

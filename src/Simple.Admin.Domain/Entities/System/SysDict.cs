@@ -1,6 +1,4 @@
-﻿using Simple.Admin.Domain.Shared.Fields;
-
-namespace Simple.Admin.Domain.Entities.System
+﻿namespace Simple.Admin.Domain.Entities.System
 {
     [Table("SysDict")]
     public class SysDict : EntityBase, IParentId<long>, ISort, IRemark

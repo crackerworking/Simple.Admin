@@ -35,6 +35,6 @@ namespace Simple.Admin.Domain.Shared.Models
         /// <summary>
         /// HttpContext.Items:key名
         /// </summary>
-        public readonly static string MIHEADER = "Mi-Header";
+        public static readonly string MIHEADER = "Mi-Header";
     }
 }

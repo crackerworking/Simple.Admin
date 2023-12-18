@@ -1,6 +1,4 @@
-﻿using Simple.Admin.Domain.Entities;
-
-namespace Simple.Admin.Domain.Entities.System
+﻿namespace Simple.Admin.Domain.Entities.System
 {
     /// <summary>
     /// 登录日志

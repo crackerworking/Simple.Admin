@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-using Simple.Admin.Domain.Shared.Options;
+﻿using Simple.Admin.Domain.Shared.Options;
 
 namespace Simple.Admin.Domain.Shared.Core
 {

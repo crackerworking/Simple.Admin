@@ -1,7 +1,4 @@
-﻿using Simple.Admin.Domain.Shared.Fields;
-using Simple.Admin.Domain.Shared.Models;
-
-namespace Simple.Admin.Application.Contracts.System.Models.Dict
+﻿namespace Simple.Admin.Application.Contracts.System.Models.Dict
 {
     public class DictSearch : PagingSearchModel, IRemark
     {

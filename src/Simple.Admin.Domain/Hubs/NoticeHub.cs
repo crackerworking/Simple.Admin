@@ -8,8 +8,7 @@ using Simple.Admin.Domain.Shared.Options;
 namespace Simple.Admin.Domain.Hubs
 {
     /// <summary>
-    /// 消息中心，自动发送通知；
-    /// 禁止从中心以外使用。
+    /// 消息中心，自动发送通知； 禁止从中心以外使用。
     /// </summary>
     public class NoticeHub : Hub
     {

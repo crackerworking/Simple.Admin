@@ -1,5 +1,4 @@
 ﻿using Simple.Admin.Domain.Shared.Core;
-using Simple.Admin.Domain.Shared.Options;
 
 namespace Simple.Admin.Application.Contracts.Public
 {

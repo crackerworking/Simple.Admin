@@ -1,7 +1,5 @@
 ﻿using System.Text;
 
-using Simple.Admin.Domain.Shared.Options;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -9,6 +7,7 @@ using Simple.Admin.Application.Contracts.System;
 using Simple.Admin.ControllerLibrary;
 using Simple.Admin.ControllerLibrary.Account;
 using Simple.Admin.Domain.Shared;
+using Simple.Admin.Domain.Shared.Options;
 using Simple.Admin.Domain.Shared.Response;
 
 namespace Simple.Admin.Web.Host.Filter

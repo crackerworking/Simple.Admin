@@ -1,27 +1,17 @@
 ﻿using System.Data;
 using System.Security.Claims;
-using System.Text;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 
 using Simple.Admin.Application.Contracts.Public;
-using Simple.Admin.Application.Contracts.System;
 using Simple.Admin.Application.Contracts.System.Models.Function;
 using Simple.Admin.Application.Contracts.System.Models.Permission;
 using Simple.Admin.Application.Contracts.System.Models.User;
-using Simple.Admin.Domain.DataAccess;
-using Simple.Admin.Domain.Entities.System;
 using Simple.Admin.Domain.Entities.System.Enum;
-using Simple.Admin.Domain.Extension;
-using Simple.Admin.Domain.Helper;
 using Simple.Admin.Domain.Services;
 using Simple.Admin.Domain.Shared.Core;
-using Simple.Admin.Domain.Shared.GlobalVars;
-using Simple.Admin.Domain.Shared.Models;
-using Simple.Admin.Domain.Shared.Models.UI;
-using Simple.Admin.Domain.Shared.Response;
 
 namespace Simple.Admin.Application.System.Impl
 {

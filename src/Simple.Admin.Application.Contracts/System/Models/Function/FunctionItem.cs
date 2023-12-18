@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-using Simple.Admin.Domain.Shared.Fields;
-
 namespace Simple.Admin.Application.Contracts.System.Models.Function
 {
     public class FunctionItem : IChildren<IList<FunctionItem>>

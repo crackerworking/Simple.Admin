@@ -1,5 +1,4 @@
 ﻿using Simple.Admin.Domain.Entities.System.Enum;
-using Simple.Admin.Domain.Shared.Fields;
 
 namespace Simple.Admin.Domain.Entities.System
 {

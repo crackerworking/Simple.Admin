@@ -2,14 +2,8 @@
 
 using Microsoft.AspNetCore.Http;
 
-using Simple.Admin.Application.Contracts.System;
 using Simple.Admin.Application.Contracts.System.Models.Log;
-using Simple.Admin.Domain.DataAccess;
-using Simple.Admin.Domain.Entities.System;
-using Simple.Admin.Domain.Extension;
 using Simple.Admin.Domain.Shared.Core;
-using Simple.Admin.Domain.Shared.Models;
-using Simple.Admin.Domain.Shared.Response;
 
 namespace Simple.Admin.Application.System.Impl
 {

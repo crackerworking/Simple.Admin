@@ -1,7 +1,4 @@
 ﻿using Simple.Admin.Application.Contracts.System.Models.Function;
-using Simple.Admin.Domain.Shared.Models;
-using Simple.Admin.Domain.Shared.Options;
-using Simple.Admin.Domain.Shared.Response;
 
 namespace Simple.Admin.Application.Contracts.System
 {

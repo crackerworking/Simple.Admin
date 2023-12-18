@@ -1,11 +1,9 @@
-﻿using Simple.Admin.Domain.Exceptions;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 using Simple.Admin.Domain.DataAccess;
 using Simple.Admin.Domain.Entities.System;
+using Simple.Admin.Domain.Exceptions;
 using Simple.Admin.Domain.Extension;
-
 using Simple.Admin.Domain.Shared;
 using Simple.Admin.Domain.Shared.Core;
 

@@ -1,6 +1,6 @@
-﻿using Simple.Admin.Domain.Shared.Attributes;
+﻿using Microsoft.AspNetCore.Mvc;
 
-using Microsoft.AspNetCore.Mvc;
+using Simple.Admin.Domain.Shared.Attributes;
 
 namespace Simple.Admin.Domain.Shared.Core
 {

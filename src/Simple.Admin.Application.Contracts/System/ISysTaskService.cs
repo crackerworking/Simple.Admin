@@ -1,6 +1,5 @@
 ﻿using Simple.Admin.Application.Contracts.System.Models.Tasks;
 using Simple.Admin.Domain.Shared.Core;
-using Simple.Admin.Domain.Shared.Response;
 
 namespace Simple.Admin.Application.Contracts.System
 {

@@ -1,6 +1,4 @@
-﻿using Simple.Admin.Domain.Shared.Options;
-
-namespace Simple.Admin.Application.Contracts.System.Models.Function
+﻿namespace Simple.Admin.Application.Contracts.System.Models.Function
 {
     public class FuncGroupItem
     {

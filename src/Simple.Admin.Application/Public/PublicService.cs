@@ -1,11 +1,5 @@
 ﻿using Simple.Admin.Application.Contracts.Public;
-using Simple.Admin.Application.Contracts.System;
-using Simple.Admin.Domain.DataAccess;
-using Simple.Admin.Domain.Entities.System;
-using Simple.Admin.Domain.Helper;
 using Simple.Admin.Domain.Shared.Core;
-using Simple.Admin.Domain.Shared.GlobalVars;
-using Simple.Admin.Domain.Shared.Models.UI;
 
 namespace Simple.Admin.Application.Public
 {

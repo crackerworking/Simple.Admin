@@ -1,6 +1,4 @@
-﻿using Simple.Admin.Domain.Shared.Models;
-
-namespace Simple.Admin.Application.Contracts.System.Models.Message
+﻿namespace Simple.Admin.Application.Contracts.System.Models.Message
 {
     public class MessageSearch : PagingSearchModel
     {

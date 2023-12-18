@@ -3,7 +3,7 @@
 namespace Simple.Admin.Domain.Exceptions
 {
     /// <summary>
-    /// 友好异常，异常级别<see cref="response_type.Fail"/>
+    /// 友好异常，异常级别 <see cref="response_type.Fail"/>
     /// </summary>
     public class FriendlyException : Exception
     {

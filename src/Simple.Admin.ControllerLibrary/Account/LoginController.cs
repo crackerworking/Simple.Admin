@@ -1,7 +1,6 @@
 ﻿using Simple.Admin.Application.Contracts.System;
 using Simple.Admin.Application.Contracts.System.Models.Permission;
 using Simple.Admin.Domain.Shared.Core;
-using Simple.Admin.Domain.Shared.Response;
 
 namespace Simple.Admin.ControllerLibrary.Account
 {

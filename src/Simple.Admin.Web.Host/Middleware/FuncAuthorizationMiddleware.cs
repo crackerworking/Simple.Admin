@@ -43,7 +43,7 @@ namespace Simple.Admin.Web.Host.Middleware
                     }
                     if (!flag)
                     {
-                        _logger.LogWarning($"'用户Id：{userModel.UserId}，用户名：{userModel.UserName}'访问地址`{path}`权限不足");
+                        _logger.LogWarning($"用户Id：{userModel.UserId}，用户名：{userModel.UserName}'访问地址`{path}`权限不足");
 
                         if (!pageRoute.IsNull())
                         {

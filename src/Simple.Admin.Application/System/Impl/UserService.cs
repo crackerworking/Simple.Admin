@@ -2,17 +2,9 @@
 
 using AutoMapper;
 
-using Simple.Admin.Application.Contracts.System;
 using Simple.Admin.Application.Contracts.System.Models.Role;
 using Simple.Admin.Application.Contracts.System.Models.User;
-using Simple.Admin.Domain.DataAccess;
-using Simple.Admin.Domain.Entities.System;
-using Simple.Admin.Domain.Extension;
-using Simple.Admin.Domain.Helper;
 using Simple.Admin.Domain.Shared.Core;
-using Simple.Admin.Domain.Shared.GlobalVars;
-using Simple.Admin.Domain.Shared.Models;
-using Simple.Admin.Domain.Shared.Response;
 
 namespace Simple.Admin.Application.System.Impl
 {
@@ -92,7 +84,7 @@ namespace Simple.Admin.Application.System.Impl
 
         public async Task<MessageModel<PagingModel<UserItem>>> GetUserListAsync(UserSearch search)
         {
-            var sql = @"select u.*,GROUP_CONCAT(r.RoleName) as RoleNameString from SysUser u 
+            var sql = @"select u.*,GROUP_CONCAT(r.RoleName) as RoleNameString from SysUser u
                         left join SysUserRole ur on u.Id=ur.UserId
                         left join SysRole r on ur.RoleId=r.Id
                         where u.IsDeleted=0 ";
