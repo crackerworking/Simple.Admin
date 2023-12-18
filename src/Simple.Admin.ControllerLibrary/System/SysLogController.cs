@@ -1,8 +1,6 @@
 ﻿using Simple.Admin.Application.Contracts.System;
 using Simple.Admin.Application.Contracts.System.Models.Log;
 using Simple.Admin.Domain.Shared.Core;
-using Simple.Admin.Domain.Shared.Models;
-using Simple.Admin.Domain.Shared.Response;
 
 namespace Simple.Admin.ControllerLibrary.System
 {
@@ -21,7 +19,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
-        [HttpPost, AuthorizeCode("System:LoginLog:Query")]
+        [AuthorizeCode("System:LoginLog")]
         public async Task<MessageModel<PagingModel<SysLoginLogFull>>> GetLoginLogList([FromBody] LoginLogSearch search)
         {
             return await _logService.GetLoginLogListAsync(search);
@@ -32,7 +30,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
-        [HttpPost, AuthorizeCode("System:ActionLog:Query")]
+        [AuthorizeCode("System:ActionLog")]
         public async Task<MessageModel<PagingModel<SysLogFull>>> GetLogList([FromBody] LogSearch search) => await _logService.GetLogListAsync(search);
     }
 }

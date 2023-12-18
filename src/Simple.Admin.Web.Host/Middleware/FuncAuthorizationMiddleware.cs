@@ -12,9 +12,9 @@ namespace Simple.Admin.Web.Host.Middleware
     {
         private readonly AuthorizationMiddlewareResultHandler defaultHandler = new();
         private readonly ILogger<FuncAuthorizationMiddleware> _logger;
-        private readonly string[] IGNORE_PAGES = { "/entry" };
-        private readonly List<Type> CONTROLLER_TYPES = new List<Type> { typeof(Controller), typeof(ControllerBase) };
-        private readonly List<string?> VIEW_TYPES = new List<string?> { typeof(IActionResult).FullName, typeof(ViewResult).FullName, typeof(RedirectResult).FullName };
+        private readonly string[] IGNORE_PAGES = ["/entry"];
+        private readonly List<Type> CONTROLLER_TYPES = new() { typeof(Controller), typeof(ControllerBase) };
+        private readonly List<string?> VIEW_TYPES = [typeof(IActionResult).FullName, typeof(ViewResult).FullName, typeof(RedirectResult).FullName];
 
         public FuncAuthorizationMiddleware(ILogger<FuncAuthorizationMiddleware> logger)
         {
