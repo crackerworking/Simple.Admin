@@ -24,7 +24,6 @@ namespace Simple.Admin.Application.System.Impl
         private readonly IMemoryCache _cache;
         private readonly ICurrentUser _miUser;
         private readonly IUserService _userService;
-        private readonly IPublicService _publicService;
         private readonly IRepository<SysUserRole> _userRoleRepo;
         private readonly IDapperRepository _dapperRepository;
         private readonly IRepository<SysRoleFunction> _roleFunctionRepo;
@@ -38,7 +37,6 @@ namespace Simple.Admin.Application.System.Impl
             , IMemoryCache cache
             , ICurrentUser miUser
             , IUserService userService
-            , IPublicService publicService
             , IRepository<SysUserRole> userRoleRepo
             , IDapperRepository dapperRepository
             , IRepository<SysRoleFunction> roleFunctionRepo
@@ -52,7 +50,6 @@ namespace Simple.Admin.Application.System.Impl
             _cache = cache;
             _miUser = miUser;
             _userService = userService;
-            _publicService = publicService;
             _userRoleRepo = userRoleRepo;
             _dapperRepository = dapperRepository;
             _roleFunctionRepo = roleFunctionRepo;
@@ -145,11 +142,13 @@ namespace Simple.Admin.Application.System.Impl
             var count = await _dapperRepository.ExecuteScalarAsync<int>("select count(*) from SysUser where LOWER(UserName)=@name and IsDeleted=0", new { name = input.userName.ToLower() });
             if (count > 0) return Back.Fail("用户名已存在");
 
-            var user = new SysUser();
-            user.UserName = input.userName;
-            user.NickName = input.userName;
-            user.Signature = "个性签名";
-            user.PasswordSalt = EncryptionHelper.GetPasswordSalt();
+            var user = new SysUser
+            {
+                UserName = input.userName,
+                NickName = input.userName,
+                Signature = "个性签名",
+                PasswordSalt = EncryptionHelper.GetPasswordSalt()
+            };
             user.Password = EncryptionHelper.GenEncodingPassword(input.password, user.PasswordSalt);
             user.Avatar = StringHelper.DefaultAvatar();
             await _userRepository.AddAsync(user);

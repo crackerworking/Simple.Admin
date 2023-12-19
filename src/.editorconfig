@@ -82,7 +82,7 @@ csharp_prefer_braces = true:silent
 csharp_style_prefer_method_group_conversion = true:silent
 csharp_style_namespace_declarations = block_scoped:silent
 csharp_style_prefer_top_level_statements = true:silent
-csharp_style_prefer_primary_constructors = true:suggestion
+csharp_style_prefer_primary_constructors = false:suggestion
 csharp_prefer_static_local_function = true:suggestion
 csharp_style_prefer_readonly_struct = true:suggestion
 csharp_style_prefer_readonly_struct_member = true:suggestion
@@ -96,6 +96,12 @@ csharp_style_prefer_pattern_matching = true:silent
 
 # IDE1006: 命名样式
 dotnet_diagnostic.IDE1006.severity = silent
+
+# CA1304: 指定 CultureInfo
+dotnet_diagnostic.CA1304.severity = silent
+
+# CA1848: 使用 LoggerMessage 委托
+dotnet_diagnostic.CA1848.severity = silent
 
 [*.vb]
 #### 命名样式 ####

@@ -67,7 +67,7 @@ namespace Simple.Admin.Domain.PipelineConfiguration
         /// 反射获取继承 <see cref="Startup"/> 的启动类
         /// </summary>
         /// <returns></returns>
-        private List<Type> GetAllTypes()
+        private static List<Type> GetAllTypes()
         {
             var list = new List<Type>();
             var baseType = typeof(Startup);
