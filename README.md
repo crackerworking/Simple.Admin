@@ -24,3 +24,24 @@
 * LayUI
 * AutoMapper
 * Quartz.net
+* SQLite
+* ImageSharp
+* Nito.AsyncEx
+* SignalR
+## 使用
+1. 确保安装了.NET8 SDK
+2. 克隆项目：
+`git clone https://github.com/yoursession/Simple.Admin.git`
+3. 使用vs2022打开解决方案，找到Simple.Admin.Web.Host下的libman.json右击还原客户端库
+4. 成功启动项目
+5. 实现抽象类`Startup.cs`动态管道配置
+6. 实现`IScoped`或`ISingleton`或`ITransient`动态依赖注入
+## 引用关系
+* 应用层：Simple.Admin.Application => Simple.Admin.Application.Contracts,Simple.Admin.Domain
+* 应用抽象层：Simple.Admin.Application.Contracts => Simple.Admin.Domain.Shared
+* 控制器层：Simple.Admin.ControllerLibrary => Simple.Admin.Application.Contracts
+* 数据访问层：Simple.Admin.DataDriver => Simple.Admin.Domain
+* 领域层：Simple.Admin.Domain => Simple.Admin.Domain.Shared
+* 领域共享层：Simple.Admin.Domain.Shared
+* RazorPage/UI层：Simple.Admin.RazorLibrary => Simple.Admin.Application.Contracts
+* Web应用入口层：Simple.Admin.Web.Host => Simple.Admin.Application,Simple.Admin.ControllerLibrary,Simple.Admin.DataDriver,Simple.Admin.RazorLibrary
