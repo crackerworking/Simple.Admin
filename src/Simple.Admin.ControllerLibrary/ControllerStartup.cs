@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using NSwag;
+using NSwag.Generation.Processors.Security;
 
 using Simple.Admin.Domain.Shared;
 using Simple.Admin.Domain.Shared.Core;
@@ -40,6 +41,14 @@ namespace Simple.Admin.ControllerLibrary
                     };
                 };
                 options.UseControllerSummaryAsTagDescription = true;
+                options.AddSecurity("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Description = "Copy this into the value field: Bearer {token}",
+                    Type = OpenApiSecuritySchemeType.ApiKey,
+                    In = OpenApiSecurityApiKeyLocation.Header
+                });
+                options.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("Bearer"));
             });
         }
     }

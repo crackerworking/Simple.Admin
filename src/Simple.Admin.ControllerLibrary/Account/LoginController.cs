@@ -25,7 +25,7 @@ namespace Simple.Admin.ControllerLibrary.Account
         public async Task<MessageModel> Do([FromBody] LoginIn input)
         {
             var result = await _permissionService.LoginAsync(input);
-            await _logService.WriteLoginLogAsync(input.userName, result.Code == response_type.Success, result.Message ?? "");
+            await _logService.WriteLoginLogAsync(input.username, result.Code == response_type.Success, result.Message ?? "");
             return result;
         }
 

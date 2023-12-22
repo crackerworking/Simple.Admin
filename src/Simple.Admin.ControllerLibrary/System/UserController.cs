@@ -76,13 +76,13 @@ namespace Simple.Admin.ControllerLibrary.System
             => await _permissionService.SetUserRoleAsync(input);
 
         /// <summary>
-        /// 允许登录
+        /// 切换状态
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
         [AuthorizeCode("System:User:Passed")]
-        public async Task<MessageModel> PassedUser([FromBody] PrimaryKey input)
-            => await _userService.PassedUserAsync(input);
+        public async Task<MessageModel> SwitchState([FromBody] PrimaryKey input)
+            => await _userService.SwitchStateAsync(input);
     }
 }

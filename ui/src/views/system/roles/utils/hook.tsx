@@ -2,16 +2,21 @@ import editForm from "../form.vue";
 import menuSelect from "../menu-select.vue";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
-import { usePublicHooks } from "../../hooks";
 import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
 import { reactive, ref, onMounted, h, toRaw } from "vue";
-import { getRoleList } from "@/api/system/roles";
+import {
+  getRoleList,
+  deleteRole,
+  addRole,
+  updateRole
+} from "@/api/system/roles";
+import { EnsureSuccess } from "@/utils/http/extend";
 
 export function useRole() {
   const form = reactive({
-    rolename: null,
+    roleName: null,
     remark: null
   });
   const formRef = ref();
@@ -26,30 +31,17 @@ export function useRole() {
   const columns: TableColumnList = [
     {
       label: "角色名称",
-      prop: "rolename"
-    },
-    {
-      label: "状态",
-      minWidth: 130,
-      cellRenderer: scope => (
-        <el-switch
-          size={scope.props.size === "small" ? "small" : "default"}
-          loading={switchLoadMap.value[scope.index]?.loading}
-          v-model={scope.row.status}
-          active-value={1}
-          inactive-value={0}
-          active-text="已启用"
-          inactive-text="已停用"
-          inline-prompt
-          style={switchStyle.value}
-          onChange={() => onChange(scope as any)}
-        />
-      )
+      prop: "roleName"
     },
     {
       label: "备注",
       prop: "remark",
       minWidth: 150
+    },
+    {
+      label: "创建时间",
+      prop: "createdOn",
+      minWidth: 180
     },
     {
       label: "操作",
@@ -58,9 +50,6 @@ export function useRole() {
       slot: "operation"
     }
   ];
-
-  const switchLoadMap = ref({});
-  const { switchStyle } = usePublicHooks();
 
   function handleSizeChange(val: number) {
     console.log(`${val} items per page`);
@@ -72,48 +61,6 @@ export function useRole() {
 
   function handleSelectionChange(val) {
     console.log("handleSelectionChange", val);
-  }
-
-  function onChange({ row, index }) {
-    ElMessageBox.confirm(
-      `确认要<strong>${
-        row.status === 0 ? "停用" : "启用"
-      }</strong><strong style='color:var(--el-color-primary)'>${
-        row.rolename
-      }</strong>吗?`,
-      "系统提示",
-      {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        dangerouslyUseHTMLString: true,
-        draggable: true
-      }
-    )
-      .then(() => {
-        switchLoadMap.value[index] = Object.assign(
-          {},
-          switchLoadMap.value[index],
-          {
-            loading: true
-          }
-        );
-        setTimeout(() => {
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
-          message(`已${row.status === 0 ? "停用" : "启用"}${row.rolename}`, {
-            type: "success"
-          });
-        }, 300);
-      })
-      .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0);
-      });
   }
 
   async function onSearch() {
@@ -135,12 +82,13 @@ export function useRole() {
     onSearch();
   };
 
-  function openDialog(title = "新增", row?: FormItemProps) {
+  function openDialog(title = "新增", row?: FormItemProps | any) {
     addDialog({
       title: `${title}用户`,
       props: {
         formInline: {
-          rolename: row?.rolename ?? "",
+          id: row?.id ?? "",
+          name: row?.roleName ?? "",
           remark: row?.remark ?? ""
         }
       },
@@ -152,23 +100,30 @@ export function useRole() {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
-        function chores() {
-          message(`您${title}了角色名为${curData.rolename}的这条数据`, {
-            type: "success"
-          });
-          done(); // 关闭弹框
-          onSearch(); // 刷新表格数据
-        }
         FormRef.validate(valid => {
           if (valid) {
             console.log("curData", curData);
             // 表单规则校验通过
             if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              chores();
+              addRole(curData).then(res => {
+                if (EnsureSuccess(res)) {
+                  message(res.message, { type: "success" });
+                  done(); // 关闭弹框
+                  onSearch(); // 刷新表格数据
+                } else {
+                  message(res.message, { type: "error" });
+                }
+              });
             } else {
-              // 实际开发先调用编辑接口，再进行下面操作
-              chores();
+              updateRole(curData).then(res => {
+                if (EnsureSuccess(res)) {
+                  message(res.message, { type: "success" });
+                  done();
+                  onSearch();
+                } else {
+                  message(res.message, { type: "error" });
+                }
+              });
             }
           }
         });
@@ -186,6 +141,25 @@ export function useRole() {
       fullscreenIcon: true,
       closeOnClickModal: false,
       contentRenderer: () => h(menuSelect)
+    });
+  }
+
+  function removeRole(row) {
+    ElMessageBox.confirm("确定删除" + row.roleName + "吗?", "系统提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+      dangerouslyUseHTMLString: true,
+      draggable: true
+    }).then(() => {
+      deleteRole({ id: row.id }).then(res => {
+        if (EnsureSuccess(res)) {
+          message(res.message, { type: "success" });
+          onSearch();
+        } else {
+          message(res.message, { type: "error" });
+        }
+      });
     });
   }
 
@@ -210,6 +184,7 @@ export function useRole() {
     // handleDatabase,
     handleSizeChange,
     handleCurrentChange,
-    handleSelectionChange
+    handleSelectionChange,
+    removeRole
   };
 }

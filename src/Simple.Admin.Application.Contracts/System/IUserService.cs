@@ -41,11 +41,11 @@ namespace Simple.Admin.Application.Contracts.System
         Task<MessageModel<SysUserFull>> GetUserAsync(long userId);
 
         /// <summary>
-        /// 允许登录
+        /// 切换状态
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<MessageModel> PassedUserAsync(PrimaryKey input);
+        Task<MessageModel> SwitchStateAsync(PrimaryKey input);
 
         /// <summary>
         /// 用户关联所有角色

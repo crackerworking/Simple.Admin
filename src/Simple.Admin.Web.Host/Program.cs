@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,107 +18,101 @@ using Simple.Admin.Domain.User;
 using Simple.Admin.Web.Host.Filter;
 using Simple.Admin.Web.Host.Middleware;
 
-namespace Simple.Admin.Web.Host
+const string CORS = "CustomCors";
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSignalR();
+builder.Services.AddControllers(opt =>
 {
-    public class Program
+    opt.Filters.Add<GlobalExceptionFilter>();
+    opt.Filters.Add<GlobalActionFilterAttribute>();
+}).AddJsonOptions(opt =>
+{
+    opt.JsonSerializerOptions.Converters.Add(new LongToStringConverter());
+    opt.JsonSerializerOptions.Converters.Add(new DateTimeFormatConverter());
+    opt.JsonSerializerOptions.Converters.Add(new DateTimeNullableFormatConverter());
+});
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, FuncAuthorizationMiddleware>();
+
+PipelineStartup.Instance.ConfigureServices(builder.Services);
+ConfigureService(builder.Services, builder.Configuration);
+
+var app = builder.Build();
+
+App.Running(app.Environment.IsDevelopment(), app.Environment.WebRootPath, app.Configuration, app.Services);
+
+PipelineStartup.Instance.Configure(app);
+
+app.Use((context, next) =>
+{
+    context.Request.EnableBuffering();
+    return next(context);
+});
+
+app.UseStaticFiles();
+
+app.UseCors(CORS);
+app.UseRouting();
+app.UseMiddleware<MiHeaderMiddleware>();
+
+app.UseAuthentication();
+app.UseMiddleware<UserMiddleware>();
+app.UseAuthorization();
+
+app.MapControllerRoute("api-router", "/api/{controller}/{action}");
+
+app.MapHub<NoticeHub>("/noticeHub");
+
+SystemTaskScheduler.Instance.Run();
+app.Run();
+
+static void ConfigureService(IServiceCollection services, IConfiguration configuration)
+{
+    // DB & Repository
+    services.AddMiDbContext(configuration.GetConnectionString("Sqlite")!);
+    services.AddRepository();
+
+    // CurrentUser
+    services.AddCurrentUser();
+
+    // cache
+    services.AddMemoryCache();
+
+    // AddAutomaticInjection
+    services.AddAutomaticInjection();
+
+    services.AddScoped(sp =>
     {
-        public static void Main(string[] args)
+        var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+        return httpContextAccessor.HttpContext!.Features.Get<MiHeader>() ?? new MiHeader();
+    });
+
+    // UI Config
+    var uiConfig = configuration.GetSection("AdminUI");
+    services.Configure<PaConfigModel>(uiConfig);
+
+    // quartz
+    services.AddSingleton(sp =>
+    {
+        var f = new StdSchedulerFactory();
+        return f.GetScheduler().ConfigureAwait(false).GetAwaiter().GetResult();
+    });
+
+    // model validate
+    services.Configure<ApiBehaviorOptions>(options =>
+    {
+        options.InvalidModelStateResponseFactory = (context) =>
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var error = context.ModelState.FirstOrDefaultMsg();
 
-            builder.Services.AddRazorPages();
-            builder.Services.AddSignalR();
-            builder.Services.AddControllers(opt =>
-            {
-                opt.Filters.Add<GlobalExceptionFilter>();
-                opt.Filters.Add<GlobalActionFilterAttribute>();
-            }).AddJsonOptions(opt =>
-            {
-                opt.JsonSerializerOptions.Converters.Add(new LongToStringConverter());
-                opt.JsonSerializerOptions.Converters.Add(new DateTimeFormatConverter());
-                opt.JsonSerializerOptions.Converters.Add(new DateTimeNullableFormatConverter());
-            });
-            builder.Services.AddHttpContextAccessor();
+            return new JsonResult(Back.ParameterError(error));
+        };
+    });
 
-            builder.Services.AddAuthentication()
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options => builder.Configuration.Bind("CookieSettings", options));
-            builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, FuncAuthorizationMiddleware>();
-
-            PipelineStartup.Instance.ConfigureServices(builder.Services);
-            ConfigureService(builder.Services, builder.Configuration);
-
-            var app = builder.Build();
-
-            App.Running(app.Environment.IsDevelopment(), app.Environment.WebRootPath, app.Configuration, app.Services);
-
-            PipelineStartup.Instance.Configure(app);
-
-            app.Use((context, next) =>
-            {
-                context.Request.EnableBuffering();
-                return next(context);
-            });
-
-            app.UseStaticFiles();
-
-            app.UseRouting();
-            app.UseMiddleware<MiHeaderMiddleware>();
-
-            app.UseAuthentication();
-            app.UseMiddleware<UserMiddleware>();
-            app.UseAuthorization();
-
-            app.MapRazorPages();
-            app.MapControllerRoute("api-router", "/api/{controller}/{action}");
-
-            app.MapHub<NoticeHub>("/noticeHub");
-
-            SystemTaskScheduler.Instance.Run();
-            app.Run();
-        }
-
-        private static void ConfigureService(IServiceCollection services, IConfiguration configuration)
-        {
-            // DB & Repository
-            services.AddMiDbContext(configuration.GetConnectionString("Sqlite")!);
-            services.AddRepository();
-
-            // CurrentUser
-            services.AddCurrentUser();
-
-            // cache
-            services.AddMemoryCache();
-
-            // AddAutomaticInjection
-            services.AddAutomaticInjection();
-
-            services.AddScoped(sp =>
-            {
-                var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
-                return httpContextAccessor.HttpContext!.Features.Get<MiHeader>() ?? new MiHeader();
-            });
-
-            // UI Config
-            var uiConfig = configuration.GetSection("AdminUI");
-            services.Configure<PaConfigModel>(uiConfig);
-
-            // quartz
-            services.AddSingleton(sp =>
-            {
-                var f = new StdSchedulerFactory();
-                return f.GetScheduler().ConfigureAwait(false).GetAwaiter().GetResult();
-            });
-
-            // model validate
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.InvalidModelStateResponseFactory = (context) =>
-                {
-                    var error = context.ModelState.FirstOrDefaultMsg();
-
-                    return new JsonResult(Back.ParameterError(error));
-                };
-            });
-        }
-    }
+    // Cors
+    services.AddCors(options =>
+    {
+        options.AddPolicy(CORS, conf => conf.AllowAnyHeader().AllowAnyMethod().WithOrigins(configuration["AllowedCorsOrigins"]!.Split(',', StringSplitOptions.RemoveEmptyEntries)));
+    });
 }

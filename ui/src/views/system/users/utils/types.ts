@@ -1,7 +1,5 @@
 interface FormItemProps {
-  username: string;
-  remark: string;
-  status: number;
+  userName: string;
 }
 interface FormProps {
   formInline: FormItemProps;

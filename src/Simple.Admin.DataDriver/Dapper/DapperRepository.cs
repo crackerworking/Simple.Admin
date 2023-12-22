@@ -60,7 +60,9 @@ namespace Simple.Admin.DataDriver.Dapper
             var model = new PagingModel<T>
             {
                 Total = total,
-                Rows = await QueryAsync<T>(querySql, param)
+                Rows = await QueryAsync<T>(querySql, param),
+                Page = page,
+                Size = size
             };
 
             return model;

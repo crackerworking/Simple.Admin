@@ -106,12 +106,14 @@ namespace Simple.Admin.Application.System.Impl
             return new MessageModel<PagingModel<UserItem>>(true, "查询成功", pageModel);
         }
 
-        public async Task<MessageModel> PassedUserAsync(PrimaryKey input)
+        public async Task<MessageModel> SwitchStateAsync(PrimaryKey input)
         {
-            var rows = await _userRepo.UpdateAsync(input.id, updatable => updatable
-                .SetColumn(x => x.IsEnabled, 1)
-                .SetColumn(x => x.ModifiedBy, _miUser.UserId)
-                .SetColumn(x => x.ModifiedOn, DateTime.Now));
+            var model = await _userRepo.GetAsync(x=>x.Id == input.id);
+            if (model == null) return Back.NonExist();
+            model.IsEnabled = model.IsEnabled == 1 ? 0 : 1;
+            model.ModifiedBy = _miUser.UserId;
+            model.ModifiedOn = DateTime.Now;
+            var rows = await _userRepo.UpdateAsync(model);
 
             return rows > 0 ? Back.Success() : Back.Fail();
         }

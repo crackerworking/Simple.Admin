@@ -7,6 +7,7 @@ import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
 import Menu from "@iconify-icons/ep/menu";
 import EditPen from "@iconify-icons/ep/edit-pen";
+import Delete from "@iconify-icons/ep/delete";
 import { useRole } from "./utils/hook";
 import { ref } from "vue";
 
@@ -29,7 +30,8 @@ const {
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,
-  handleMenu
+  handleMenu,
+  removeRole
 } = useRole();
 </script>
 
@@ -43,7 +45,7 @@ const {
     >
       <el-form-item label="角色名称：" prop="rolename">
         <el-input
-          v-model="form.rolename"
+          v-model="form.roleName"
           placeholder="请输入角色名称"
           clearable
           class="!w-[200px]"
@@ -116,6 +118,16 @@ const {
               @click="handleMenu(row.id)"
             >
               分配菜单
+            </el-button>
+            <el-button
+              class="reset-margin"
+              link
+              type="primary"
+              :size="size"
+              :icon="useRenderIcon(Delete)"
+              @click="removeRole(row)"
+            >
+              删除
             </el-button>
           </template>
         </pure-table>

@@ -2,15 +2,14 @@
 using System.Security.Claims;
 
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 
-using Simple.Admin.Application.Contracts.Public;
 using Simple.Admin.Application.Contracts.System.Models.Function;
 using Simple.Admin.Application.Contracts.System.Models.Permission;
 using Simple.Admin.Application.Contracts.System.Models.User;
 using Simple.Admin.Domain.Entities.System.Enum;
 using Simple.Admin.Domain.Services;
+using Simple.Admin.Domain.Shared;
 using Simple.Admin.Domain.Shared.Core;
 
 namespace Simple.Admin.Application.System.Impl
@@ -27,7 +26,6 @@ namespace Simple.Admin.Application.System.Impl
         private readonly IRepository<SysUserRole> _userRoleRepo;
         private readonly IDapperRepository _dapperRepository;
         private readonly IRepository<SysRoleFunction> _roleFunctionRepo;
-        private readonly ICaptcha _captcha;
         private readonly ITransactionContext _transactionContext;
 
         public PermissionService(IRepository<SysUser> userRepository
@@ -40,7 +38,6 @@ namespace Simple.Admin.Application.System.Impl
             , IRepository<SysUserRole> userRoleRepo
             , IDapperRepository dapperRepository
             , IRepository<SysRoleFunction> roleFunctionRepo
-            , ICaptcha captcha
             , ITransactionContext transactionContext)
         {
             _userRepository = userRepository;
@@ -53,7 +50,6 @@ namespace Simple.Admin.Application.System.Impl
             _userRoleRepo = userRoleRepo;
             _dapperRepository = dapperRepository;
             _roleFunctionRepo = roleFunctionRepo;
-            _captcha = captcha;
             _transactionContext = transactionContext;
         }
 
@@ -164,10 +160,7 @@ namespace Simple.Admin.Application.System.Impl
 
         public async Task<MessageModel> LoginAsync(LoginIn input)
         {
-            var validateFlag = await _captcha.ValidateAsync(input.guid.ToString(), input.code);
-            if (!validateFlag) return Back.Fail("验证码错误");
-
-            var user = await _userRepository.GetAsync(x => x.UserName.ToLower() == input.userName.ToLower());
+            var user = await _userRepository.GetAsync(x => x.UserName.ToLower() == input.username.ToLower());
             if (user == null) return Back.Fail("用户名不存在");
             if (user.IsEnabled == 0) return Back.Fail("没有登录权限，请联系管理员");
 
@@ -187,10 +180,20 @@ namespace Simple.Admin.Application.System.Impl
                 new (ClaimTypes.Role,roleNames),
                 new (ClaimTypes.UserData,StringHelper.UserDataString(user.Id,user.UserName,roleNames))
             };
-            var claimIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            await _context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimIdentity));
+            var expireTime = DateTime.Now.AddMinutes(Convert.ToInt32(App.Configuration.GetSection("JWT")["Expires"]));
+            string token = TokenHelper.GenerateToken(claims, expireTime);
+            claims[3] = new Claim(ClaimTypes.Role, roleNames + "," + "refresh-token");
+            string refreshToken = TokenHelper.GenerateToken(claims, expireTime.AddHours(1));
+            var vo = new LoginVo
+            {
+                username = user.UserName,
+                roles = [.. roleNameArray],
+                accessToken = token,
+                expires = expireTime.ToString("yyyy/MM/dd HH:mm:ss"),
+                refreshToken = refreshToken
+            };
 
-            return Back.Success("登录成功");
+            return Back.Success("登录成功").As(vo);
         }
 
         public async Task<UserModel> QueryUserModelCacheAsync(string userData)

@@ -6,12 +6,17 @@ import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
 import { reactive, ref, onMounted, h, toRaw } from "vue";
-import { getUserList } from "@/api/system/users";
+import {
+  addUser,
+  getUserList,
+  resetUserPassword,
+  switchUserState
+} from "@/api/system/users";
+import { EnsureSuccess } from "@/utils/http/extend";
 
 export function useUser() {
   const form = reactive({
-    username: null,
-    nickname: null
+    userName: null
   });
   const formRef = ref();
   const dataList = ref([]);
@@ -22,7 +27,8 @@ export function useUser() {
     total: 0,
     pageSize: 10,
     currentPage: 1,
-    background: true
+    background: true,
+    pageSizes: [10, 25, 50, 75, 100]
   });
   const columns: TableColumnList = [
     {
@@ -32,11 +38,27 @@ export function useUser() {
     },
     {
       label: "用户名",
-      prop: "username"
+      prop: "userName"
     },
     {
       label: "昵称",
-      prop: "nickname"
+      prop: "nickName"
+    },
+    {
+      label: "角色",
+      cellRenderer: scope => (
+        <div>
+          {scope.row.roleNames?.map(x => (
+            <el-tag class="mr-1 mb-1">{x}</el-tag>
+          ))}
+        </div>
+      )
+    },
+    {
+      label: "性别",
+      cellRenderer: scope => (
+        <span v-text={scope.row.sex === 0 ? "女" : "男"}></span>
+      )
     },
     {
       label: "状态",
@@ -45,7 +67,7 @@ export function useUser() {
         <el-switch
           size={scope.props.size === "small" ? "small" : "default"}
           loading={switchLoadMap.value[scope.index]?.loading}
-          v-model={scope.row.status}
+          v-model={scope.row.isEnabled}
           active-value={1}
           inactive-value={0}
           active-text="已启用"
@@ -57,14 +79,9 @@ export function useUser() {
       )
     },
     {
-      label: "备注",
-      prop: "remark",
-      minWidth: 150
-    },
-    {
       label: "创建时间",
       minWidth: 180,
-      prop: "createTime"
+      prop: "createdOn"
     },
     {
       label: "操作",
@@ -73,22 +90,13 @@ export function useUser() {
       slot: "operation"
     }
   ];
-  // const buttonClass = computed(() => {
-  //   return [
-  //     "!h-[20px]",
-  //     "reset-margin",
-  //     "!text-gray-500",
-  //     "dark:!text-white",
-  //     "dark:hover:!text-primary"
-  //   ];
-  // });
 
-  function onChange({ row, index }) {
+  function onChange({ row, _ }) {
     ElMessageBox.confirm(
       `确认要<strong>${
-        row.status === 0 ? "停用" : "启用"
+        row.isEnabled === 0 ? "停用" : "启用"
       }</strong><strong style='color:var(--el-color-primary)'>${
-        row.username
+        row.userName
       }</strong>吗?`,
       "系统提示",
       {
@@ -100,45 +108,36 @@ export function useUser() {
       }
     )
       .then(() => {
-        switchLoadMap.value[index] = Object.assign(
-          {},
-          switchLoadMap.value[index],
-          {
-            loading: true
+        switchUserState({ id: row.id }).then(res => {
+          if (EnsureSuccess(res)) {
+            message(res.message, { type: "success" });
+            onSearch();
+          } else {
+            message(res.message, { type: "error" });
           }
-        );
-        setTimeout(() => {
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
-          message(`已${row.status === 0 ? "停用" : "启用"}${row.username}`, {
-            type: "success"
-          });
-        }, 300);
+        });
       })
       .catch(() => {
-        row.status === 0 ? (row.status = 1) : (row.status = 0);
+        row.isEnabled = row.isEnabled === 1 ? 0 : 1;
       });
   }
 
   function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
+    pagination.pageSize = val;
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
+    pagination.currentPage = val;
+    onSearch();
   }
 
   function handleSelectionChange(val) {
     console.log("handleSelectionChange", val);
   }
 
-  function resetPassword() {
-    ElMessageBox.confirm("确定重置密码", "系统提示", {
+  function resetPassword(row) {
+    ElMessageBox.confirm("确定重置" + row.userName + "密码?", "系统提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning",
@@ -146,18 +145,27 @@ export function useUser() {
       draggable: true
     })
       .then(() => {
-        ElMessageBox.alert("123456");
+        resetUserPassword({ id: row.id }).then(res => {
+          if (EnsureSuccess(res)) {
+            message(res.message, { type: "success" });
+            ElMessageBox.alert("重置后密码：" + res.result);
+          } else {
+            message(res.message, { type: "error" });
+          }
+        });
       })
       .catch(() => {});
   }
 
   async function onSearch() {
     loading.value = true;
-    const { result: data } = await getUserList(toRaw(form));
+    const { result: data } = await getUserList({
+      ...toRaw(form),
+      page: pagination.currentPage,
+      size: pagination.pageSize
+    });
     dataList.value = data.rows;
     pagination.total = data.total;
-    pagination.pageSize = data.page;
-    pagination.currentPage = data.size;
 
     setTimeout(() => {
       loading.value = false;
@@ -165,6 +173,7 @@ export function useUser() {
   }
 
   const resetForm = formEl => {
+    console.log(formEl);
     if (!formEl) return;
     formEl.resetFields();
     onSearch();
@@ -175,9 +184,7 @@ export function useUser() {
       title: `${title}用户`,
       props: {
         formInline: {
-          name: row?.username ?? "",
-          code: row?.remark ?? "",
-          remark: row?.remark ?? ""
+          userName: row?.userName ?? ""
         }
       },
       width: "40%",
@@ -188,23 +195,22 @@ export function useUser() {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
-        function chores() {
-          message(`您${title}了用户名为${curData.username}的这条数据`, {
-            type: "success"
-          });
-          done(); // 关闭弹框
-          onSearch(); // 刷新表格数据
-        }
         FormRef.validate(valid => {
           if (valid) {
             console.log("curData", curData);
             // 表单规则校验通过
             if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              chores();
+              addUser(curData).then(res => {
+                if (EnsureSuccess(res)) {
+                  message(res.message, { type: "success" });
+                  done(); // 关闭弹框
+                  onSearch(); // 刷新表格数据
+                } else {
+                  message(res.message, { type: "error" });
+                }
+              });
             } else {
-              // 实际开发先调用编辑接口，再进行下面操作
-              chores();
+              //
             }
           }
         });
@@ -217,9 +223,6 @@ export function useUser() {
     message("等菜单管理页面开发后完善");
   }
 
-  /** 数据权限 可自行开发 */
-  // function handleDatabase() {}
-
   onMounted(() => {
     onSearch();
   });
@@ -230,12 +233,10 @@ export function useUser() {
     columns,
     dataList,
     pagination,
-    // buttonClass,
     onSearch,
     resetForm,
     openDialog,
     handleMenu,
-    // handleDatabase,
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange,

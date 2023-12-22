@@ -40,18 +40,10 @@ const {
       :model="form"
       class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px]"
     >
-      <el-form-item label="用户名：" prop="username">
+      <el-form-item label="用户名：" prop="userName">
         <el-input
-          v-model="form.username"
+          v-model="form.userName"
           placeholder="请输入用户名"
-          clearable
-          class="!w-[200px]"
-        />
-      </el-form-item>
-      <el-form-item label="昵称：" prop="name">
-        <el-input
-          v-model="form.nickname"
-          placeholder="请输入用户昵称"
           clearable
           class="!w-[200px]"
         />
@@ -95,14 +87,14 @@ const {
           @page-size-change="handleSizeChange"
           @page-current-change="handleCurrentChange"
         >
-          <template #operation="{}">
+          <template #operation="{ row }">
             <el-button
               class="reset-margin"
               link
               type="primary"
               :size="size"
               :icon="useRenderIcon(Password)"
-              @click="resetPassword()"
+              @click="resetPassword(row)"
             >
               重置密码
             </el-button>

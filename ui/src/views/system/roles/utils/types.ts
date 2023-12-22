@@ -1,5 +1,6 @@
 interface FormItemProps {
-  rolename: string;
+  id: string;
+  name: string;
   remark: string;
 }
 interface FormProps {

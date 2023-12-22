@@ -5,7 +5,8 @@ import { FormProps } from "./utils/types";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
-    rolename: "",
+    id: "",
+    name: "",
     remark: ""
   })
 });
@@ -27,9 +28,9 @@ defineExpose({ getRef });
     :rules="formRules"
     label-width="82px"
   >
-    <el-form-item label="角色名称" prop="rolename">
+    <el-form-item label="角色名称" prop="name">
       <el-input
-        v-model="newFormInline.rolename"
+        v-model="newFormInline.name"
         clearable
         placeholder="请输入角色名称"
       />

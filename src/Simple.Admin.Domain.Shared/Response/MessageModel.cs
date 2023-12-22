@@ -62,7 +62,7 @@
         public MessageModel(bool successed, T? result)
         {
             Code = successed ? response_type.Success : response_type.Fail;
-            Message = "search " + (successed ? "success" : "fail");
+            Message = successed ? "success" : "fail";
             Result = result;
         }
 

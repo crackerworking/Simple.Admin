@@ -37,7 +37,10 @@
     <ProjectReference Include="..\Simple.Admin.Application\Simple.Admin.Application.csproj" />
     <ProjectReference Include="..\Simple.Admin.ControllerLibrary\Simple.Admin.ControllerLibrary.csproj" />
     <ProjectReference Include="..\Simple.Admin.DataDriver\Simple.Admin.DataDriver.csproj" />
-    <ProjectReference Include="..\Simple.Admin.RazorLibrary\Simple.Admin.RazorLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
