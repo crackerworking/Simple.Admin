@@ -1,138 +1,77 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import ReCol from "@/components/ReCol";
-import { formRules } from "./utils/rule";
+import { ref, onMounted } from "vue";
 import { FormProps } from "./utils/types";
-import { usePublicHooks } from "../hooks";
+import { formRules } from "./utils/rule";
+import { getMenuTree } from "@/api/system/menu";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
-    higherDeptOptions: [],
     parentId: 0,
-    name: "",
-    principal: "",
-    phone: "",
-    email: "",
-    sort: 0,
-    status: 1,
-    remark: ""
+    functionName: "",
+    functionType: 10,
+    url: "",
+    icon: "",
+    authorizationCode: "",
+    sort: 0
   })
 });
+const editForm = ref(props.formInline);
+const filterTree = ref([]);
 
-const ruleFormRef = ref();
-const { switchStyle } = usePublicHooks();
-const newFormInline = ref(props.formInline);
-
-function getRef() {
-  return ruleFormRef.value;
+function filterMethod(value) {
+  console.log(value);
 }
 
-defineExpose({ getRef });
+onMounted(async () => {
+  const { result } = await getMenuTree();
+  filterTree.value = result;
+});
 </script>
 
 <template>
   <el-form
-    ref="ruleFormRef"
-    :model="newFormInline"
+    :model="editForm"
+    label-width="120px"
     :rules="formRules"
-    label-width="82px"
+    ref="editFormRef"
   >
-    <el-row :gutter="30">
-      <re-col>
-        <el-form-item label="上级部门">
-          <el-cascader
-            v-model="newFormInline.parentId"
-            class="w-full"
-            :options="newFormInline.higherDeptOptions"
-            :props="{
-              value: 'id',
-              label: 'name',
-              emitPath: false,
-              checkStrictly: true
-            }"
-            clearable
-            filterable
-            placeholder="请选择上级部门"
-          >
-            <template #default="{ node, data }">
-              <span>{{ data.name }}</span>
-              <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-            </template>
-          </el-cascader>
-        </el-form-item>
-      </re-col>
-
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="部门名称" prop="name">
-          <el-input
-            v-model="newFormInline.name"
-            clearable
-            placeholder="请输入部门名称"
-          />
-        </el-form-item>
-      </re-col>
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="部门负责人">
-          <el-input
-            v-model="newFormInline.principal"
-            clearable
-            placeholder="请输入部门负责人"
-          />
-        </el-form-item>
-      </re-col>
-
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="手机号" prop="phone">
-          <el-input
-            v-model="newFormInline.phone"
-            clearable
-            placeholder="请输入手机号"
-          />
-        </el-form-item>
-      </re-col>
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="邮箱" prop="email">
-          <el-input
-            v-model="newFormInline.email"
-            clearable
-            placeholder="请输入邮箱"
-          />
-        </el-form-item>
-      </re-col>
-
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="排序">
-          <el-input-number
-            v-model="newFormInline.sort"
-            :min="0"
-            :max="9999"
-            controls-position="right"
-          />
-        </el-form-item>
-      </re-col>
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="部门状态">
-          <el-switch
-            v-model="newFormInline.status"
-            inline-prompt
-            :active-value="1"
-            :inactive-value="0"
-            active-text="启用"
-            inactive-text="停用"
-            :style="switchStyle"
-          />
-        </el-form-item>
-      </re-col>
-
-      <re-col>
-        <el-form-item label="备注">
-          <el-input
-            v-model="newFormInline.remark"
-            placeholder="请输入备注信息"
-            type="textarea"
-          />
-        </el-form-item>
-      </re-col>
-    </el-row>
+    <el-form-item label="上级">
+      <el-tree-select
+        node-key="value"
+        value-key="value"
+        v-model="editForm.parentId"
+        show-checkbox
+        :check-strictly="true"
+        clearable
+        :filter-method="filterMethod"
+        filterable
+        :data="filterTree"
+        :render-after-expand="false"
+        :props="{ label: 'name', children: 'children' }"
+      />
+    </el-form-item>
+    <el-form-item label="名称" prop="functionName">
+      <el-input v-model="editForm.functionName" />
+    </el-form-item>
+    <el-form-item label="类型" prop="functionType">
+      <el-radio-group v-model="editForm.functionType">
+        <el-radio :label="10">菜单</el-radio>
+        <el-radio :label="20">按钮</el-radio>
+        <el-radio :label="30">资源</el-radio>
+        <el-radio :label="40">功能</el-radio>
+      </el-radio-group>
+    </el-form-item>
+    <el-form-item label="地址">
+      <el-input v-model="editForm.url" />
+    </el-form-item>
+    <el-form-item label="图标" v-if="editForm.functionType == 10">
+      <el-input v-model="editForm.icon" />
+    </el-form-item>
+    <el-form-item label="排序">
+      <el-input-number v-model="editForm.sort" :min="1" :max="999" />
+    </el-form-item>
+    <el-form-item label="授权码">
+      <el-input v-model="editForm.authorizationCode" />
+    </el-form-item>
   </el-form>
 </template>

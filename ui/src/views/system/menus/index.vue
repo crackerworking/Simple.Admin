@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useDept } from "./utils/hook";
+import { useMenu } from "./utils/hook";
 import { PureTableBar } from "@/components/RePureTableBar";
+import { PureTable } from "@pureadmin/table";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
 import Delete from "@iconify-icons/ep/delete";
@@ -11,7 +12,7 @@ import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
 
 defineOptions({
-  name: "Dept"
+  name: "Menus"
 });
 
 const formRef = ref();
@@ -26,7 +27,7 @@ const {
   openDialog,
   handleDelete,
   handleSelectionChange
-} = useDept();
+} = useMenu();
 </script>
 
 <template>
@@ -37,23 +38,23 @@ const {
       :model="form"
       class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px]"
     >
-      <el-form-item label="部门名称：" prop="name">
+      <el-form-item label="功能名称：" prop="name">
         <el-input
-          v-model="form.name"
-          placeholder="请输入部门名称"
+          v-model="form.functionName"
+          placeholder="请输入功能名称"
           clearable
           class="!w-[200px]"
         />
       </el-form-item>
-      <el-form-item label="状态：" prop="status">
+      <el-form-item label="类型：" prop="status">
         <el-select
-          v-model="form.status"
-          placeholder="请选择状态"
+          v-model="form.functionType"
+          placeholder="请选择类型"
           clearable
           class="!w-[180px]"
         >
-          <el-option label="启用" :value="1" />
-          <el-option label="停用" :value="0" />
+          <el-option label="菜单" :value="10" />
+          <el-option label="目录" :value="20" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -72,9 +73,9 @@ const {
     </el-form>
 
     <PureTableBar
-      title="部门列表（仅演示，操作后不生效）"
+      title="功能列表"
       :columns="columns"
-      :tableRef="tableRef?.getTableRef()"
+      :tableRef="tableRef"
       @refresh="onSearch"
     >
       <template #buttons>

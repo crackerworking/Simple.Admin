@@ -20,6 +20,14 @@ export default {
       meta: {
         title: "角色管理"
       }
+    },
+    {
+      path: "/menus/index",
+      name: "Menus",
+      component: () => import("@/views/system/menus/index.vue"),
+      meta: {
+        title: "菜单管理"
+      }
     }
   ]
 };
