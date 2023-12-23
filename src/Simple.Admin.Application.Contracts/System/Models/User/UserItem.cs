@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Simple.Admin.Application.Contracts.System.Models.User
 {
@@ -10,11 +11,23 @@ namespace Simple.Admin.Application.Contracts.System.Models.User
         [NotNull]
         public string? UserName { get; set; }
 
-        public string? RoleNameString { get; set; }
+        [JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public string? RoleIdStr { get; set; }
+
+        public string[] RoleIds
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(RoleIdStr))
+                {
+                    return RoleIdStr.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                }
+                return Array.Empty<string>();
+            }
+        }
 
         public DateTime CreatedOn { get; set; }
-
-        public IList<string>? RoleNames { get; set; }
 
         public int IsEnabled { get; set; }
 

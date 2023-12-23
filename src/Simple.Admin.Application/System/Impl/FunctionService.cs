@@ -26,6 +26,15 @@ namespace Simple.Admin.Application.System.Impl
             _cache = cache;
         }
 
+        public async Task<MessageModel<IList<SysFunctionFull>>> GetFunctions(FunctionDto dto)
+        {
+            var exp = PredicateBuilder.Instance.Create<SysFunction>()
+                .AndIf(!string.IsNullOrEmpty(dto.FunctionName), x => x.FunctionName.Contains(dto.FunctionName));
+            var raw = await _functionRepo.GetListAsync(exp);
+            var list = _mapper.Map<List<SysFunctionFull>>(raw);
+            return new MessageModel<IList<SysFunctionFull>>(list);
+        }
+
         private IList<SysFunctionFull> _allFunctions => GetFunctionsCacheAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
         public async Task<MessageModel> AddOrUpdateFunctionAsync(FunctionOperation operation)

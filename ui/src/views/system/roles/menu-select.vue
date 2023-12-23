@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { onMounted, watch, ref } from "vue";
-import { getRoleFunctions } from "@/api/system/roles";
+import { getFunctionTree, getRoleFunctionIds } from "@/api/system/roles";
 import "./menu-select.css";
 
 const props = defineProps(["id"]);
 const treeData = ref<Array<any>>([]);
 const filterText = ref<string>("");
 const treeRef = ref();
-const defaultKeys = [];
-const defaultExpandedKeys = [];
+const defaultKeys = ref([]);
+const defaultExpandedKeys = ref([]);
 const defaultProps = {
   label: "functionName",
   children: "children"
@@ -23,9 +23,18 @@ watch(filterText, newVal => {
 });
 
 onMounted(async () => {
-  const { result } = await getRoleFunctions({ id: props.id });
+  const { result } = await getFunctionTree();
   treeData.value = result;
+  const { result: ids } = await getRoleFunctionIds({ id: props.id });
+  defaultKeys.value = ids;
+  defaultExpandedKeys.value = ids;
 });
+
+function getRef() {
+  return treeRef.value;
+}
+
+defineExpose({ getRef });
 </script>
 
 <template>

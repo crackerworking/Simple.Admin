@@ -84,7 +84,7 @@ namespace Simple.Admin.Application.System.Impl
 
         public async Task<MessageModel<PagingModel<UserItem>>> GetUserListAsync(UserSearch search)
         {
-            var sql = @"select u.*,GROUP_CONCAT(r.RoleName) as RoleNameString from SysUser u
+            var sql = @"select u.*,GROUP_CONCAT(r.id) as RoleIdStr from SysUser u
                         left join SysUserRole ur on u.Id=ur.UserId
                         left join SysRole r on ur.RoleId=r.Id
                         where u.IsDeleted=0 ";
@@ -96,19 +96,12 @@ namespace Simple.Admin.Application.System.Impl
             var pageModel = await _dapperRepo.QueryPagedAsync<UserItem>(sql, search.Page, search.Size, "CreatedOn asc",
                 new { UserName = "%" + search.UserName + "%" });
 
-            foreach (var item in pageModel.Rows!)
-            {
-                if (!string.IsNullOrEmpty(item.RoleNameString))
-                {
-                    item.RoleNames = item.RoleNameString.Split(',');
-                }
-            }
             return new MessageModel<PagingModel<UserItem>>(true, "查询成功", pageModel);
         }
 
         public async Task<MessageModel> SwitchStateAsync(PrimaryKey input)
         {
-            var model = await _userRepo.GetAsync(x=>x.Id == input.id);
+            var model = await _userRepo.GetAsync(x => x.Id == input.id);
             if (model == null) return Back.NonExist();
             model.IsEnabled = model.IsEnabled == 1 ? 0 : 1;
             model.ModifiedBy = _miUser.UserId;

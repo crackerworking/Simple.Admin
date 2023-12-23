@@ -1,16 +1,18 @@
 import editForm from "../form.vue";
+import roleForm from "../role-select.vue";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
 import { usePublicHooks } from "../../hooks";
 import { addDialog } from "@/components/ReDialog";
-import type { FormItemProps } from "../utils/types";
+import type { FormItemProps, RoleFormItemProps } from "./types";
 import type { PaginationProps } from "@pureadmin/table";
 import { reactive, ref, onMounted, h, toRaw } from "vue";
 import {
   addUser,
   getUserList,
   resetUserPassword,
-  switchUserState
+  switchUserState,
+  setUserRole
 } from "@/api/system/users";
 import { EnsureSuccess } from "@/utils/http/extend";
 
@@ -19,6 +21,7 @@ export function useUser() {
     userName: null
   });
   const formRef = ref();
+  const roleFormRef = ref();
   const dataList = ref([]);
   const loading = ref(true);
   const switchLoadMap = ref({});
@@ -43,16 +46,6 @@ export function useUser() {
     {
       label: "昵称",
       prop: "nickName"
-    },
-    {
-      label: "角色",
-      cellRenderer: scope => (
-        <div>
-          {scope.row.roleNames?.map(x => (
-            <el-tag class="mr-1 mb-1">{x}</el-tag>
-          ))}
-        </div>
-      )
     },
     {
       label: "性别",
@@ -157,6 +150,40 @@ export function useUser() {
       .catch(() => {});
   }
 
+  function assignRoles(row) {
+    addDialog({
+      title: `配置角色`,
+      props: {
+        formInline: {
+          userId: row?.id,
+          roleIds: row?.roleIds
+        }
+      },
+      width: "40%",
+      draggable: true,
+      fullscreenIcon: true,
+      closeOnClickModal: false,
+      contentRenderer: () => h(roleForm, { ref: roleFormRef }),
+      beforeSure: (done, { options }) => {
+        const RoleFormRef = roleFormRef.value.getRef();
+        const curData = options.props.formInline as RoleFormItemProps;
+        RoleFormRef.validate(valid => {
+          if (valid) {
+            setUserRole(curData).then(res => {
+              if (EnsureSuccess(res)) {
+                message(res.message, { type: "success" });
+                done(); // 关闭弹框
+                onSearch(); // 刷新表格数据
+              } else {
+                message(res.message, { type: "error" });
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+
   async function onSearch() {
     loading.value = true;
     const { result: data } = await getUserList({
@@ -240,6 +267,7 @@ export function useUser() {
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange,
-    resetPassword
+    resetPassword,
+    assignRoles
   };
 }

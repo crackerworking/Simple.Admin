@@ -38,5 +38,11 @@ namespace Simple.Admin.Application.Contracts.System
         /// <param name="id"></param>
         /// <returns></returns>
         Task<MessageModel<SysRoleFull>> GetRoleAsync(long id);
+
+        /// <summary>
+        /// 角色选项
+        /// </summary>
+        /// <returns></returns>
+        Task<MessageModel<IList<Option>>> GetRoleOptions();
     }
 }

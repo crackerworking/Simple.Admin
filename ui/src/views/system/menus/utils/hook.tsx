@@ -1,9 +1,9 @@
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { getMenuList } from "@/api/system/menu";
+import { getFunctions } from "@/api/system/functions";
 import { addDialog } from "@/components/ReDialog";
-import { reactive, ref, onMounted, h } from "vue";
+import { reactive, ref, onMounted, h, toRaw } from "vue";
 import type { FormItemProps } from "../utils/types";
 import { isAllEmpty } from "@pureadmin/utils";
 
@@ -61,19 +61,8 @@ export function useMenu() {
 
   async function onSearch() {
     loading.value = true;
-    const { result } = await getMenuList(); // 这里是返回一维数组结构，前端自行处理成树结构，返回格式要求：唯一id加父节点parentId，parentId取父节点id
-    let newData = result;
-    if (!isAllEmpty(form.functionName)) {
-      // 前端搜索部门名称
-      newData = newData.filter(item =>
-        item.functionName.includes(form.functionName)
-      );
-    }
-    if (!isAllEmpty(form.functionType)) {
-      // 前端搜索状态
-      newData = newData.filter(item => item.functionType === form.functionType);
-    }
-    dataList.value = handleTree(newData); // 处理成树结构
+    const { result } = await getFunctions(toRaw(form));
+    dataList.value = handleTree(result); // 处理成树结构
     setTimeout(() => {
       loading.value = false;
     }, 500);

@@ -38,24 +38,13 @@ const {
       :model="form"
       class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px]"
     >
-      <el-form-item label="功能名称：" prop="name">
+      <el-form-item label="功能名称：" prop="functionName">
         <el-input
           v-model="form.functionName"
           placeholder="请输入功能名称"
           clearable
           class="!w-[200px]"
         />
-      </el-form-item>
-      <el-form-item label="类型：" prop="status">
-        <el-select
-          v-model="form.functionType"
-          placeholder="请选择类型"
-          clearable
-          class="!w-[180px]"
-        >
-          <el-option label="菜单" :value="10" />
-          <el-option label="目录" :value="20" />
-        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -84,7 +73,7 @@ const {
           :icon="useRenderIcon(AddFill)"
           @click="openDialog()"
         >
-          新增部门
+          新增功能
         </el-button>
       </template>
       <template v-slot="{ size, dynamicColumns }">

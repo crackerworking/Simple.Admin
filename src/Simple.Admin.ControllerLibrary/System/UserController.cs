@@ -10,11 +10,13 @@ namespace Simple.Admin.ControllerLibrary.System
     {
         private readonly IUserService _userService;
         private readonly IPermissionService _permissionService;
+        private readonly IRoleService _roleService;
 
-        public UserController(IUserService userService, IPermissionService permissionService)
+        public UserController(IUserService userService, IPermissionService permissionService, IRoleService roleService)
         {
             _userService = userService;
             _permissionService = permissionService;
+            _roleService = roleService;
         }
 
         /// <summary>
@@ -84,5 +86,12 @@ namespace Simple.Admin.ControllerLibrary.System
         [AuthorizeCode("System:User:Passed")]
         public async Task<MessageModel> SwitchState([FromBody] PrimaryKey input)
             => await _userService.SwitchStateAsync(input);
+
+        /// <summary>
+        /// 角色选项
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public Task<MessageModel<IList<Option>>> GetRoleOptions() => _roleService.GetRoleOptions();
     }
 }

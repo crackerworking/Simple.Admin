@@ -1,11 +1,15 @@
 import { http } from "@/utils/http";
 import { ApiGenericResponse } from "@/utils/http/types";
 
-/** 菜单列表 */
-export const getMenuList = (data?: object) => {
-  return http.request<ApiGenericResponse<any>>("post", "/getMenuList", {
-    data
-  });
+/** 功能列表 */
+export const getFunctions = (data?: object) => {
+  return http.request<ApiGenericResponse<any>>(
+    "post",
+    "/api/Function/GetFunctions",
+    {
+      data
+    }
+  );
 };
 
 /** 菜单下拉数据 */

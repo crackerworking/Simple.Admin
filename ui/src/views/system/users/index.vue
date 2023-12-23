@@ -7,6 +7,7 @@ import Search from "@iconify-icons/ep/search";
 import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
 import { useUser } from "./utils/hook";
+import AdminOutlined from "@iconify-icons/eos-icons/admin-outlined";
 import { ref } from "vue";
 
 defineOptions({
@@ -20,15 +21,13 @@ const {
   columns,
   dataList,
   pagination,
-  // buttonClass,
   onSearch,
   resetForm,
-  openDialog,
-  // handleDatabase,
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,
-  resetPassword
+  resetPassword,
+  assignRoles
 } = useUser();
 </script>
 
@@ -88,6 +87,16 @@ const {
           @page-current-change="handleCurrentChange"
         >
           <template #operation="{ row }">
+            <el-button
+              class="reset-margin"
+              link
+              type="primary"
+              :size="size"
+              :icon="useRenderIcon(AdminOutlined)"
+              @click="assignRoles(row)"
+            >
+              配置角色
+            </el-button>
             <el-button
               class="reset-margin"
               link

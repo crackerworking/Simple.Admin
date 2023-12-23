@@ -40,3 +40,18 @@ export const resetUserPassword = (data?: object) => {
     }
   );
 };
+
+/** 设置用户角色 */
+export const setUserRole = (data?: object) => {
+  return http.request<ApiResponse>("post", "/api/User/SetUserRole", {
+    data
+  });
+};
+
+/** 角色选项 */
+export const getRoleOptions = () => {
+  return http.request<ApiGenericResponse<any>>(
+    "post",
+    "/api/User/GetRoleOptions"
+  );
+};

@@ -43,7 +43,7 @@ const {
       :model="form"
       class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px]"
     >
-      <el-form-item label="角色名称：" prop="rolename">
+      <el-form-item label="角色名称：" prop="roleName">
         <el-input
           v-model="form.roleName"
           placeholder="请输入角色名称"

@@ -5,6 +5,12 @@ namespace Simple.Admin.Application.Contracts.System
     public interface IFunctionService
     {
         /// <summary>
+        /// 功能列表
+        /// </summary>
+        /// <returns></returns>
+        Task<MessageModel<IList<SysFunctionFull>>> GetFunctions(FunctionDto dto);
+
+        /// <summary>
         /// 新增或修改 TODO:
         /// </summary>
         /// <param name="operation"></param>

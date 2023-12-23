@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { FormProps } from "./utils/types";
 import { formRules } from "./utils/rule";
-import { getMenuTree } from "@/api/system/menu";
+import { getMenuTree } from "@/api/system/functions";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({

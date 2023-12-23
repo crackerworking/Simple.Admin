@@ -12,11 +12,31 @@ export const getRoleList = (data?: object) => {
   );
 };
 
-/** 角色功能 */
-export const getRoleFunctions = (data?: object) => {
-  return http.request<ApiGenericResponse<any>>("post", "/getRoleFunctions", {
-    data
-  });
+/** 功能树 */
+export const getFunctionTree = (data = { test: "hello" }) => {
+  return http.request<ApiGenericResponse<any>>(
+    "post",
+    "/api/Function/GetFunctionList",
+    { data }
+  );
+};
+
+/** 角色功能ID */
+export const getRoleFunctionIds = (data?: object) => {
+  return http.request<ApiGenericResponse<any>>(
+    "post",
+    "/api/Role/GetRoleFunctionIds",
+    { data }
+  );
+};
+
+/** 设置角色功能 */
+export const setRoleFunctions = (data?: object) => {
+  return http.request<ApiGenericResponse<any>>(
+    "post",
+    "/api/Role/SetRoleFunctions",
+    { data }
+  );
 };
 
 /** 删除角色 */

@@ -25,6 +25,13 @@ namespace Simple.Admin.Application.System.Impl
             _userRoleRepo = userRoleRepo;
         }
 
+        public async Task<MessageModel<IList<Option>>> GetRoleOptions()
+        {
+            var raw = await _roleRepository.GetListAsync(x=>x.IsDeleted == 0);
+            var list = raw.Select(x => new Option(x.RoleName, x.Id.ToString())).ToList();
+            return new MessageModel<IList<Option>>(list);
+        }
+
         public async Task<MessageModel> AddRoleAsync(RolePlus input)
         {
             var isExist = await _roleRepository.AnyAsync(x => x.RoleName.ToLower() == input.name.ToLower());
@@ -56,6 +63,11 @@ namespace Simple.Admin.Application.System.Impl
             {
                 sql += " and RoleName like @name ";
                 parameter.Add("name", "%" + search.RoleName + "%");
+            }
+            if (!string.IsNullOrEmpty(search.Remark))
+            {
+                sql += " and Remark like @remark ";
+                parameter.Add("remark", "%" + search.Remark + "%");
             }
 
             var pageModel = await _dapperRepository.QueryPagedAsync<SysRoleFull>(sql, search.Page, search.Size, "CreatedOn desc", parameter);

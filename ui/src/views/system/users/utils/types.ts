@@ -5,4 +5,13 @@ interface FormProps {
   formInline: FormItemProps;
 }
 
-export type { FormItemProps, FormProps };
+interface RoleFormItemProps {
+  userId: string;
+  roleIds: Array<string>;
+}
+
+interface RoleFormProps {
+  formInline: RoleFormItemProps;
+}
+
+export type { FormItemProps, FormProps, RoleFormItemProps, RoleFormProps };

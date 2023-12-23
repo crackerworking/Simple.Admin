@@ -49,5 +49,12 @@ namespace Simple.Admin.ControllerLibrary.System
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Function:Query")]
         public IList<TreeOption> GetFunctionTree() => _functionService.GetFunctionTree();
+
+        /// <summary>
+        /// 功能列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public Task<MessageModel<IList<SysFunctionFull>>> GetFunctions([FromBody] FunctionDto dto) => _functionService.GetFunctions(dto);
     }
 }

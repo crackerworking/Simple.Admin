@@ -28,6 +28,7 @@
     "not op_mini all"
   ],
   "dependencies": {
+    "@iconify-icons/eos-icons": "^1.2.6",
     "@pureadmin/descriptions": "^1.1.1",
     "@pureadmin/table": "^2.3.2",
     "@pureadmin/utils": "^1.9.6",

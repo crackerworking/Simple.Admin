@@ -10,7 +10,8 @@ import {
   getRoleList,
   deleteRole,
   addRole,
-  updateRole
+  updateRole,
+  setRoleFunctions
 } from "@/api/system/roles";
 import { EnsureSuccess } from "@/utils/http/extend";
 
@@ -20,13 +21,15 @@ export function useRole() {
     remark: null
   });
   const formRef = ref();
+  const treeRef = ref();
   const dataList = ref([]);
   const loading = ref(true);
   const pagination = reactive<PaginationProps>({
     total: 0,
     pageSize: 10,
     currentPage: 1,
-    background: true
+    background: true,
+    pageSizes: [10, 25, 50, 75, 100]
   });
   const columns: TableColumnList = [
     {
@@ -52,11 +55,13 @@ export function useRole() {
   ];
 
   function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
+    pagination.pageSize = val;
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
+    pagination.currentPage = val;
+    onSearch();
   }
 
   function handleSelectionChange(val) {
@@ -68,8 +73,6 @@ export function useRole() {
     const { result: data } = await getRoleList(toRaw(form));
     dataList.value = data.rows;
     pagination.total = data.total;
-    pagination.pageSize = data.page;
-    pagination.currentPage = data.size;
 
     setTimeout(() => {
       loading.value = false;
@@ -140,7 +143,20 @@ export function useRole() {
       draggable: true,
       fullscreenIcon: true,
       closeOnClickModal: false,
-      contentRenderer: () => h(menuSelect)
+      contentRenderer: () => h(menuSelect, { ref: treeRef }),
+      beforeSure: (done, { options }) => {
+        console.debug(options);
+        const TreeRef = treeRef.value.getRef();
+        const checkedIds = TreeRef.getCheckedKeys();
+        setRoleFunctions({ id: id, funcIds: checkedIds }).then(res => {
+          if (EnsureSuccess(res)) {
+            message(res.message, { type: "success" });
+            done(); // 关闭弹框
+          } else {
+            message(res.message, { type: "error" });
+          }
+        });
+      }
     });
   }
 
@@ -163,9 +179,6 @@ export function useRole() {
     });
   }
 
-  /** 数据权限 可自行开发 */
-  // function handleDatabase() {}
-
   onMounted(() => {
     onSearch();
   });
@@ -176,12 +189,10 @@ export function useRole() {
     columns,
     dataList,
     pagination,
-    // buttonClass,
     onSearch,
     resetForm,
     openDialog,
     handleMenu,
-    // handleDatabase,
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange,
