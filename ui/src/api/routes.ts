@@ -1,10 +1,9 @@
 import { http } from "@/utils/http";
-
-type Result = {
-  success: boolean;
-  data: Array<any>;
-};
+import { ApiGenericResponse } from "@/utils/http/types";
 
 export const getAsyncRoutes = () => {
-  return http.request<Result>("get", "/getAsyncRoutes");
+  return http.request<ApiGenericResponse<any>>(
+    "post",
+    "/api/Personal/GetSiderMenu"
+  );
 };

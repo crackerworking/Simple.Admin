@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { FormProps } from "./utils/types";
 import { formRules } from "./utils/rule";
-import { getMenuTree } from "@/api/system/functions";
+import { getFunctionTree } from "@/api/system/roles";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
@@ -12,20 +12,29 @@ const props = withDefaults(defineProps<FormProps>(), {
     url: "",
     icon: "",
     authorizationCode: "",
-    sort: 0
+    sort: 0,
+    id: ""
   })
 });
 const editForm = ref(props.formInline);
 const filterTree = ref([]);
+const editFormRef = ref();
 
 function filterMethod(value) {
   console.log(value);
 }
 
-onMounted(async () => {
-  const { result } = await getMenuTree();
-  filterTree.value = result;
+function getRef() {
+  return editFormRef.value;
+}
+
+onMounted(() => {
+  getFunctionTree().then(res => {
+    filterTree.value = res.result;
+  });
 });
+
+defineExpose({ getRef });
 </script>
 
 <template>
@@ -37,8 +46,8 @@ onMounted(async () => {
   >
     <el-form-item label="上级">
       <el-tree-select
-        node-key="value"
-        value-key="value"
+        node-key="id"
+        value-key="id"
         v-model="editForm.parentId"
         show-checkbox
         :check-strictly="true"
@@ -47,7 +56,7 @@ onMounted(async () => {
         filterable
         :data="filterTree"
         :render-after-expand="false"
-        :props="{ label: 'name', children: 'children' }"
+        :props="{ label: 'functionName', children: 'children' }"
       />
     </el-form-item>
     <el-form-item label="名称" prop="functionName">

@@ -53,31 +53,49 @@ namespace Simple.Admin.Application.System.Impl
             _transactionContext = transactionContext;
         }
 
-        public async Task<List<PaMenuModel>> GetSiderMenuAsync()
+        public async Task<MessageModel<List<RouterItem>>> GetSiderMenuAsync()
         {
             var topLevels = (await _functionService.GetFunctionsCacheAsync())
                 .Where(x => _miUser.FuncIds.Contains(x.Id) && x.ParentId <= 0 && x.FunctionType == (int)EnumFunctionType.Menu).OrderBy(x => x.Sort);
-            var list = new List<PaMenuModel>();
+            var list = new List<RouterItem>();
             foreach (var x in topLevels)
             {
                 var children = (await GetPaChildrenAsync(x.Id)).ToList();
-                var temp = new PaMenuModel(x.Id, 0, x.FunctionName, x.Url, x.Icon, children);
+                var temp = new RouterItem
+                {
+                    path = x.Url,
+                    meta = new RouterItemMeta
+                    {
+                        icon = x.Icon,
+                        rank = x.Sort,
+                        title = x.FunctionName
+                    },
+                    children = (await GetPaChildrenAsync(x.Id)).OrderBy(x => x.meta.rank).ToList()
+                };
                 list.Add(temp);
             }
 
-            return list;
+            return new MessageModel<List<RouterItem>>(list);
         }
 
-        private async Task<IList<PaMenuModel>> GetPaChildrenAsync(long id)
+        private async Task<IList<RouterItem>> GetPaChildrenAsync(long id)
         {
             var children = (await _functionService.GetFunctionsCacheAsync()).Where(x => _miUser.FuncIds.Contains(x.Id) && x.ParentId > 0 && x.FunctionType == (int)EnumFunctionType.Menu && x.ParentId == id).OrderBy(x => x.Sort);
-            var list = new List<PaMenuModel>();
+            var list = new List<RouterItem>();
             foreach (var x in children)
             {
-                var temp = (await GetPaChildrenAsync(x.Id)).ToList();
-                var type = await GetMenuTypeAsync(x.Children);
-                var menu = new PaMenuModel(x.Id, type, x.FunctionName, x.Url, x.Icon, temp);
-                list.Add(menu);
+                var temp = new RouterItem
+                {
+                    path = x.Url,
+                    meta = new RouterItemMeta
+                    {
+                        icon = x.Icon,
+                        rank = x.Sort,
+                        title = x.FunctionName
+                    },
+                    children = (await GetPaChildrenAsync(x.Id)).OrderBy(x => x.meta.rank).ToList()
+                };
+                list.Add(temp);
             }
             return list;
         }

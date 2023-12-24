@@ -24,7 +24,7 @@ namespace Simple.Admin.Application.Contracts.System
         /// 获取当前用户可查看的侧边菜单
         /// </summary>
         /// <returns></returns>
-        Task<List<PaMenuModel>> GetSiderMenuAsync();
+        Task<MessageModel<List<RouterItem>>> GetSiderMenuAsync();
 
         /// <summary>
         /// 获取角色功能

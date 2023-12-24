@@ -22,11 +22,11 @@ export default {
       }
     },
     {
-      path: "/menus/index",
-      name: "Menus",
-      component: () => import("@/views/system/menus/index.vue"),
+      path: "/functions/index",
+      name: "Functions",
+      component: () => import("@/views/system/functions/index.vue"),
       meta: {
-        title: "菜单管理"
+        title: "功能管理"
       }
     }
   ]

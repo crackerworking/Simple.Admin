@@ -6,6 +6,7 @@ interface FormItemProps {
   icon: string;
   authorizationCode: string;
   sort: number;
+  id: string;
 }
 interface FormProps {
   formInline: FormItemProps;

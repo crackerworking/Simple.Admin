@@ -12,7 +12,7 @@ import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
 
 defineOptions({
-  name: "Menus"
+  name: "Functions"
 });
 
 const formRef = ref();
@@ -25,7 +25,7 @@ const {
   onSearch,
   resetForm,
   openDialog,
-  handleDelete,
+  removeFunction,
   handleSelectionChange
 } = useMenu();
 </script>
@@ -107,22 +107,16 @@ const {
             >
               编辑
             </el-button>
-            <el-popconfirm
-              :title="`是否确认删除部门名称为${row.name}的这条数据`"
-              @confirm="handleDelete(row)"
+            <el-button
+              class="reset-margin"
+              link
+              type="primary"
+              :size="size"
+              :icon="useRenderIcon(Delete)"
+              @click="removeFunction(row)"
             >
-              <template #reference>
-                <el-button
-                  class="reset-margin"
-                  link
-                  type="primary"
-                  :size="size"
-                  :icon="useRenderIcon(Delete)"
-                >
-                  删除
-                </el-button>
-              </template>
-            </el-popconfirm>
+              删除
+            </el-button>
           </template>
         </pure-table>
       </template>

@@ -26,18 +26,28 @@ namespace Simple.Admin.Application.System.Impl
             _cache = cache;
         }
 
+        public Task<MessageModel> AddFunctionAsync(FunctionOperation operation)
+        {
+            return AddOrUpdateFunctionAsync(operation);
+        }
+
+        public Task<MessageModel> UpdateFunctionAsync(FunctionOperation operation)
+        {
+            return AddOrUpdateFunctionAsync(operation);
+        }
+
         public async Task<MessageModel<IList<SysFunctionFull>>> GetFunctions(FunctionDto dto)
         {
             var exp = PredicateBuilder.Instance.Create<SysFunction>()
-                .AndIf(!string.IsNullOrEmpty(dto.FunctionName), x => x.FunctionName.Contains(dto.FunctionName));
+                .AndIf(!string.IsNullOrEmpty(dto.FunctionName), x => x.FunctionName.Contains(dto.FunctionName!));
             var raw = await _functionRepo.GetListAsync(exp);
-            var list = _mapper.Map<List<SysFunctionFull>>(raw);
+            var list = _mapper.Map<List<SysFunctionFull>>(raw.OrderBy(x => x.Sort));
             return new MessageModel<IList<SysFunctionFull>>(list);
         }
 
         private IList<SysFunctionFull> _allFunctions => GetFunctionsCacheAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
-        public async Task<MessageModel> AddOrUpdateFunctionAsync(FunctionOperation operation)
+        private async Task<MessageModel> AddOrUpdateFunctionAsync(FunctionOperation operation)
         {
             if (string.IsNullOrWhiteSpace(operation.Icon) && operation.FunctionType == (int)EnumFunctionType.Menu)
             {

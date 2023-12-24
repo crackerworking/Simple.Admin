@@ -11,11 +11,18 @@ namespace Simple.Admin.Application.Contracts.System
         Task<MessageModel<IList<SysFunctionFull>>> GetFunctions(FunctionDto dto);
 
         /// <summary>
-        /// 新增或修改 TODO:
+        /// 新增
         /// </summary>
         /// <param name="operation"></param>
         /// <returns></returns>
-        Task<MessageModel> AddOrUpdateFunctionAsync(FunctionOperation operation);
+        Task<MessageModel> AddFunctionAsync(FunctionOperation operation);
+
+        /// <summary>
+        /// 修改
+        /// </summary>
+        /// <param name="operation"></param>
+        /// <returns></returns>
+        Task<MessageModel> UpdateFunctionAsync(FunctionOperation operation);
 
         /// <summary>
         /// 列表（带树形）

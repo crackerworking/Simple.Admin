@@ -1,4 +1,9 @@
-﻿using Simple.Admin.Application.Contracts.Public;
+﻿using System.Linq.Expressions;
+
+using Simple.Admin.Application.Contracts.Public;
+using Simple.Admin.Application.Contracts.System.Models.Function;
+using Simple.Admin.Application.Contracts.System.Models.Permission;
+using Simple.Admin.Domain.Entities.System.Enum;
 using Simple.Admin.Domain.Shared.Core;
 
 namespace Simple.Admin.Application.Public
@@ -10,10 +15,11 @@ namespace Simple.Admin.Application.Public
         private readonly IRepository<SysMessage> _messageRepo;
         private readonly ICaptcha _captcha;
         private readonly IQuickDict _dictionaryApi;
+        private readonly IRepository<SysFunction> _functionRepo;
         private readonly IDictService _dictService;
 
         public PublicService(IOptionsMonitor<PaConfigModel> uiConfig, IDictService dictService
-            , ICurrentUser miUser, IRepository<SysMessage> messageRepo, ICaptcha captcha, IQuickDict dictionaryApi)
+            , ICurrentUser miUser, IRepository<SysMessage> messageRepo, ICaptcha captcha, IQuickDict dictionaryApi,IRepository<SysFunction> functionRepo)
         {
             _dictService = dictService;
             _uiConfig = uiConfig.CurrentValue;
@@ -21,6 +27,7 @@ namespace Simple.Admin.Application.Public
             _messageRepo = messageRepo;
             _captcha = captcha;
             _dictionaryApi = dictionaryApi;
+            _functionRepo = functionRepo;
         }
 
         public async Task<PaConfigModel> ReadConfigAsync()

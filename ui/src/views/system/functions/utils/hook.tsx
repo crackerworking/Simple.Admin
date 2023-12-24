@@ -1,11 +1,18 @@
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { getFunctions } from "@/api/system/functions";
+import {
+  getFunctions,
+  addFunction,
+  updateFunction,
+  deleteFunction
+} from "@/api/system/functions";
 import { addDialog } from "@/components/ReDialog";
 import { reactive, ref, onMounted, h, toRaw } from "vue";
 import type { FormItemProps } from "../utils/types";
-import { isAllEmpty } from "@pureadmin/utils";
+import { EnsureSuccess } from "@/utils/http/extend";
+import { ElMessageBox } from "element-plus";
+import { Icon } from "@iconify/vue";
 
 export function useMenu() {
   const form = reactive({
@@ -26,7 +33,8 @@ export function useMenu() {
     },
     {
       label: "图标",
-      prop: "icon"
+      width: 60,
+      cellRenderer: scope => <Icon icon={scope.row.icon} />
     },
     {
       label: "地址",
@@ -70,16 +78,17 @@ export function useMenu() {
 
   function openDialog(title = "新增", row?: FormItemProps) {
     addDialog({
-      title: `${title}菜单`,
+      title: `${title}功能`,
       props: {
         formInline: {
-          parentId: row?.parentId,
+          parentId: row?.parentId <= 0 ? "" : row?.parentId,
           functionName: row?.functionName,
           functionType: row?.functionType,
           url: row?.url,
           icon: row?.icon,
           authorizationCode: row?.authorizationCode,
-          sort: row?.sort
+          sort: row?.sort,
+          id: row?.id
         }
       },
       width: "40%",
@@ -90,23 +99,30 @@ export function useMenu() {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
-        function chores() {
-          message(`您${title}了部门名称为${curData.functionName}的这条数据`, {
-            type: "success"
-          });
-          done(); // 关闭弹框
-          onSearch(); // 刷新表格数据
-        }
         FormRef.validate(valid => {
           if (valid) {
             console.log("curData", curData);
             // 表单规则校验通过
             if (title === "新增") {
-              // 实际开发先调用新增接口，再进行下面操作
-              chores();
+              addFunction(curData).then(res => {
+                if (EnsureSuccess(res)) {
+                  message(res.message, { type: "success" });
+                  done(); // 关闭弹框
+                  onSearch(); // 刷新表格数据
+                } else {
+                  message(res.message, { type: "error" });
+                }
+              });
             } else {
-              // 实际开发先调用编辑接口，再进行下面操作
-              chores();
+              updateFunction(curData).then(res => {
+                if (EnsureSuccess(res)) {
+                  message(res.message, { type: "success" });
+                  done();
+                  onSearch();
+                } else {
+                  message(res.message, { type: "error" });
+                }
+              });
             }
           }
         });
@@ -114,9 +130,27 @@ export function useMenu() {
     });
   }
 
-  function handleDelete(row) {
-    message(`您删除了部门名称为${row.name}的这条数据`, { type: "success" });
-    onSearch();
+  function removeFunction(row) {
+    ElMessageBox.confirm(
+      "确定删除【" + row.functionName + "】吗?",
+      "系统提示",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        dangerouslyUseHTMLString: true,
+        draggable: true
+      }
+    ).then(() => {
+      deleteFunction({ array_id: [row.id] }).then(res => {
+        if (EnsureSuccess(res)) {
+          message(res.message, { type: "success" });
+          onSearch();
+        } else {
+          message(res.message, { type: "error" });
+        }
+      });
+    });
   }
 
   onMounted(() => {
@@ -132,10 +166,10 @@ export function useMenu() {
     onSearch,
     /** 重置 */
     resetForm,
-    /** 新增、编辑部门 */
+    /** 新增、编辑功能 */
     openDialog,
-    /** 删除部门 */
-    handleDelete,
+    /** 删除功能 */
+    removeFunction,
     handleSelectionChange
   };
 }

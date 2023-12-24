@@ -26,13 +26,20 @@ namespace Simple.Admin.ControllerLibrary.System
         }
 
         /// <summary>
-        /// 新增或修改 TODO:
+        /// 新增
         /// </summary>
         /// <param name="operation"></param>
         /// <returns></returns>
-        [HttpPost, AuthorizeCode("System:Function:AddOrUpdate")]
-        public async Task<MessageModel> AddOrUpdateFunction([FromBody] FunctionOperation operation)
-            => await _functionService.AddOrUpdateFunctionAsync(operation);
+        [HttpPost]
+        public Task<MessageModel> AddFunction([FromBody] FunctionOperation operation) => _functionService.AddFunctionAsync(operation);
+
+        /// <summary>
+        /// 修改
+        /// </summary>
+        /// <param name="operation"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public Task<MessageModel> UpdateFunction([FromBody] FunctionOperation operation) => _functionService.UpdateFunctionAsync(operation);
 
         /// <summary>
         /// 移除
