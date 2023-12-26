@@ -8,7 +8,7 @@ namespace Simple.Admin.Application.Contracts.System
         /// 功能列表
         /// </summary>
         /// <returns></returns>
-        Task<MessageModel<IList<SysFunctionFull>>> GetFunctions(FunctionDto dto);
+        Task<MessageModel<IList<SysFunctionFull>>> GetFunctionList(FunctionDto dto);
 
         /// <summary>
         /// 新增
@@ -29,20 +29,7 @@ namespace Simple.Admin.Application.Contracts.System
         /// </summary>
         /// <param name="search"></param>
         /// <returns></returns>
-        Task<MessageModel<IList<FunctionItem>>> GetFunctionListAsync(FunctionSearch search);
-
-        /// <summary>
-        /// 树形下拉选项
-        /// </summary>
-        /// <returns></returns>
-        IList<TreeOption> GetFunctionTree();
-
-        /// <summary>
-        /// 单个
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<SysFunctionFull> GetAsync(long id);
+        Task<MessageModel<IList<FunctionItem>>> GetFunctionTreeAsync();
 
         /// <summary>
         /// 移除

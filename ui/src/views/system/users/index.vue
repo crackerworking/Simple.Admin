@@ -27,7 +27,8 @@ const {
   handleCurrentChange,
   handleSelectionChange,
   resetPassword,
-  assignRoles
+  assignRoles,
+  openDialog
 } = useUser();
 </script>
 
@@ -67,6 +68,7 @@ const {
           type="primary"
           :icon="useRenderIcon(AddFill)"
           @click="openDialog()"
+          v-auth="'System:User:Add'"
         >
           新增用户
         </el-button>

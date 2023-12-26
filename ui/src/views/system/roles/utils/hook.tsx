@@ -105,7 +105,6 @@ export function useRole() {
         const curData = options.props.formInline as FormItemProps;
         FormRef.validate(valid => {
           if (valid) {
-            console.log("curData", curData);
             // 表单规则校验通过
             if (title === "新增") {
               addRole(curData).then(res => {

@@ -9,6 +9,8 @@ import { LoginVo, RefreshTokenResult } from "@/api/user";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { type DataInfo, setToken, removeToken, sessionKey } from "@/utils/auth";
 import { ApiGenericResponse } from "@/utils/http/types";
+import { EnsureSuccess } from "@/utils/http/extend";
+import { message } from "@/utils/message";
 
 export const useUserStore = defineStore({
   id: "pure-user",
@@ -33,9 +35,11 @@ export const useUserStore = defineStore({
       return new Promise<ApiGenericResponse<LoginVo>>((resolve, reject) => {
         getLogin(data)
           .then(res => {
-            if (res) {
+            if (EnsureSuccess(res)) {
               setToken(res.result);
               resolve(res);
+            } else {
+              message(res.message, { type: "error" });
             }
           })
           .catch(error => {

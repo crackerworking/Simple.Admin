@@ -4,6 +4,7 @@ import { storageSession } from "@pureadmin/utils";
 import { type CSSProperties, ref, computed } from "vue";
 import { useUserStoreHook } from "@/store/modules/user";
 import { usePermissionStoreHook } from "@/store/modules/permission";
+import { EnsureSuccess } from "@/utils/http/extend";
 
 defineOptions({
   name: "PermissionPage"
@@ -31,9 +32,9 @@ const options = [
 
 function onChange() {
   useUserStoreHook()
-    .loginByUsername({ username: username.value, password: "admin123" })
+    .loginByUsername({ username: username.value, password: "123456." })
     .then(res => {
-      if (res.success) {
+      if (EnsureSuccess(res)) {
         storageSession().removeItem("async-routes");
         usePermissionStoreHook().clearAllCachePage();
         initRouter();

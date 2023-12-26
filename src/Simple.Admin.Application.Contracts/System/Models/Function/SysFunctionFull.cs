@@ -12,6 +12,8 @@ namespace Simple.Admin.Application.Contracts.System.Models.Function
         [NotNull]
         public string? FunctionName { get; set; }
 
+        public string? Name { get; set; }
+
         /// <summary>
         /// 图标
         /// </summary>

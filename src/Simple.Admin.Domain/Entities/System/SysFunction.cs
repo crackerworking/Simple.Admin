@@ -14,6 +14,8 @@ namespace Simple.Admin.Domain.Entities.System
         [NotNull]
         public string? FunctionName { get; set; }
 
+        public string? Name { get; set; }
+
         /// <summary>
         /// 图标
         /// </summary>
@@ -27,7 +29,7 @@ namespace Simple.Admin.Domain.Entities.System
         /// <summary>
         /// 功能类型
         /// </summary>
-        public EnumFunctionType FunctionType { get; set; }
+        public function_type FunctionType { get; set; }
 
         /// <summary>
         /// 子集，存SysFunction.Id，多个以','隔开

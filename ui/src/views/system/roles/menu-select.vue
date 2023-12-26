@@ -65,12 +65,6 @@ defineExpose({ getRef });
               size="small"
               >按钮</el-tag
             >
-            <el-tag v-else-if="data.functionType == 30" type="info" size="small"
-              >资源</el-tag
-            >
-            <el-tag v-else-if="data.functionType == 40" size="small"
-              >功能</el-tag
-            >
           </span>
         </span>
       </template>

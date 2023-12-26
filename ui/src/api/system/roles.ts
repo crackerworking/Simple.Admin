@@ -13,11 +13,10 @@ export const getRoleList = (data?: object) => {
 };
 
 /** 功能树 */
-export const getFunctionTree = (data = { test: "hello" }) => {
+export const getFunctionTree = () => {
   return http.request<ApiGenericResponse<any>>(
     "post",
-    "/api/Function/GetFunctionList",
-    { data }
+    "/api/Function/GetFunctionTree"
   );
 };
 

@@ -37,15 +37,5 @@ namespace Simple.Admin.ControllerLibrary.Account
         [HttpPost]
         public async Task<MessageModel> New([FromBody] RegisterIn input)
             => await _permissionService.RegisterAsync(input);
-
-        /// <summary>
-        /// 注销
-        /// </summary>
-        /// <returns></returns>
-        public async Task<IActionResult> Exit()
-        {
-            await _permissionService.LogoutAsync();
-            return Redirect("/login");
-        }
     }
 }

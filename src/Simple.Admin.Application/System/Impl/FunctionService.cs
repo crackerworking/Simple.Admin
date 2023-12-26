@@ -36,7 +36,7 @@ namespace Simple.Admin.Application.System.Impl
             return AddOrUpdateFunctionAsync(operation);
         }
 
-        public async Task<MessageModel<IList<SysFunctionFull>>> GetFunctions(FunctionDto dto)
+        public async Task<MessageModel<IList<SysFunctionFull>>> GetFunctionList(FunctionDto dto)
         {
             var exp = PredicateBuilder.Instance.Create<SysFunction>()
                 .AndIf(!string.IsNullOrEmpty(dto.FunctionName), x => x.FunctionName.Contains(dto.FunctionName!));
@@ -49,7 +49,7 @@ namespace Simple.Admin.Application.System.Impl
 
         private async Task<MessageModel> AddOrUpdateFunctionAsync(FunctionOperation operation)
         {
-            if (string.IsNullOrWhiteSpace(operation.Icon) && operation.FunctionType == (int)EnumFunctionType.Menu)
+            if (string.IsNullOrWhiteSpace(operation.Icon) && operation.FunctionType == (int)function_type.Menu)
             {
                 operation.Icon = "iconfont mi-iconfonticon";
             }
@@ -70,7 +70,7 @@ namespace Simple.Admin.Application.System.Impl
                 func.AuthorizationCode = operation.AuthorizationCode;
                 func.ParentId = operation.ParentId;
                 func.Sort = operation.Sort;
-                func.FunctionType = (EnumFunctionType)operation.FunctionType;
+                func.FunctionType = (function_type)operation.FunctionType;
                 await _functionRepo.UpdateAsync(func);
             }
             RemoveCache();
@@ -78,21 +78,10 @@ namespace Simple.Admin.Application.System.Impl
             return Back.Success();
         }
 
-        public async Task<SysFunctionFull> GetAsync(long id)
+        public async Task<MessageModel<IList<FunctionItem>>> GetFunctionTreeAsync()
         {
-            var model = await _functionRepo.GetAsync(x => x.Id == id);
-            return _mapper.Map<SysFunctionFull>(model);
-        }
-
-        public async Task<MessageModel<IList<FunctionItem>>> GetFunctionListAsync(FunctionSearch search)
-        {
-            var exp = PredicateBuilder.Instance.Create<SysFunctionFull>()
-                .AndIf(!string.IsNullOrEmpty(search.FunctionName), x => x.FunctionName.Contains(search.FunctionName!))
-                .AndIf(!string.IsNullOrEmpty(search.Url), x => x.Url != null && x.Url.Contains(search.Url!));
-
-            var searchList = _allFunctions.Where(exp.Compile()).OrderBy(x => x.Sort);
-            var flag = exp.Body.NodeType == ExpressionType.AndAlso;
-            var topLevel = flag ? searchList : _allFunctions.Where(x => x.ParentId <= 0).OrderBy(x => x.Sort);
+            var searchList = _allFunctions.OrderBy(x => x.Sort);
+            var topLevel = _allFunctions.Where(x => x.ParentId <= 0).OrderBy(x => x.Sort);
             var list = topLevel.Select(x => new FunctionItem
             {
                 FunctionName = x.FunctionName,
@@ -123,17 +112,6 @@ namespace Simple.Admin.Application.System.Impl
                 Sort = x.Sort,
                 Id = x.Id,
                 Children = GetFuncChildNode(x.Id)
-            }).ToList();
-        }
-
-        public IList<TreeOption> GetFunctionTree()
-        {
-            var topLevels = _allFunctions.Where(x => x.ParentId <= 0).OrderBy(x => x.Sort);
-            return topLevels.Select(x => new TreeOption
-            {
-                Name = x.FunctionName,
-                Value = x.Id.ToString(),
-                Children = GetFunctionChildNode(x.Id)
             }).ToList();
         }
 
@@ -175,6 +153,7 @@ namespace Simple.Admin.Application.System.Impl
 
         private void RemoveCache()
         {
+            _cache.RemoveByPattern(StringHelper.UserFunctionCachePattern());
             _cache.Remove(CacheConst.FUNCTION);
         }
 

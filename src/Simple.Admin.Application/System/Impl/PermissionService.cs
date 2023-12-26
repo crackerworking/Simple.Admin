@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using System.Security.Claims;
 
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 
 using Simple.Admin.Application.Contracts.System.Models.Function;
@@ -55,22 +54,31 @@ namespace Simple.Admin.Application.System.Impl
 
         public async Task<MessageModel<List<RouterItem>>> GetSiderMenuAsync()
         {
-            var topLevels = (await _functionService.GetFunctionsCacheAsync())
-                .Where(x => _miUser.FuncIds.Contains(x.Id) && x.ParentId <= 0 && x.FunctionType == (int)EnumFunctionType.Menu).OrderBy(x => x.Sort);
+            var topLevels = (await _functionService.GetFunctionsCacheAsync()).Where(x => x.ParentId <= 0 && x.FunctionType == (int)function_type.Menu).OrderBy(x => x.Sort);
+            var functionIds = topLevels.Select(x => x.Id).ToList();
+            var roles = await _roleRepository.GetListAsync(x => x.IsDeleted == 0);
+            var roleFunction = await _roleFunctionRepo.GetListAsync(x => functionIds.Contains(x.FunctionId));
+            var btnFunctions = (await _functionService.GetFunctionsCacheAsync()).Where(x => x.FunctionType == (int)function_type.Button);
             var list = new List<RouterItem>();
             foreach (var x in topLevels)
             {
-                var children = (await GetPaChildrenAsync(x.Id)).ToList();
+                var roleIds = roleFunction.Where(m => m.FunctionId == x.Id).Select(m => m.RoleId);
+                var roleNames = roles.Where(r => roleIds.Contains(r.Id)).Select(r => r.RoleName);
+                roleNames = roleNames.Append(AuthorizationConst.ADMIN).Distinct();
+                var children = (await GetChildrenAsync(x.Id)).ToList();
                 var temp = new RouterItem
                 {
+                    name = x.Name ?? "",
                     path = x.Url,
                     meta = new RouterItemMeta
                     {
                         icon = x.Icon,
                         rank = x.Sort,
-                        title = x.FunctionName
+                        title = x.FunctionName,
+                        roles = roleNames.ToArray(),
+                        auths = btnFunctions.Where(b => b.ParentId == x.Id && _miUser.FuncIds.Contains(b.Id)).Select(b => b.AuthorizationCode ?? "").ToArray()
                     },
-                    children = (await GetPaChildrenAsync(x.Id)).OrderBy(x => x.meta.rank).ToList()
+                    children = (await GetChildrenAsync(x.Id)).OrderBy(x => x.meta.rank).ToList()
                 };
                 list.Add(temp);
             }
@@ -78,22 +86,33 @@ namespace Simple.Admin.Application.System.Impl
             return new MessageModel<List<RouterItem>>(list);
         }
 
-        private async Task<IList<RouterItem>> GetPaChildrenAsync(long id)
+        private async Task<IList<RouterItem>> GetChildrenAsync(long id)
         {
-            var children = (await _functionService.GetFunctionsCacheAsync()).Where(x => _miUser.FuncIds.Contains(x.Id) && x.ParentId > 0 && x.FunctionType == (int)EnumFunctionType.Menu && x.ParentId == id).OrderBy(x => x.Sort);
+            var children = (await _functionService.GetFunctionsCacheAsync()).Where(x => x.ParentId > 0 && x.FunctionType == (int)function_type.Menu && x.ParentId == id).OrderBy(x => x.Sort);
+            var functionIds = children.Select(x => x.Id).ToList();
+            var roles = await _roleRepository.GetListAsync(x => x.IsDeleted == 0);
+            var roleFunction = await _roleFunctionRepo.GetListAsync(x => functionIds.Contains(x.FunctionId));
+            var btnFunctions = (await _functionService.GetFunctionsCacheAsync()).Where(x => x.FunctionType == (int)function_type.Button);
             var list = new List<RouterItem>();
             foreach (var x in children)
             {
+                var roleIds = roleFunction.Where(m => m.FunctionId == x.Id).Select(m => m.RoleId);
+                var roleNames = roles.Where(r => roleIds.Contains(r.Id)).Select(r => r.RoleName);
+                roleNames = roleNames.Append(AuthorizationConst.ADMIN).Distinct();
                 var temp = new RouterItem
                 {
+                    name = x.Name ?? "",
                     path = x.Url,
                     meta = new RouterItemMeta
                     {
                         icon = x.Icon,
                         rank = x.Sort,
-                        title = x.FunctionName
+                        title = x.FunctionName,
+                        roles = roleNames.ToArray(),
+                        showParent = true,
+                        auths = btnFunctions.Where(b => b.ParentId == x.Id && _miUser.FuncIds.Contains(b.Id)).Select(b => b.AuthorizationCode ?? "").ToArray()
                     },
-                    children = (await GetPaChildrenAsync(x.Id)).OrderBy(x => x.meta.rank).ToList()
+                    children = (await GetChildrenAsync(x.Id)).OrderBy(x => x.meta.rank).ToList()
                 };
                 list.Add(temp);
             }
@@ -110,7 +129,7 @@ namespace Simple.Admin.Application.System.Impl
             if (string.IsNullOrEmpty(children)) return 1;
             var arr = children.Split(',');
             if (arr == null) return 1;
-            var flag = (await _functionService.GetFunctionsCacheAsync()).Any(x => arr.Contains(x.Id.ToString()) && x.FunctionType == (int)EnumFunctionType.Menu);
+            var flag = (await _functionService.GetFunctionsCacheAsync()).Any(x => arr.Contains(x.Id.ToString()) && x.FunctionType == (int)function_type.Menu);
             return flag ? 0 : 1;
         }
 
@@ -160,7 +179,7 @@ namespace Simple.Admin.Application.System.Impl
             {
                 UserName = input.userName,
                 NickName = input.userName,
-                Signature = "个性签名",
+                Signature = "",
                 PasswordSalt = EncryptionHelper.GetPasswordSalt()
             };
             user.Password = EncryptionHelper.GenEncodingPassword(input.password, user.PasswordSalt);
@@ -188,7 +207,7 @@ namespace Simple.Admin.Application.System.Impl
             var roleNameArray = (await _userService.GetRolesAsync(user.Id)).Select(x => x.RoleName).ToList();
             if (user.IsSuperAdmin == 1)
             {
-                roleNameArray.Add(AuthorizationConst.SUPER_ADMIN);
+                roleNameArray.Add(AuthorizationConst.ADMIN);
             }
             var roleNames = string.Join(",", roleNameArray);
             var claims = new Claim[]
@@ -233,7 +252,7 @@ namespace Simple.Admin.Application.System.Impl
                 var exp = PredicateBuilder.Instance.Create<SysFunctionFull>();
                 if (userModel.IsSuperAdmin)
                 {
-                    userModel.Roles = AuthorizationConst.SUPER_ADMIN;
+                    userModel.Roles = AuthorizationConst.ADMIN;
                     exp = x => true;
                 }
                 else
@@ -293,11 +312,6 @@ namespace Simple.Admin.Application.System.Impl
             }
 
             return Back.Success();
-        }
-
-        public async Task LogoutAsync()
-        {
-            await _context.SignOutAsync();
         }
 
         public async Task<MessageModel<IList<long>>> GetRoleFunctionIdsAsync(PrimaryKey input)

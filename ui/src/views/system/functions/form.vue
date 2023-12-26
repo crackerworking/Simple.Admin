@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<FormProps>(), {
     url: "",
     icon: "",
     authorizationCode: "",
-    sort: 0,
+    sort: 1,
     id: ""
   })
 });
@@ -66,8 +66,6 @@ defineExpose({ getRef });
       <el-radio-group v-model="editForm.functionType">
         <el-radio :label="10">菜单</el-radio>
         <el-radio :label="20">按钮</el-radio>
-        <el-radio :label="30">资源</el-radio>
-        <el-radio :label="40">功能</el-radio>
       </el-radio-group>
     </el-form-item>
     <el-form-item label="地址">

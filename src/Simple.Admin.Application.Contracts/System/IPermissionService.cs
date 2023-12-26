@@ -55,12 +55,6 @@ namespace Simple.Admin.Application.Contracts.System
         Task<MessageModel> LoginAsync(LoginIn input);
 
         /// <summary>
-        /// 注销
-        /// </summary>
-        /// <returns></returns>
-        Task LogoutAsync();
-
-        /// <summary>
         /// 查询登录必须数据
         /// </summary>
         /// <param name="userData"></param>

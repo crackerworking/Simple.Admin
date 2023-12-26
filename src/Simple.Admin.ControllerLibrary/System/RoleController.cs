@@ -23,7 +23,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        [AuthorizeCode("System:Role:AddOrUpdate")]
+        [AuthorizeCode("System:Role:Add")]
         public async Task<MessageModel> AddRole([FromBody] RolePlus input)
             => await _roleService.AddRoleAsync(input);
 
@@ -51,7 +51,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        [AuthorizeCode("System:Role:AddOrUpdate")]
+        [AuthorizeCode("System:Role:Update")]
         public async Task<MessageModel> UpdateRole([FromBody] RoleEdit input)
             => await _roleService.UpdateRoleAsync(input);
 
@@ -60,7 +60,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [HttpPost, AuthorizeCode("System:Role:AssignFunctions")]
+        [HttpPost, AuthorizeCode("System:Role:SetRoleFunctions")]
         public async Task<MessageModel> SetRoleFunctions([FromBody] SetRoleFunctionsIn input)
         {
             return await _permissionService.SetRoleFunctionsAsync(input);

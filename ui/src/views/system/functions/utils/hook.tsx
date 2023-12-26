@@ -2,7 +2,7 @@ import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import {
-  getFunctions,
+  getFunctionList,
   addFunction,
   updateFunction,
   deleteFunction
@@ -26,15 +26,29 @@ export function useMenu() {
 
   const columns: TableColumnList = [
     {
-      label: "菜单名称",
+      label: "功能名称",
       prop: "functionName",
       width: 180,
       align: "left"
     },
     {
+      label: "类型",
+      cellRenderer: scope =>
+        scope.row?.functionType === 10 ? (
+          <el-tag type="success">菜单</el-tag>
+        ) : (
+          <el-tag type="warning">按钮</el-tag>
+        )
+    },
+    {
       label: "图标",
       width: 60,
-      cellRenderer: scope => <Icon icon={scope.row.icon} />
+      cellRenderer: scope =>
+        scope.row?.icon ? (
+          <Icon icon={scope.row.icon} class="ml-2.5" />
+        ) : (
+          <span></span>
+        )
     },
     {
       label: "地址",
@@ -69,7 +83,7 @@ export function useMenu() {
 
   async function onSearch() {
     loading.value = true;
-    const { result } = await getFunctions(toRaw(form));
+    const { result } = await getFunctionList(toRaw(form));
     dataList.value = handleTree(result); // 处理成树结构
     setTimeout(() => {
       loading.value = false;
@@ -87,7 +101,7 @@ export function useMenu() {
           url: row?.url,
           icon: row?.icon,
           authorizationCode: row?.authorizationCode,
-          sort: row?.sort,
+          sort: row?.sort ?? 1,
           id: row?.id
         }
       },
@@ -101,7 +115,6 @@ export function useMenu() {
         const curData = options.props.formInline as FormItemProps;
         FormRef.validate(valid => {
           if (valid) {
-            console.log("curData", curData);
             // 表单规则校验通过
             if (title === "新增") {
               addFunction(curData).then(res => {

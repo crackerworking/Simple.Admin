@@ -17,12 +17,11 @@ namespace Simple.Admin.ControllerLibrary.System
         /// <summary>
         /// 列表（带树形）
         /// </summary>
-        /// <param name="search"></param>
         /// <returns></returns>
         [HttpPost, AuthorizeCode("System:Function:Query")]
-        public async Task<MessageModel> GetFunctionList([FromBody] FunctionSearch search)
+        public async Task<MessageModel> GetFunctionTree()
         {
-            return await _functionService.GetFunctionListAsync(search);
+            return await _functionService.GetFunctionTreeAsync();
         }
 
         /// <summary>
@@ -51,17 +50,11 @@ namespace Simple.Admin.ControllerLibrary.System
             => await _functionService.RemoveFunctionAsync(input);
 
         /// <summary>
-        /// 树形下拉选项
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost, AuthorizeCode("System:Function:Query")]
-        public IList<TreeOption> GetFunctionTree() => _functionService.GetFunctionTree();
-
-        /// <summary>
         /// 功能列表
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public Task<MessageModel<IList<SysFunctionFull>>> GetFunctions([FromBody] FunctionDto dto) => _functionService.GetFunctions(dto);
+        [AuthorizeCode("System:Function:Query")]
+        public Task<MessageModel<IList<SysFunctionFull>>> GetFunctionList([FromBody] FunctionDto dto) => _functionService.GetFunctionList(dto);
     }
 }

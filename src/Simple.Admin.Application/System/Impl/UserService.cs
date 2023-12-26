@@ -38,7 +38,7 @@ namespace Simple.Admin.Application.System.Impl
                 PasswordSalt = EncryptionHelper.GetPasswordSalt(),
                 Avatar = StringHelper.DefaultAvatar(),
                 NickName = input.userName,
-                Signature = "请设置您的个性签名"
+                Signature = ""
             };
             var password = StringHelper.GetRandomString(6);
             user.Password = EncryptionHelper.GenEncodingPassword(password, user.PasswordSalt);

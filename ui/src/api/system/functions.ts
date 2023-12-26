@@ -2,10 +2,10 @@ import { http } from "@/utils/http";
 import { ApiGenericResponse } from "@/utils/http/types";
 
 /** 功能列表 */
-export const getFunctions = (data?: object) => {
+export const getFunctionList = (data?: object) => {
   return http.request<ApiGenericResponse<any>>(
     "post",
-    "/api/Function/GetFunctions",
+    "/api/Function/GetFunctionList",
     {
       data
     }
