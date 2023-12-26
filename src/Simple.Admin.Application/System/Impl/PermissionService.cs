@@ -74,9 +74,10 @@ namespace Simple.Admin.Application.System.Impl
                     {
                         icon = x.Icon,
                         rank = x.Sort,
-                        title = x.FunctionName,
+                        title = x.Title,
                         roles = roleNames.ToArray(),
-                        auths = btnFunctions.Where(b => b.ParentId == x.Id && _miUser.FuncIds.Contains(b.Id)).Select(b => b.AuthorizationCode ?? "").ToArray()
+                        auths = btnFunctions.Where(b => b.ParentId == x.Id && _miUser.FuncIds.Contains(b.Id)).Select(b => b.AuthorizationCode ?? "").ToArray(),
+                        frameSrc = x.FrameSrc
                     },
                     children = (await GetChildrenAsync(x.Id)).OrderBy(x => x.meta.rank).ToList()
                 };
@@ -107,10 +108,10 @@ namespace Simple.Admin.Application.System.Impl
                     {
                         icon = x.Icon,
                         rank = x.Sort,
-                        title = x.FunctionName,
+                        title = x.Title,
                         roles = roleNames.ToArray(),
-                        showParent = true,
-                        auths = btnFunctions.Where(b => b.ParentId == x.Id && _miUser.FuncIds.Contains(b.Id)).Select(b => b.AuthorizationCode ?? "").ToArray()
+                        auths = btnFunctions.Where(b => b.ParentId == x.Id && _miUser.FuncIds.Contains(b.Id)).Select(b => b.AuthorizationCode ?? "").ToArray(),
+                        frameSrc = x.FrameSrc
                     },
                     children = (await GetChildrenAsync(x.Id)).OrderBy(x => x.meta.rank).ToList()
                 };

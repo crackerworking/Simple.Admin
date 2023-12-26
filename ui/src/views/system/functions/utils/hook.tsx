@@ -16,7 +16,7 @@ import { Icon } from "@iconify/vue";
 
 export function useMenu() {
   const form = reactive({
-    functionName: "",
+    title: "",
     functionType: null
   });
 
@@ -27,7 +27,7 @@ export function useMenu() {
   const columns: TableColumnList = [
     {
       label: "功能名称",
-      prop: "functionName",
+      prop: "title",
       width: 180,
       align: "left"
     },
@@ -96,13 +96,15 @@ export function useMenu() {
       props: {
         formInline: {
           parentId: row?.parentId <= 0 ? "" : row?.parentId,
-          functionName: row?.functionName,
+          title: row?.title,
           functionType: row?.functionType,
           url: row?.url,
           icon: row?.icon,
           authorizationCode: row?.authorizationCode,
           sort: row?.sort ?? 1,
-          id: row?.id
+          id: row?.id,
+          name: row?.name,
+          frameSrc: row?.frameSrc
         }
       },
       width: "40%",
@@ -115,7 +117,20 @@ export function useMenu() {
         const curData = options.props.formInline as FormItemProps;
         FormRef.validate(valid => {
           if (valid) {
-            // 表单规则校验通过
+            // 表单规则校验通过后，当类型为菜单时，名称和路由是必须的
+            if (curData.functionType === 10) {
+              if (!curData.name) {
+                message("名称是必须的", { type: "warning" });
+                return;
+              }
+              if (!curData.url) {
+                message("路由是必须的", { type: "warning" });
+                return;
+              } else if (curData.url.substring(0, 1) !== "/") {
+                message("路由必须以'/'起始", { type: "warning" });
+                return;
+              }
+            }
             if (title === "新增") {
               addFunction(curData).then(res => {
                 if (EnsureSuccess(res)) {
@@ -144,17 +159,13 @@ export function useMenu() {
   }
 
   function removeFunction(row) {
-    ElMessageBox.confirm(
-      "确定删除【" + row.functionName + "】吗?",
-      "系统提示",
-      {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-        dangerouslyUseHTMLString: true,
-        draggable: true
-      }
-    ).then(() => {
+    ElMessageBox.confirm("确定删除【" + row.title + "】吗?", "系统提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+      dangerouslyUseHTMLString: true,
+      draggable: true
+    }).then(() => {
       deleteFunction({ array_id: [row.id] }).then(res => {
         if (EnsureSuccess(res)) {
           message(res.message, { type: "success" });

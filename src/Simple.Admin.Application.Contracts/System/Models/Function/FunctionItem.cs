@@ -10,7 +10,7 @@ namespace Simple.Admin.Application.Contracts.System.Models.Function
         /// 功能名称
         /// </summary>
         [NotNull]
-        public string? FunctionName { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// 图标

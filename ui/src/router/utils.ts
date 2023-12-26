@@ -311,7 +311,9 @@ function addAsyncRoutes(arrRoutes: Array<RouteRecordRaw>) {
       const index = v?.component
         ? modulesRoutesKeys.findIndex(ev => ev.includes(v.component as any))
         : modulesRoutesKeys.findIndex(ev => ev.includes(v.path));
-      v.component = modulesRoutes[modulesRoutesKeys[index]];
+      if (!v.children || v.children.length === 0) {
+        v.component = modulesRoutes[modulesRoutesKeys[index]];
+      }
     }
     if (v?.children && v.children.length) {
       addAsyncRoutes(v.children);

@@ -1,8 +1,10 @@
 interface FormItemProps {
   parentId: number;
-  functionName: string;
+  title: string;
+  name: string;
   functionType: number;
   url: string;
+  frameSrc: string;
   icon: string;
   authorizationCode: string;
   sort: number;

@@ -32,7 +32,6 @@ defineExpose({ getRef });
     <el-form-item label="配置角色">
       <el-select
         v-model="newFormInline.roleIds"
-        class="m-2"
         placeholder="请选择角色"
         multiple
       >

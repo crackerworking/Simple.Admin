@@ -12,9 +12,11 @@ namespace Simple.Admin.Domain.Entities.System
         /// 功能名称
         /// </summary>
         [NotNull]
-        public string? FunctionName { get; set; }
+        public string? Title { get; set; }
 
         public string? Name { get; set; }
+
+        public string? FrameSrc { get; set; }
 
         /// <summary>
         /// 图标

@@ -13,7 +13,8 @@
         public string[] auths { get; set; } = [];
 
         public bool showLink => true;
-        public bool showParent { get; set; }
+
+        public string? frameSrc { get; set; }
     }
 
     public class RouterItem

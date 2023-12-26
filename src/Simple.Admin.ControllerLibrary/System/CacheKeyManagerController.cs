@@ -2,7 +2,7 @@
 using Simple.Admin.Application.Contracts.Cache.Models;
 using Simple.Admin.Domain.Shared.Core;
 
-namespace Simple.Admin.ControllerLibrary.Development
+namespace Simple.Admin.ControllerLibrary.System
 {
     [Authorize]
     public class CacheKeyManagerController : MiControllerBase

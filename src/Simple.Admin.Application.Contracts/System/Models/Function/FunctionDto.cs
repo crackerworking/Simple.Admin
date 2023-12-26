@@ -5,6 +5,6 @@
         /// <summary>
         /// 功能名称
         /// </summary>
-        public string? FunctionName { get; set; }
+        public string? Title { get; set; }
     }
 }

@@ -10,13 +10,13 @@ const treeRef = ref();
 const defaultKeys = ref([]);
 const defaultExpandedKeys = ref([]);
 const defaultProps = {
-  label: "functionName",
+  label: "title",
   children: "children"
 };
 
 function filterNode(value, data) {
   if (!value) return true;
-  return data.functionName.includes(value);
+  return data.title.includes(value);
 }
 watch(filterText, newVal => {
   treeRef.value.filter(newVal);

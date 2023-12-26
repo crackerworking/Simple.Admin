@@ -38,9 +38,9 @@ const {
       :model="form"
       class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px]"
     >
-      <el-form-item label="功能名称：" prop="functionName">
+      <el-form-item label="功能名称：" prop="title">
         <el-input
-          v-model="form.functionName"
+          v-model="form.title"
           placeholder="请输入功能名称"
           clearable
           class="!w-[200px]"

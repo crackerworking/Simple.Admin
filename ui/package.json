@@ -29,6 +29,7 @@
   ],
   "dependencies": {
     "@iconify-icons/eos-icons": "^1.2.6",
+    "@iconify-icons/iconoir": "^1.2.30",
     "@pureadmin/descriptions": "^1.1.1",
     "@pureadmin/table": "^2.3.2",
     "@pureadmin/utils": "^1.9.6",

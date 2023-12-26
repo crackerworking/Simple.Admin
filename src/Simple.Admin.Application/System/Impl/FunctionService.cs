@@ -39,7 +39,7 @@ namespace Simple.Admin.Application.System.Impl
         public async Task<MessageModel<IList<SysFunctionFull>>> GetFunctionList(FunctionDto dto)
         {
             var exp = PredicateBuilder.Instance.Create<SysFunction>()
-                .AndIf(!string.IsNullOrEmpty(dto.FunctionName), x => x.FunctionName.Contains(dto.FunctionName!));
+                .AndIf(!string.IsNullOrEmpty(dto.Title), x => x.Title.Contains(dto.Title!));
             var raw = await _functionRepo.GetListAsync(exp);
             var list = _mapper.Map<List<SysFunctionFull>>(raw.OrderBy(x => x.Sort));
             return new MessageModel<IList<SysFunctionFull>>(list);
@@ -49,10 +49,6 @@ namespace Simple.Admin.Application.System.Impl
 
         private async Task<MessageModel> AddOrUpdateFunctionAsync(FunctionOperation operation)
         {
-            if (string.IsNullOrWhiteSpace(operation.Icon) && operation.FunctionType == (int)function_type.Menu)
-            {
-                operation.Icon = "iconfont mi-iconfonticon";
-            }
             if (operation.Id <= 0)
             {
                 var func = _mapper.Map<SysFunction>(operation);
@@ -65,7 +61,9 @@ namespace Simple.Admin.Application.System.Impl
             {
                 var func = _mapper.Map<SysFunction>(operation);
                 func.Icon = operation.Icon;
-                func.FunctionName = operation.FunctionName;
+                func.Title = operation.Title;
+                func.Name = operation.Name;
+                func.FrameSrc = operation.FrameSrc;
                 func.Url = operation.Url;
                 func.AuthorizationCode = operation.AuthorizationCode;
                 func.ParentId = operation.ParentId;
@@ -84,7 +82,7 @@ namespace Simple.Admin.Application.System.Impl
             var topLevel = _allFunctions.Where(x => x.ParentId <= 0).OrderBy(x => x.Sort);
             var list = topLevel.Select(x => new FunctionItem
             {
-                FunctionName = x.FunctionName,
+                Title = x.Title,
                 Icon = x.Icon,
                 Url = x.Url,
                 FunctionType = x.FunctionType,
@@ -103,7 +101,7 @@ namespace Simple.Admin.Application.System.Impl
             var children = _allFunctions.Where(x => x.ParentId == id).OrderBy(x => x.Sort);
             return children.Select(x => new FunctionItem
             {
-                FunctionName = x.FunctionName,
+                Title = x.Title,
                 Icon = x.Icon,
                 Url = x.Url,
                 FunctionType = x.FunctionType,
@@ -120,7 +118,7 @@ namespace Simple.Admin.Application.System.Impl
             var children = _allFunctions.Where(x => x.ParentId == id).OrderBy(x => x.Sort);
             return children.Select(x => new TreeOption
             {
-                Name = x.FunctionName,
+                Name = x.Title,
                 Value = x.Id.ToString(),
                 Children = GetFunctionChildNode(x.Id)
             }).ToList();
