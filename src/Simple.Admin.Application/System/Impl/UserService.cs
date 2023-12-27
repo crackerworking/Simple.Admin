@@ -87,11 +87,17 @@ namespace Simple.Admin.Application.System.Impl
             var sql = @"select u.*,GROUP_CONCAT(r.id) as RoleIdStr from SysUser u
                         left join SysUserRole ur on u.Id=ur.UserId
                         left join SysRole r on ur.RoleId=r.Id
-                        where u.IsDeleted=0 ";
+                        where u.IsDeleted=0 and u.IsSuperAdmin=0 ";
             if (!string.IsNullOrWhiteSpace(search.UserName))
             {
                 sql += " and u.UserName like @UserName ";
             }
+            if (!string.IsNullOrWhiteSpace(search.NickName))
+            {
+                sql += " and u.NickName like @NickName";
+            }
+            if (search.Sex.HasValue) sql += " and u.Sex=" + search.Sex;
+            if (search.IsEnabled.HasValue) sql += " and u.IsEnabled=" + search.IsEnabled;
             sql += " GROUP BY u.Id ";
             var pageModel = await _dapperRepo.QueryPagedAsync<UserItem>(sql, search.Page, search.Size, "CreatedOn asc",
                 new { UserName = "%" + search.UserName + "%" });
@@ -109,16 +115,6 @@ namespace Simple.Admin.Application.System.Impl
             var rows = await _userRepo.UpdateAsync(model);
 
             return rows > 0 ? Back.Success() : Back.Fail();
-        }
-
-        public async Task<MessageModel> RemoveUserAsync(PrimaryKey input)
-        {
-            var flag = await _userRepo.UpdateAsync(input.id, updatable => updatable
-                .SetColumn(x => x.IsDeleted, 1)
-                .SetColumn(x => x.ModifiedBy, _miUser.UserId)
-                .SetColumn(x => x.ModifiedOn, DateTime.Now));
-
-            return Back.SuccessOrFail(flag > 0);
         }
 
         public async Task<MessageModel> SetPasswordAsync(SetPasswordIn input)

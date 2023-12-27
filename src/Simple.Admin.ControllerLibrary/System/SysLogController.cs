@@ -24,13 +24,5 @@ namespace Simple.Admin.ControllerLibrary.System
         {
             return await _logService.GetLoginLogListAsync(search);
         }
-
-        /// <summary>
-        /// 操作日志列表
-        /// </summary>
-        /// <param name="search"></param>
-        /// <returns></returns>
-        [AuthorizeCode("System:ActionLog")]
-        public async Task<MessageModel<PagingModel<SysLogFull>>> GetLogList([FromBody] LogSearch search) => await _logService.GetLogListAsync(search);
     }
 }

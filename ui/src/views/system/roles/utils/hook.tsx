@@ -38,13 +38,12 @@ export function useRole() {
     },
     {
       label: "备注",
-      prop: "remark",
-      minWidth: 150
+      prop: "remark"
     },
     {
       label: "创建时间",
       prop: "createdOn",
-      minWidth: 180
+      minWidth: 120
     },
     {
       label: "操作",

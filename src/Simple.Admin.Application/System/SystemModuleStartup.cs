@@ -24,7 +24,6 @@ namespace Simple.Admin.Application.System
                 conf.CreateMap<SysFunction, SysFunctionFull>();
                 conf.CreateMap<FunctionOperation, SysFunction>();
                 conf.CreateMap<SysLoginLog, SysLoginLogFull>();
-                conf.CreateMap<SysLog, SysLogFull>();
                 conf.CreateMap<SysRole, SysRoleFull>();
                 conf.CreateMap<SysDict, SysDictFull>();
                 conf.CreateMap<DictPlus, SysDict>();

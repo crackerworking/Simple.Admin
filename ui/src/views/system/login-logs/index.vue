@@ -2,16 +2,13 @@
 import { PureTable } from "@pureadmin/table";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { PureTableBar } from "@/components/RePureTableBar";
-import Password from "@iconify-icons/ri/lock-password-line";
 import Search from "@iconify-icons/ep/search";
 import Refresh from "@iconify-icons/ep/refresh";
-import AddFill from "@iconify-icons/ri/add-circle-line";
 import { useUser } from "./utils/hook";
-import AdminOutlined from "@iconify-icons/eos-icons/admin-outlined";
 import { ref } from "vue";
 
 defineOptions({
-  name: "Users"
+  name: "LoginLogs"
 });
 
 const formRef = ref();
@@ -25,10 +22,7 @@ const {
   resetForm,
   handleSizeChange,
   handleCurrentChange,
-  handleSelectionChange,
-  resetPassword,
-  assignRoles,
-  openDialog
+  handleSelectionChange
 } = useUser();
 </script>
 
@@ -48,25 +42,20 @@ const {
           class="!w-[200px]"
         />
       </el-form-item>
-      <el-form-item label="昵称：" prop="nickName">
-        <el-input
-          v-model="form.userName"
-          placeholder="请输入昵称"
-          clearable
-          class="!w-[200px]"
+      <el-form-item label="状态：" prop="succeed">
+        <el-select v-model="form.succeed" clearable>
+          <el-option label="成功" value="1" />
+          <el-option label="失败" value="2" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="登录时间" prop="createdOn">
+        <el-date-picker
+          v-model="form.createdOn"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="起始时间"
+          end-placeholder="结束时间"
         />
-      </el-form-item>
-      <el-form-item label="性别：" prop="sex">
-        <el-select v-model="form.sex" clearable>
-          <el-option label="男" value="1" />
-          <el-option label="女" value="0" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="状态：" prop="isEnabled">
-        <el-select v-model="form.isEnabled" clearable>
-          <el-option label="启用" value="1" />
-          <el-option label="禁用" value="0" />
-        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -82,17 +71,7 @@ const {
         </el-button>
       </el-form-item>
     </el-form>
-    <PureTableBar title="用户列表" :columns="columns" @refresh="onSearch">
-      <template #buttons>
-        <el-button
-          type="primary"
-          :icon="useRenderIcon(AddFill)"
-          @click="openDialog()"
-          v-auth="'System:User:Add'"
-        >
-          新增用户
-        </el-button>
-      </template>
+    <PureTableBar title="登录日志" :columns="columns" @refresh="onSearch">
       <template v-slot="{ size, dynamicColumns }">
         <pure-table
           :data="dataList"
@@ -107,30 +86,7 @@ const {
           @selection-change="handleSelectionChange"
           @page-size-change="handleSizeChange"
           @page-current-change="handleCurrentChange"
-        >
-          <template #operation="{ row }">
-            <el-button
-              class="reset-margin"
-              link
-              type="primary"
-              :size="size"
-              :icon="useRenderIcon(AdminOutlined)"
-              @click="assignRoles(row)"
-            >
-              配置角色
-            </el-button>
-            <el-button
-              class="reset-margin"
-              link
-              type="primary"
-              :size="size"
-              :icon="useRenderIcon(Password)"
-              @click="resetPassword(row)"
-            >
-              重置密码
-            </el-button>
-          </template>
-        </pure-table>
+        />
       </template>
     </PureTableBar>
   </div>

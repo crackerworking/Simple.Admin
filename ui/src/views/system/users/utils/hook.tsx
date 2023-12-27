@@ -18,7 +18,10 @@ import { EnsureSuccess } from "@/utils/http/extend";
 
 export function useUser() {
   const form = reactive({
-    userName: null
+    userName: null,
+    nickName: null,
+    sex: null,
+    isEnabled: null
   });
   const formRef = ref();
   const roleFormRef = ref();
@@ -73,7 +76,7 @@ export function useUser() {
     },
     {
       label: "创建时间",
-      minWidth: 180,
+      minWidth: 120,
       prop: "createdOn"
     },
     {
@@ -244,11 +247,6 @@ export function useUser() {
     });
   }
 
-  /** 菜单权限 */
-  function handleMenu() {
-    message("等菜单管理页面开发后完善");
-  }
-
   onMounted(() => {
     onSearch();
   });
@@ -262,7 +260,6 @@ export function useUser() {
     onSearch,
     resetForm,
     openDialog,
-    handleMenu,
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange,

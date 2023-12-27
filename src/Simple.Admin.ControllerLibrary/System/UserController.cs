@@ -44,18 +44,6 @@ namespace Simple.Admin.ControllerLibrary.System
         }
 
         /// <summary>
-        /// 移除用户
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [AuthorizeCode("System:User:Remove")]
-        public async Task<MessageModel> RemoveUser([FromBody] PrimaryKey input)
-        {
-            return await _userService.RemoveUserAsync(input);
-        }
-
-        /// <summary>
         /// 更新用户密码
         /// </summary>
         /// <param name="input"></param>

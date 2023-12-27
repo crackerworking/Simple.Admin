@@ -9,19 +9,19 @@ namespace Simple.Admin.Domain.Helper
     {
         public static MessageModel Success(string? message = default)
         {
-            message ??= "success";
+            message ??= "操作成功";
             return new MessageModel(response_type.Success, message);
         }
 
         public static MessageModel Fail(string? message = default)
         {
-            message ??= "fail";
+            message ??= "操作失败";
             return new MessageModel(response_type.Fail, message);
         }
 
         public static MessageModel NonExist(string? message = default)
         {
-            message ??= "data does not exist.";
+            message ??= "数据不存在";
             return new MessageModel(response_type.NonExist, message);
         }
 
@@ -32,7 +32,7 @@ namespace Simple.Admin.Domain.Helper
 
         public static MessageModel ParameterError(string? message = default)
         {
-            message ??= "Parameter error.";
+            message ??= "参数错误";
             return new MessageModel(response_type.ParameterError, message);
         }
     }

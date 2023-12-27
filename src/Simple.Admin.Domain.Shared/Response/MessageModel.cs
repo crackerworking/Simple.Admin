@@ -62,7 +62,7 @@
         public MessageModel(bool successed, T? result)
         {
             Code = successed ? response_type.Success : response_type.Fail;
-            Message = successed ? "success" : "fail";
+            Message = successed ? "操作成功" : "操作失败";
             Result = result;
         }
 

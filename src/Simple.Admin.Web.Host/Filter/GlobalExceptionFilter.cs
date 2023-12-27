@@ -35,15 +35,6 @@ namespace Simple.Admin.Web.Host.Filter
                 }
                 var req = await LogParamsAsync(context.HttpContext);
                 FileLogging.Instance.WriteException(context.Exception, req);
-                if (context.HttpContext.Items.TryGetValue("RequestId", out var temp))
-                {
-                    var enabled = Convert.ToBoolean(App.Configuration["ActionLog"]);
-                    if (enabled)
-                    {
-                        var guid = (string?)temp;
-                        _logService.SetExceptionAsync(guid ?? Guid.NewGuid().ToString(), context.Exception.Message).ConfigureAwait(true).GetAwaiter();
-                    }
-                }
                 context.ExceptionHandled = true;
             }
         }

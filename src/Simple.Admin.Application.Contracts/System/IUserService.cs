@@ -20,13 +20,6 @@ namespace Simple.Admin.Application.Contracts.System
         Task<MessageModel<string>> AddUserAsync(UserPlus input);
 
         /// <summary>
-        /// 移除用户
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        Task<MessageModel> RemoveUserAsync(PrimaryKey input);
-
-        /// <summary>
         /// 更新用户密码
         /// </summary>
         /// <param name="input"></param>

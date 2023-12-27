@@ -10,8 +10,8 @@
         /// <summary>
         /// 登录时间
         /// </summary>
-        public string? CreatedOn { get; set; }
+        public DateTime[]? CreatedOn { get; set; }
 
-        public int Succeed { get; set; }
+        public int? Succeed { get; set; }
     }
 }

@@ -21,8 +21,7 @@ export function useUser(tableRef) {
   });
   const columns: TableColumnList = [
     {
-      type: "selection",
-      width: 50
+      type: "selection"
     },
     {
       label: "ID",
@@ -84,6 +83,10 @@ export function useUser(tableRef) {
     let ids = [row?.id];
     if (!row) {
       const checkedRows = tableRef.value.getTableRef().getSelectionRows();
+      if (checkedRows.some(x => x.readed === 1)) {
+        message("请选择未读消息", { type: "warning" });
+        return;
+      }
       ids = checkedRows.map(x => x.id);
     }
     if (ids.length === 0) {
