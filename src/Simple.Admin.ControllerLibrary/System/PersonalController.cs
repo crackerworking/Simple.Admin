@@ -3,7 +3,6 @@ using Simple.Admin.Application.Contracts.System.Models.Message;
 using Simple.Admin.Application.Contracts.System.Models.Permission;
 using Simple.Admin.Application.Contracts.System.Models.User;
 using Simple.Admin.Domain.Shared.Core;
-using Simple.Admin.Domain.Shared.Models.UI;
 
 namespace Simple.Admin.ControllerLibrary.System
 {

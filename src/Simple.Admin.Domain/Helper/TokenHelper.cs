@@ -30,5 +30,32 @@ namespace Simple.Admin.Domain.Helper
 
             return token;
         }
+
+        /// <summary>
+        /// 从Token中获取用户身份
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public ClaimsPrincipal? GetPrincipalFromAccessToken(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+
+            try
+            {
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(App.Configuration.GetSection("JWT")["IssuerSigningKey"]!));
+                return handler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = key,
+                    ValidateLifetime = false
+                }, out SecurityToken validatedToken);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }

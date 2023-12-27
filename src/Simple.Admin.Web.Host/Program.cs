@@ -12,7 +12,6 @@ using Simple.Admin.Domain.Json;
 using Simple.Admin.Domain.PipelineConfiguration;
 using Simple.Admin.Domain.Shared;
 using Simple.Admin.Domain.Shared.Models;
-using Simple.Admin.Domain.Shared.Models.UI;
 using Simple.Admin.Domain.Tasks;
 using Simple.Admin.Domain.User;
 using Simple.Admin.Web.Host.Filter;
@@ -87,10 +86,6 @@ static void ConfigureService(IServiceCollection services, IConfiguration configu
         var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
         return httpContextAccessor.HttpContext!.Features.Get<MiHeader>() ?? new MiHeader();
     });
-
-    // UI Config
-    var uiConfig = configuration.GetSection("AdminUI");
-    services.Configure<PaConfigModel>(uiConfig);
 
     // quartz
     services.AddSingleton(sp =>

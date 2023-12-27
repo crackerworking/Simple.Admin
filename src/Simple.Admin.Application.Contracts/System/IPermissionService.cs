@@ -1,6 +1,5 @@
 ﻿using Simple.Admin.Application.Contracts.System.Models.Permission;
 using Simple.Admin.Application.Contracts.System.Models.User;
-using Simple.Admin.Domain.Shared.Models.UI;
 
 namespace Simple.Admin.Application.Contracts.System
 {

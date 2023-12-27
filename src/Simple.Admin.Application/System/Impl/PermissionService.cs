@@ -26,6 +26,7 @@ namespace Simple.Admin.Application.System.Impl
         private readonly IDapperRepository _dapperRepository;
         private readonly IRepository<SysRoleFunction> _roleFunctionRepo;
         private readonly ITransactionContext _transactionContext;
+        private readonly ITokenManager _tokenManager;
 
         public PermissionService(IRepository<SysUser> userRepository
             , IRepository<SysRole> roleRepository
@@ -37,7 +38,8 @@ namespace Simple.Admin.Application.System.Impl
             , IRepository<SysUserRole> userRoleRepo
             , IDapperRepository dapperRepository
             , IRepository<SysRoleFunction> roleFunctionRepo
-            , ITransactionContext transactionContext)
+            , ITransactionContext transactionContext
+            , ITokenManager tokenManager)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
@@ -50,6 +52,7 @@ namespace Simple.Admin.Application.System.Impl
             _dapperRepository = dapperRepository;
             _roleFunctionRepo = roleFunctionRepo;
             _transactionContext = transactionContext;
+            _tokenManager = tokenManager;
         }
 
         public async Task<MessageModel<List<RouterItem>>> GetSiderMenuAsync()
@@ -220,8 +223,10 @@ namespace Simple.Admin.Application.System.Impl
             };
             var expireTime = DateTime.Now.AddMinutes(Convert.ToInt32(App.Configuration.GetSection("JWT")["Expires"]));
             string token = TokenHelper.GenerateToken(claims, expireTime);
-            claims[3] = new Claim(ClaimTypes.Role, roleNames + "," + "refresh-token");
-            string refreshToken = TokenHelper.GenerateToken(claims, expireTime.AddHours(1));
+            var newExpireTime = expireTime.AddHours(2);
+            var newClaims = claims.Concat([new Claim(AuthorizationConst.REFRESH_TYPE, AuthorizationConst.REFRESH_TOKEN)]);
+            string refreshToken = TokenHelper.GenerateToken(newClaims, newExpireTime);
+            _tokenManager.AddToken(refreshToken, newExpireTime);
             var vo = new LoginVo
             {
                 username = user.UserName,

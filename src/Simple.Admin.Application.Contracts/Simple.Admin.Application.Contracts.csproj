@@ -10,8 +10,4 @@
     <ProjectReference Include="..\Simple.Admin.Domain.Shared\Simple.Admin.Domain.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Public\Models\" />
-  </ItemGroup>
-
 </Project>
