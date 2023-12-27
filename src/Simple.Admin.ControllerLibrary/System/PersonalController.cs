@@ -58,6 +58,6 @@ namespace Simple.Admin.ControllerLibrary.System
         /// <returns></returns>
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IList<HeaderMsg>> GetHeaderMsg() => await _msgService.GetHeaderMsgAsync();
+        public async Task<MessageModel> GetHeaderMsg() => await _msgService.GetHeaderMsgAsync();
     }
 }

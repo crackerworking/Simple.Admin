@@ -1,14 +1,37 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { noticesData } from "./data";
+import { ref, onMounted } from "vue";
+//import { noticesData } from "./data";
+import { getHeaderMsg } from "@/api/workspace/notice";
 import NoticeList from "./noticeList.vue";
 import Bell from "@iconify-icons/ep/bell";
 
 const noticesNum = ref(0);
-const notices = ref(noticesData);
-const activeKey = ref(noticesData[0].key);
+const notices = ref([]);
+const activeKey = ref("1");
 
-notices.value.map(v => (noticesNum.value += v.list.length));
+function initNotices() {
+  getHeaderMsg().then(res => {
+    notices.value = res.result.map(x => {
+      noticesNum.value = x.children.length;
+      return {
+        key: x.id,
+        name: x.title,
+        list: x.children.map(s => {
+          s.datetime = s.time;
+          s.description = s.content;
+          return s;
+        })
+      };
+    });
+    setTimeout(() => {
+      initNotices();
+    }, 60000);
+  });
+}
+
+onMounted(() => {
+  initNotices();
+});
 </script>
 
 <template>

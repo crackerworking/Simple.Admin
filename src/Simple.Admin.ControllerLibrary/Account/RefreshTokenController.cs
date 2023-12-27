@@ -15,9 +15,9 @@ namespace Simple.Admin.ControllerLibrary.Account
         }
 
         [HttpPost]
-        public MessageModel Post(string t)
+        public MessageModel Post([FromBody] RefreshTokenDto dto)
         {
-            return _publicService.GetRefreshTokenResult(new RefreshTokenDto { Token = t });
+            return _publicService.GetRefreshTokenResult(dto);
         }
     }
 }

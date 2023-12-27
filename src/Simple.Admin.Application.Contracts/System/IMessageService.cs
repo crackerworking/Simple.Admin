@@ -22,6 +22,6 @@ namespace Simple.Admin.Application.Contracts.System
         /// 顶部导航栏未读消息
         /// </summary>
         /// <returns></returns>
-        Task<IList<HeaderMsg>> GetHeaderMsgAsync();
+        Task<MessageModel<IList<HeaderMsg>>> GetHeaderMsgAsync();
     }
 }

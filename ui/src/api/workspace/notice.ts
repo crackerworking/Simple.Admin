@@ -18,3 +18,11 @@ export const readed = (data?: object) => {
     data
   });
 };
+
+/** 顶部通知 */
+export const getHeaderMsg = () => {
+  return http.request<ApiGenericResponse<any>>(
+    "get",
+    "/api/Personal/GetHeaderMsg"
+  );
+};

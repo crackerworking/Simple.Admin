@@ -80,7 +80,7 @@ export const noticesData: TabItem[] = [
         title: "李白 评论了你",
         description: "长风破浪会有时,直挂云帆济沧海",
         datetime: "一年前",
-        type: "2"
+        type: "1"
       },
       {
         avatar:

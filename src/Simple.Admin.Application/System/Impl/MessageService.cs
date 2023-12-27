@@ -19,30 +19,30 @@ namespace Simple.Admin.Application.System.Impl
             _dapperRepository = dapperRepository;
         }
 
-        public async Task<IList<HeaderMsg>> GetHeaderMsgAsync()
+        public async Task<MessageModel<IList<HeaderMsg>>> GetHeaderMsgAsync()
         {
             var list = (await _messageRepository.GetListAsync(x => x.Readed == 0 && x.ReceiveUser == _miUser.UserId)).OrderByDescending(x => x.CreatedOn);
             var result = new List<HeaderMsg>();
             var msg = new HeaderMsg
             {
-                Title = "未读消息",
+                Title = "通知",
                 Id = 1,
                 Children = list.Select(x => new HeaderMsgChild
                 {
                     Id = x.Id,
                     Title = x.Title,
-                    Context = ShowContent(x.Content),
+                    Content = ShowContent(x.Content),
                     Time = ShowTime(x.CreatedOn)
                 }).ToList()
             };
             result.Add(msg);
-            return result;
+            return new MessageModel<IList<HeaderMsg>>(result);
         }
 
         private string ShowContent(string? content)
         {
             if (string.IsNullOrEmpty(content)) return "无内容";
-            else if (content.Length >= 10) return content.Substring(0, 10) + "...";
+            else if (content.Length >= 25) return content[..25] + "...";
             else return content;
         }
 
