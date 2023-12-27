@@ -36,9 +36,10 @@ namespace Simple.Admin.Web.Host.Middleware
                     {
                         var endpoint = context.GetEndpoint();
                         var attr = endpoint?.Metadata.GetMetadata<AuthorizeCodeAttribute>();
-                        if (endpoint != null && attr != null)
+                        if (endpoint != null)
                         {
-                            flag = userModel.PowerItems!.Any(x => x.AuthCode == attr.Code);
+                            if (attr != null) flag = userModel.PowerItems!.Any(x => x.AuthCode == attr.Code);
+                            else flag = true;
                         }
                     }
                     if (!flag)

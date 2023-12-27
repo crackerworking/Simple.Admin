@@ -20,7 +20,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        [AuthorizeCode("Development:CacheKey:Query")]
+        [AuthorizeCode("System:CacheKey:Query")]
         public async Task<MessageModel<IList<Option>>> GetAllKeys([FromBody] CacheKeySearch input) => await _keyService.GetAllKeysAsync(input);
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        [AuthorizeCode("Development:CacheKey:Remove")]
+        [AuthorizeCode("System:CacheKey:Remove")]
         public async Task<MessageModel> RemoveKey([FromBody] CacheKeyIn input) => await _keyService.RemoveKeyAsync(input);
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        [AuthorizeCode("Development:CacheKey:GetData")]
+        [AuthorizeCode("System:CacheKey:GetData")]
         public async Task<MessageModel<string>> GetData([FromBody] CacheKeyIn input) => await _keyService.GetDataAsync(input);
     }
 }
