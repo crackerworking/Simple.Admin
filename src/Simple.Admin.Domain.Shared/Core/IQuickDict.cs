@@ -24,23 +24,23 @@ namespace Simple.Admin.Domain.Shared.Core
         /// <summary>
         /// 读取字典子集
         /// </summary>
-        /// <param name="parentKey"></param>
+        /// <param name="type"></param>
         /// <returns></returns>
-        Task<Dictionary<string, string>> GetManyAsync(string parentKey);
+        Task<Dictionary<string, string>> GetManyAsync(string type);
 
         /// <summary>
         /// 读取字典子集，赋值到模型
         /// </summary>
-        /// <param name="parentKey"></param>
+        /// <param name="type"></param>
         /// <returns></returns>
-        Task<T> GetManyAsync<T>(string parentKey);
+        Task<T> GetManyAsync<T>(string type);
 
         /// <summary>
         /// 读取字典子集，组装成option
         /// </summary>
-        /// <param name="parentKey"></param>
+        /// <param name="type"></param>
         /// <returns></returns>
-        Task<List<Option>> GetOptionsAsync(string parentKey);
+        Task<List<Option>> GetOptionsAsync(string type);
 
         /// <summary>
         /// 更新字典value

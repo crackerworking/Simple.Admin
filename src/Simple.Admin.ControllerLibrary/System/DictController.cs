@@ -49,13 +49,5 @@ namespace Simple.Admin.ControllerLibrary.System
         [HttpPost, AuthorizeCode("System:Dict:Remove")]
         public async Task<MessageModel> RemoveDict([FromBody] PrimaryKeys input)
             => await _dictService.RemoveDictAsync(input);
-
-        /// <summary>
-        /// 获取已有子集的字典
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost, AuthorizeCode("System:Dict:Query")]
-        public async Task<List<Option>> GetParentList()
-            => await _dictService.GetParentListAsync();
     }
 }

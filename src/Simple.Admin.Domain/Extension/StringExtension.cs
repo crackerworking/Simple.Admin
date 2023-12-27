@@ -15,5 +15,9 @@ namespace Simple.Admin.Domain.Extension
             if (string.IsNullOrEmpty(str) || string.IsNullOrEmpty(pattern)) return false;
             return new Regex(pattern).IsMatch(str);
         }
+
+        public static bool IsNotNullOrEmpty(this string? str) => !string.IsNullOrEmpty(str);
+
+        public static bool IsNotNullOrWhiteSpace(this string? str) => !string.IsNullOrWhiteSpace(str);
     }
 }

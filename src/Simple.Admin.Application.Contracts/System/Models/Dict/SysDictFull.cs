@@ -26,10 +26,9 @@ namespace Simple.Admin.Application.Contracts.System.Models.Dict
         /// <summary>
         /// 父级Key
         /// </summary>
-        public string? ParentKey { get; set; }
+        public string? Type { get; set; }
 
         public int Sort { get; set; }
-        public long ParentId { get; set; }
         public string? Remark { get; set; }
 
         public DateTime CreatedOn { get; set; }

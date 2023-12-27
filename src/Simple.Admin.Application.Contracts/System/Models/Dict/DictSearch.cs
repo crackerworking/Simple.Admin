@@ -9,6 +9,6 @@
 
         public string? Remark { get; set; }
 
-        public long? ParentId { get; set; }
+        public string? Type { get; set; }
     }
 }

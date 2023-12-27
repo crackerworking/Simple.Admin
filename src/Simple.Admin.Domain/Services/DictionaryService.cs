@@ -28,7 +28,7 @@ namespace Simple.Admin.Domain.Services
             get
             {
                 if (_keyValuePairs == null) Load();
-                return _keyValuePairs[key];
+                return _keyValuePairs.TryGetValue(key,out var val) ? val : string.Empty;
             }
         }
 
@@ -38,23 +38,23 @@ namespace Simple.Admin.Domain.Services
             return Task.FromResult(_keyValuePairs[key]);
         }
 
-        public Task<Dictionary<string, string>> GetManyAsync(string parentKey)
+        public Task<Dictionary<string, string>> GetManyAsync(string type)
         {
             if (_sysDict == null) Load();
             var dict = new Dictionary<string, string>();
-            foreach (var item in _sysDict!.Where(x => x.ParentKey == parentKey))
+            foreach (var item in _sysDict!.Where(x => x.Type == type))
             {
                 dict.TryAdd(item.Key, item.Value ?? "");
             }
             return Task.FromResult(dict);
         }
 
-        public Task<T> GetManyAsync<T>(string parentKey)
+        public Task<T> GetManyAsync<T>(string type)
         {
             if (_sysDict == null) Load();
             var model = Activator.CreateInstance<T>();
 
-            var children = _sysDict!.Where(x => x.ParentKey == parentKey).ToList();
+            var children = _sysDict!.Where(x => x.Type == type).ToList();
             if (children.Count == 0) return Task.FromResult(model);
             foreach (PropertyInfo prop in typeof(T).GetProperties())
             {
@@ -68,11 +68,11 @@ namespace Simple.Admin.Domain.Services
             return Task.FromResult(model);
         }
 
-        public Task<List<Option>> GetOptionsAsync(string parentKey)
+        public Task<List<Option>> GetOptionsAsync(string type)
         {
             if (_sysDict == null) Load();
 
-            var list = _sysDict!.Where(x => x.ParentKey == parentKey).Select(x => new Option
+            var list = _sysDict!.Where(x => x.Type == type).Select(x => new Option
             {
                 Name = x.Name,
                 Value = x.Value

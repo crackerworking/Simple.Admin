@@ -2,7 +2,7 @@ import type { PaginationProps } from "@pureadmin/table";
 import { reactive, ref, onMounted, toRaw } from "vue";
 import { getLoginLogList } from "@/api/system/login-logs";
 
-export function useUser() {
+export function useLoginLogs() {
   const form = reactive({
     userName: null,
     succeed: null,

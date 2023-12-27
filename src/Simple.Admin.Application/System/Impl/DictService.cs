@@ -5,6 +5,7 @@ using AutoMapper;
 using Dapper;
 
 using Simple.Admin.Application.Contracts.System.Models.Dict;
+using Simple.Admin.Domain.Extension;
 using Simple.Admin.Domain.Shared.Core;
 
 namespace Simple.Admin.Application.System.Impl
@@ -27,7 +28,7 @@ namespace Simple.Admin.Application.System.Impl
 
         public async Task<MessageModel<PagingModel<DictItem>>> GetDictListAsync(DictSearch search)
         {
-            var sql = new StringBuilder(@"select d.*,(select count(*) from SysDict where id = d.ParentId) ChildCount,(select name from SysDict where id=d.ParentId) ParentName from SysDict d where d.IsDeleted = 0 ");
+            var sql = new StringBuilder(@"select d.* from SysDict d where d.IsDeleted = 0 ");
             var parameters = new DynamicParameters();
             if (!string.IsNullOrEmpty(search.Vague))
             {
@@ -39,11 +40,11 @@ namespace Simple.Admin.Application.System.Impl
                 sql.Append(" and d.remark like @remark ");
                 parameters.Add("remark", "%" + search.Remark + "%");
             }
-            if (search.ParentId.HasValue && search.ParentId > 0)
+            if (!string.IsNullOrEmpty(search.Type))
             {
-                sql.Append(" and d.ParentId = @parentId ");
+                sql.Append(" and d.Type like @Type ");
                 sql.AppendLine(" order by Sort asc ");
-                parameters.Add("parentId", search.ParentId);
+                parameters.Add("Type", "%" + search.Type + "%");
             }
             else
             {
@@ -86,21 +87,11 @@ namespace Simple.Admin.Application.System.Impl
             return _mapper.Map<List<SysDictFull>>(dict);
         }
 
-        public async Task<List<Option>> GetParentListAsync()
-        {
-            var sql = "select Name,Id AS Value from SysDict where IsDeleted = 0 and Id in (select ParentId from SysDict where IsDeleted = 0) ";
-
-            return await _dapperRepository.QueryAsync<Option>(sql);
-        }
-
         public async Task<MessageModel> AddAsync(DictPlus input)
         {
+            if (_quickDict[input.Key].IsNotNullOrEmpty()) return Back.Fail($"已存在名为【{input.Key}】的字典");
             var dict = _mapper.Map<SysDict>(input);
             dict.Id = SnowflakeIdHelper.Next();
-            if (dict.ParentId > 0)
-            {
-                dict.ParentKey = (await _dictRepo.GetAsync(x => x.Id == dict.ParentId))?.Key;
-            }
             var rows = await _dictRepo.AddAsync(dict);
             if (rows > 0)
             {
@@ -111,6 +102,7 @@ namespace Simple.Admin.Application.System.Impl
 
         public async Task<MessageModel> UpdateAsync(DictEdit input)
         {
+            if (_quickDict[input.Key].IsNotNullOrEmpty()) return Back.Fail($"已存在名为【{input.Key}】的字典");
             var dict = await _dictRepo.GetAsync(x => x.Id == input.Id);
             if (dict == null) return Back.NonExist();
 
@@ -119,8 +111,7 @@ namespace Simple.Admin.Application.System.Impl
             dict.Value = input.Value;
             dict.Remark = input.Remark;
             dict.Sort = input.Sort;
-            dict.ParentId = input.ParentId;
-            dict.ParentKey = input.ParentKey;
+            dict.Type = input.Type;
 
             var rows = await _dictRepo.UpdateAsync(dict);
 

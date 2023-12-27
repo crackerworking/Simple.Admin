@@ -5,14 +5,13 @@ import { PureTableBar } from "@/components/RePureTableBar";
 import Search from "@iconify-icons/ep/search";
 import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
-import Menu from "@iconify-icons/ep/menu";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Delete from "@iconify-icons/ep/delete";
-import { useRole } from "./utils/hook";
+import { useDict } from "./utils/hook";
 import { ref } from "vue";
 
 defineOptions({
-  name: "Roles"
+  name: "Dict"
 });
 
 const formRef = ref();
@@ -22,17 +21,14 @@ const {
   columns,
   dataList,
   pagination,
-  // buttonClass,
   onSearch,
   resetForm,
   openDialog,
-  // handleDatabase,
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange,
-  handleMenu,
-  removeRole
-} = useRole();
+  removeDict
+} = useDict();
 </script>
 
 <template>
@@ -43,10 +39,18 @@ const {
       :model="form"
       class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px]"
     >
-      <el-form-item label="角色名称：" prop="roleName">
+      <el-form-item label="模糊查询：" prop="vague">
         <el-input
-          v-model="form.roleName"
-          placeholder="请输入角色名称"
+          v-model="form.vague"
+          placeholder="请输入字典名称/key"
+          clearable
+          class="!w-[200px]"
+        />
+      </el-form-item>
+      <el-form-item label="分类：" prop="type">
+        <el-input
+          v-model="form.type"
+          placeholder="请输入分类"
           clearable
           class="!w-[200px]"
         />
@@ -73,7 +77,7 @@ const {
         </el-button>
       </el-form-item>
     </el-form>
-    <PureTableBar title="角色列表" :columns="columns" @refresh="onSearch">
+    <PureTableBar title="用户列表" :columns="columns" @refresh="onSearch">
       <template #buttons>
         <el-button
           type="primary"
@@ -114,18 +118,8 @@ const {
               link
               type="primary"
               :size="size"
-              :icon="useRenderIcon(Menu)"
-              @click="handleMenu(row.id)"
-            >
-              分配菜单
-            </el-button>
-            <el-button
-              class="reset-margin"
-              link
-              type="primary"
-              :size="size"
               :icon="useRenderIcon(Delete)"
-              @click="removeRole(row)"
+              @click="removeDict(row)"
             >
               删除
             </el-button>

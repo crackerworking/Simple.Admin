@@ -2,6 +2,9 @@
 {
     public class DictEdit : DictPlus
     {
+        /// <summary>
+        /// 字典ID
+        /// </summary>
         public long Id { get; set; }
     }
 }

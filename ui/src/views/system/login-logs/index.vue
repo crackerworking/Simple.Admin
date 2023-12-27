@@ -4,7 +4,7 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { PureTableBar } from "@/components/RePureTableBar";
 import Search from "@iconify-icons/ep/search";
 import Refresh from "@iconify-icons/ep/refresh";
-import { useUser } from "./utils/hook";
+import { useLoginLogs } from "./utils/hook";
 import { ref } from "vue";
 
 defineOptions({
@@ -23,7 +23,7 @@ const {
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange
-} = useUser();
+} = useLoginLogs();
 </script>
 
 <template>

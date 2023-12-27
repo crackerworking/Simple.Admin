@@ -89,7 +89,7 @@ defineExpose({ getRef });
     <el-form-item label="图标" v-if="editForm.functionType == 10">
       <el-input v-model="editForm.icon" placeholder="请输入支持图标字符串" />
     </el-form-item>
-    <el-form-item label="排序">
+    <el-form-item label="排序" prop="sort">
       <el-input-number v-model="editForm.sort" :min="1" :max="999" />
     </el-form-item>
     <el-form-item label="授权码">

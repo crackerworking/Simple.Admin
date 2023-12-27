@@ -21,9 +21,19 @@ namespace Simple.Admin.Application.Contracts.System.Models.Dict
         /// </summary>
         public string? Value { get; set; }
 
-        public long ParentId { get; set; }
-        public string? ParentKey { get; set; }
+        /// <summary>
+        /// 字典分类
+        /// </summary>
+        public string? Type { get; set; }
+
+        /// <summary>
+        /// 备注
+        /// </summary>
         public string? Remark { get; set; }
+
+        /// <summary>
+        /// 排序
+        /// </summary>
         public int Sort { get; set; }
     }
 }

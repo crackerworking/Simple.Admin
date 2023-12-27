@@ -1,7 +1,7 @@
 ﻿namespace Simple.Admin.Domain.Entities.System
 {
     [Table("SysDict")]
-    public class SysDict : EntityBase, IParentId<long>, ISort, IRemark
+    public class SysDict : EntityBase, ISort, IRemark
     {
         /// <summary>
         /// 字典名称
@@ -23,10 +23,9 @@
         /// <summary>
         /// 父级Key
         /// </summary>
-        public string? ParentKey { get; set; }
+        public string? Type { get; set; }
 
         public int Sort { get; set; }
-        public long ParentId { get; set; }
         public string? Remark { get; set; }
     }
 }

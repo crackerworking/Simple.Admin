@@ -1,27 +1,26 @@
 import editForm from "../form.vue";
-import menuSelect from "../menu-select.vue";
 import { message } from "@/utils/message";
-import { ElMessageBox } from "element-plus";
-import { addDialog } from "@/components/ReDialog";
-import type { FormItemProps } from "../utils/types";
-import type { PaginationProps } from "@pureadmin/table";
-import { reactive, ref, onMounted, h, toRaw } from "vue";
 import {
-  getRoleList,
-  deleteRole,
-  addRole,
-  updateRole,
-  setRoleFunctions
-} from "@/api/system/roles";
+  getDictList,
+  addDict,
+  updateDict,
+  deleteDict
+} from "@/api/system/dict";
+import { addDialog } from "@/components/ReDialog";
+import { reactive, ref, onMounted, h, toRaw } from "vue";
+import type { FormItemProps } from "../utils/types";
 import { EnsureSuccess } from "@/utils/http/extend";
+import { ElMessageBox } from "element-plus";
+import type { PaginationProps } from "@pureadmin/table";
 
-export function useRole() {
+export function useDict() {
   const form = reactive({
-    roleName: null,
-    remark: null
+    vague: null,
+    remark: null,
+    type: null
   });
+
   const formRef = ref();
-  const treeRef = ref();
   const dataList = ref([]);
   const loading = ref(true);
   const pagination = reactive<PaginationProps>({
@@ -31,45 +30,53 @@ export function useRole() {
     background: true,
     pageSizes: [10, 25, 50, 75, 100]
   });
+
   const columns: TableColumnList = [
     {
-      label: "角色名称",
-      prop: "roleName"
+      label: "名称",
+      prop: "name"
+    },
+    {
+      label: "键/key",
+      prop: "key"
+    },
+    {
+      label: "值",
+      prop: "value"
+    },
+    {
+      label: "分类",
+      prop: "type"
     },
     {
       label: "备注",
       prop: "remark"
     },
     {
-      label: "创建时间",
-      prop: "createdOn",
-      minWidth: 120
+      label: "排序",
+      prop: "sort"
     },
     {
       label: "操作",
       fixed: "right",
-      width: 240,
+      width: 160,
       slot: "operation"
     }
   ];
-
-  function handleSizeChange(val: number) {
-    pagination.pageSize = val;
-    onSearch();
-  }
-
-  function handleCurrentChange(val: number) {
-    pagination.currentPage = val;
-    onSearch();
-  }
 
   function handleSelectionChange(val) {
     console.log("handleSelectionChange", val);
   }
 
+  function resetForm(formEl) {
+    if (!formEl) return;
+    formEl.resetFields();
+    onSearch();
+  }
+
   async function onSearch() {
     loading.value = true;
-    const { result: data } = await getRoleList({
+    const { result: data } = await getDictList({
       ...toRaw(form),
       page: pagination.currentPage,
       size: pagination.pageSize
@@ -82,20 +89,18 @@ export function useRole() {
     }, 500);
   }
 
-  const resetForm = formEl => {
-    if (!formEl) return;
-    formEl.resetFields();
-    onSearch();
-  };
-
-  function openDialog(title = "新增", row?: FormItemProps | any) {
+  function openDialog(title = "新增", row?: FormItemProps) {
     addDialog({
-      title: `${title}角色`,
+      title: `${title}字典`,
       props: {
         formInline: {
-          id: row?.id ?? "",
-          name: row?.roleName ?? "",
-          remark: row?.remark ?? ""
+          name: row?.name,
+          key: row?.key,
+          value: row?.value,
+          type: row?.type,
+          remark: row?.remark,
+          sort: row?.sort ?? 1,
+          id: row?.id ?? 0
         }
       },
       width: "40%",
@@ -108,9 +113,8 @@ export function useRole() {
         const curData = options.props.formInline as FormItemProps;
         FormRef.validate(valid => {
           if (valid) {
-            // 表单规则校验通过
             if (title === "新增") {
-              addRole(curData).then(res => {
+              addDict(curData).then(res => {
                 if (EnsureSuccess(res)) {
                   message(res.message, { type: "success" });
                   done(); // 关闭弹框
@@ -120,7 +124,7 @@ export function useRole() {
                 }
               });
             } else {
-              updateRole(curData).then(res => {
+              updateDict(curData).then(res => {
                 if (EnsureSuccess(res)) {
                   message(res.message, { type: "success" });
                   done();
@@ -136,41 +140,15 @@ export function useRole() {
     });
   }
 
-  /** 菜单权限 */
-  function handleMenu(id) {
-    addDialog({
-      title: "分配菜单",
-      props: { id: id },
-      width: "50%",
-      draggable: true,
-      fullscreenIcon: true,
-      closeOnClickModal: false,
-      contentRenderer: () => h(menuSelect, { ref: treeRef }),
-      beforeSure: (done, { options }) => {
-        console.debug(options);
-        const TreeRef = treeRef.value.getRef();
-        const checkedIds = TreeRef.getCheckedKeys();
-        setRoleFunctions({ id: id, funcIds: checkedIds }).then(res => {
-          if (EnsureSuccess(res)) {
-            message(res.message, { type: "success" });
-            done(); // 关闭弹框
-          } else {
-            message(res.message, { type: "error" });
-          }
-        });
-      }
-    });
-  }
-
-  function removeRole(row) {
-    ElMessageBox.confirm("确定删除" + row.roleName + "吗?", "系统提示", {
+  function removeDict(row) {
+    ElMessageBox.confirm("确定删除【" + row.title + "】吗?", "系统提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning",
       dangerouslyUseHTMLString: true,
       draggable: true
     }).then(() => {
-      deleteRole({ id: row.id }).then(res => {
+      deleteDict({ array_id: [row.id] }).then(res => {
         if (EnsureSuccess(res)) {
           message(res.message, { type: "success" });
           onSearch();
@@ -179,6 +157,16 @@ export function useRole() {
         }
       });
     });
+  }
+
+  function handleSizeChange(val: number) {
+    pagination.pageSize = val;
+    onSearch();
+  }
+
+  function handleCurrentChange(val: number) {
+    pagination.currentPage = val;
+    onSearch();
   }
 
   onMounted(() => {
@@ -190,14 +178,16 @@ export function useRole() {
     loading,
     columns,
     dataList,
-    pagination,
+    /** 搜索 */
     onSearch,
+    /** 重置 */
     resetForm,
+    /** 新增、编辑功能 */
     openDialog,
-    handleMenu,
-    handleSizeChange,
-    handleCurrentChange,
+    removeDict,
     handleSelectionChange,
-    removeRole
+    pagination,
+    handleSizeChange,
+    handleCurrentChange
   };
 }

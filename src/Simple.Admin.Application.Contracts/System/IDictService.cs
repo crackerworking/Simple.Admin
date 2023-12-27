@@ -44,11 +44,5 @@ namespace Simple.Admin.Application.Contracts.System
         /// <param name="id"></param>
         /// <returns></returns>
         Task<MessageModel<SysDictFull>> GetAsync(long id);
-
-        /// <summary>
-        /// 获取已有子集的字典
-        /// </summary>
-        /// <returns></returns>
-        Task<List<Option>> GetParentListAsync();
     }
 }
