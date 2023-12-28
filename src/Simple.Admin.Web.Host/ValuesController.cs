@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Simple.Admin.Domain.Helper;
 using Simple.Admin.Domain.Shared.Core;
+using Simple.Admin.Domain.Shared.GlobalVars;
 using Simple.Admin.Domain.Shared.Options;
 using Simple.Admin.Domain.Shared.Response;
 
@@ -16,6 +17,19 @@ namespace Simple.Admin.Web.Host
         public ValuesController(IQuickDict dictionaryApi)
         {
             _dictionaryApi = dictionaryApi;
+        }
+
+        [HttpGet]
+        public MessageModel Init()
+        {
+            return new MessageModel<dynamic>(new
+            {
+                time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                tip = $"欢迎使用{SystemConfigConst.PROJECT_NAME}！",
+                tip_star = "如果您感觉不错，记得点击下面链接给个star！",
+                github = SystemConfigConst.GITHUB,
+                gitee = SystemConfigConst.GITEE
+            });
         }
 
         /// <summary>

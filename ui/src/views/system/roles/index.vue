@@ -79,6 +79,7 @@ const {
           type="primary"
           :icon="useRenderIcon(AddFill)"
           @click="openDialog()"
+          v-auth="'System:Role:Add'"
         >
           新增角色
         </el-button>
@@ -106,6 +107,7 @@ const {
               :size="size"
               :icon="useRenderIcon(EditPen)"
               @click="openDialog('编辑', row)"
+              v-auth="'System:Role:Update'"
             >
               修改
             </el-button>
@@ -116,8 +118,9 @@ const {
               :size="size"
               :icon="useRenderIcon(Menu)"
               @click="handleMenu(row.id)"
+              v-auth="'System:Role:SetRoleFunctions'"
             >
-              分配菜单
+              分配功能
             </el-button>
             <el-button
               class="reset-margin"
@@ -126,6 +129,7 @@ const {
               :size="size"
               :icon="useRenderIcon(Delete)"
               @click="removeRole(row)"
+              v-auth="'System:Role:Remove'"
             >
               删除
             </el-button>

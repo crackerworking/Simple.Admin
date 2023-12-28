@@ -17,10 +17,14 @@
 
   <ItemGroup>
     <None Remove="font\RedwoodMount-p7Jrd.ttf" />
+    <None Remove="mi.db" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="font\RedwoodMount-p7Jrd.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="mi.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -37,10 +41,6 @@
     <ProjectReference Include="..\Simple.Admin.Application\Simple.Admin.Application.csproj" />
     <ProjectReference Include="..\Simple.Admin.ControllerLibrary\Simple.Admin.ControllerLibrary.csproj" />
     <ProjectReference Include="..\Simple.Admin.DataDriver\Simple.Admin.DataDriver.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

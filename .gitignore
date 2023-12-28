@@ -140,3 +140,4 @@ obj/
 .vscode
 appsettings.json
 microsoft-signalr
+/src/Simple.Admin.Web.Host/Properties/PublishProfiles

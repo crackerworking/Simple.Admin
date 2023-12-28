@@ -38,7 +38,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        [AuthorizeCode("System:CacheKey:GetData")]
+        [AuthorizeCode("System:CacheKey:Query")]
         public async Task<MessageModel<string>> GetData([FromBody] CacheKeyIn input) => await _keyService.GetDataAsync(input);
     }
 }

@@ -136,10 +136,10 @@ export function useRole() {
     });
   }
 
-  /** 菜单权限 */
+  /** 功能权限 */
   function handleMenu(id) {
     addDialog({
-      title: "分配菜单",
+      title: "分配功能",
       props: { id: id },
       width: "50%",
       draggable: true,

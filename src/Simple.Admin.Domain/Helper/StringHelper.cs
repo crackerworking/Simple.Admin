@@ -1,7 +1,12 @@
 ﻿using System.Net.NetworkInformation;
 using System.Security.Cryptography;
+using System.Text;
 
 using Simple.Admin.Domain.Exceptions;
+using Simple.Admin.Domain.Shared;
+using Simple.Admin.Domain.Shared.GlobalVars;
+
+using Spectre.Console;
 
 namespace Simple.Admin.Domain.Helper
 {
@@ -102,7 +107,19 @@ namespace Simple.Admin.Domain.Helper
         /// <returns></returns>
         public static string DefaultAvatar()
         {
-            return "/admin/images/avatar.jpg";
+            return "";
+        }
+
+        /// <summary>
+        /// 项目信息
+        /// </summary>
+        /// <returns></returns>
+        public static void Information()
+        {
+            var banner = File.ReadAllText(Path.Combine(App.WebRoot, "banner.txt"));
+            AnsiConsole.MarkupLine($"[deepskyblue3_1]{banner}[/]");
+            AnsiConsole.MarkupLine($"[white]github：[/][deepskyblue3_1]{SystemConfigConst.GITHUB}[/]");
+            AnsiConsole.MarkupLine($"[white]gitee：[/][deepskyblue3_1]{SystemConfigConst.GITEE}[/]");
         }
     }
 }

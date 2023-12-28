@@ -72,6 +72,7 @@ const {
           type="primary"
           :icon="useRenderIcon(AddFill)"
           @click="openDialog()"
+          v-auth="'System:Function:Add'"
         >
           新增功能
         </el-button>
@@ -104,6 +105,7 @@ const {
               :size="size"
               :icon="useRenderIcon(EditPen)"
               @click="openDialog('编辑', row)"
+              v-auth="'System:Function:Update'"
             >
               编辑
             </el-button>
@@ -114,6 +116,7 @@ const {
               :size="size"
               :icon="useRenderIcon(Delete)"
               @click="removeFunction(row)"
+              v-auth="'System:Function:Remove'"
             >
               删除
             </el-button>

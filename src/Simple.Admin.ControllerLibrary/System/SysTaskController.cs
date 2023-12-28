@@ -19,7 +19,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [AuthorizeCode("SysTask:GetList")]
+        [AuthorizeCode("System:SysTask:GetList")]
         public Task<MessageModel<List<TaskItem>>> GetListAsync()
         {
             return _sysTaskService.GetListAsync();
@@ -31,7 +31,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        [AuthorizeCode("SysTask:Update")]
+        [AuthorizeCode("System:SysTask:Update")]
         public Task<MessageModel> UpdateAsync([FromBody] TaskEdit input)
         {
             return _sysTaskService.UpdateAsync(input);

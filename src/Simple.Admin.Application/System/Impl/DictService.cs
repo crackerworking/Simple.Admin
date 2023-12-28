@@ -102,9 +102,9 @@ namespace Simple.Admin.Application.System.Impl
 
         public async Task<MessageModel> UpdateAsync(DictEdit input)
         {
-            if (_quickDict[input.Key].IsNotNullOrEmpty()) return Back.Fail($"已存在名为【{input.Key}】的字典");
             var dict = await _dictRepo.GetAsync(x => x.Id == input.Id);
             if (dict == null) return Back.NonExist();
+            if (_quickDict[input.Key].IsNotNullOrEmpty() && input.Key != dict.Key) return Back.Fail($"已存在名为【{input.Key}】的字典");
 
             dict.Name = input.Name;
             dict.Key = input.Key;

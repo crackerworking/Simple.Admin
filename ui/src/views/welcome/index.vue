@@ -5,5 +5,29 @@ defineOptions({
 </script>
 
 <template>
-  <h1>simple-admin-ui（非国际化版本）</h1>
+  <div>
+    <el-card class="mb-2">
+      <el-descriptions title="Simple.Admin">
+        <el-descriptions-item label="联系作者"
+          >crackerwork@outlook.com</el-descriptions-item
+        >
+        <el-descriptions-item label="github"
+          ><el-button link type="primary"
+            >https://github.com/yoursession/Simple.Admin</el-button
+          ></el-descriptions-item
+        >
+        <el-descriptions-item label="gitee"
+          ><el-button link type="primary"
+            >https://gitee.com/yoursession/simple-admin</el-button
+          ></el-descriptions-item
+        >
+      </el-descriptions>
+    </el-card>
+    <el-card>
+      项目名叫做<b>Simple.Admin</b>，意为简单，简化开发。框架基于.NET8.0，使用AspNetCore+Vue.js(前端项目基于<a
+        href="https://github.com/pure-admin/vue-pure-admin"
+        >pure-admin</a
+      >)构建的后台管理，实现了页面、按钮（接口）权限拦截。整体项目技术简单，非常适合作为初学项目和升级到企业后台，并且有自定义无权限页面、禁止访问错误页面、动态定时任务、内存缓存key、登录日志、右下角弹窗通知等特色功能。
+    </el-card>
+  </div>
 </template>

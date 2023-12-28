@@ -83,8 +83,9 @@ const {
           type="primary"
           :icon="useRenderIcon(AddFill)"
           @click="openDialog()"
+          v-auth="'System:Dict:Add'"
         >
-          新增角色
+          新增字典
         </el-button>
       </template>
       <template v-slot="{ size, dynamicColumns }">
@@ -110,6 +111,7 @@ const {
               :size="size"
               :icon="useRenderIcon(EditPen)"
               @click="openDialog('编辑', row)"
+              v-auth="'System:Dict:Update'"
             >
               修改
             </el-button>
@@ -120,6 +122,7 @@ const {
               :size="size"
               :icon="useRenderIcon(Delete)"
               @click="removeDict(row)"
+              v-auth="'System:Dict:Remove'"
             >
               删除
             </el-button>

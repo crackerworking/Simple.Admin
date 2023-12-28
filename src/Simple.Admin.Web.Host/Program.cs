@@ -70,6 +70,7 @@ app.MapControllerRoute("api-router", "/api/{controller}/{action}");
 app.MapHub<NoticeHub>("/noticeHub");
 
 SystemTaskScheduler.Instance.Run();
+StringHelper.Information();
 app.Run();
 
 static void ConfigureService(IServiceCollection services, IConfiguration configuration)

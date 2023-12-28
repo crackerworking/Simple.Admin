@@ -25,7 +25,7 @@ export function useTask() {
         scope.row.isEnabled === 1 ? (
           <el-tag type="success">已启动</el-tag>
         ) : (
-          <el-tag type="error">已暂停</el-tag>
+          <el-tag type="danger">已暂停</el-tag>
         )
     },
     {

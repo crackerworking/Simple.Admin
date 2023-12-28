@@ -15,6 +15,7 @@ import {
   setUserRole
 } from "@/api/system/users";
 import { EnsureSuccess } from "@/utils/http/extend";
+import { hasAuth } from "@/router/utils";
 
 export function useUser() {
   const form = reactive({
@@ -59,20 +60,23 @@ export function useUser() {
     {
       label: "状态",
       minWidth: 130,
-      cellRenderer: scope => (
-        <el-switch
-          size={scope.props.size === "small" ? "small" : "default"}
-          loading={switchLoadMap.value[scope.index]?.loading}
-          v-model={scope.row.isEnabled}
-          active-value={1}
-          inactive-value={0}
-          active-text="已启用"
-          inactive-text="已停用"
-          inline-prompt
-          style={switchStyle.value}
-          onChange={() => onChange(scope as any)}
-        />
-      )
+      cellRenderer: scope =>
+        hasAuth("System:User:Passed") ? (
+          <el-switch
+            size={scope.props.size === "small" ? "small" : "default"}
+            loading={switchLoadMap.value[scope.index]?.loading}
+            v-model={scope.row.isEnabled}
+            active-value={1}
+            inactive-value={0}
+            active-text="已启用"
+            inactive-text="已停用"
+            inline-prompt
+            style={switchStyle.value}
+            onChange={() => onChange(scope as any)}
+          />
+        ) : (
+          <span>{scope.row.isEnabled === 1 ? "启用" : "禁用"}</span>
+        )
     },
     {
       label: "创建时间",

@@ -89,12 +89,13 @@ onMounted(() => {
         >
           <el-table-column type="index" width="50" />
           <el-table-column prop="name" label="Key名" />
-          <el-table-column label="操作" fixed="right" width="70px">
+          <el-table-column label="操作" fixed="right" width="80px">
             <template #default="scope">
               <el-button
                 size="small"
                 type="danger"
                 @click="handleDelete(scope.row)"
+                v-auth="'System:CacheKey:Remove'"
                 >移除</el-button
               >
             </template>

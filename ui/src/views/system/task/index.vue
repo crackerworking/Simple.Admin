@@ -34,6 +34,7 @@ const { columns, dataList, onSearch, openDialog } = useTask();
               :size="size"
               :icon="useRenderIcon(EditPen)"
               @click="openDialog('编辑', row)"
+              v-auth="'System:SysTask:Update'"
             >
               修改
             </el-button>

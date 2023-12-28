@@ -92,7 +92,7 @@ namespace Simple.Admin.Domain.Helper
             {
                 var path = App.Configuration["LogFilePath"];
                 if (path.IsNull()) return Path.Combine(App.WebRoot, "logs");
-                return path;
+                return path!;
             }
         }
     }

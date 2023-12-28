@@ -116,6 +116,7 @@ const {
               :size="size"
               :icon="useRenderIcon(AdminOutlined)"
               @click="assignRoles(row)"
+              v-auth="'System:User:SetUserRole'"
             >
               配置角色
             </el-button>
@@ -126,6 +127,7 @@ const {
               :size="size"
               :icon="useRenderIcon(Password)"
               @click="resetPassword(row)"
+              v-auth="'System:User:UpdatePassword'"
             >
               重置密码
             </el-button>

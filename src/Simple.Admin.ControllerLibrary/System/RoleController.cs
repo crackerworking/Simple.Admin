@@ -71,7 +71,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [HttpPost, AuthorizeCode("System:Role:AssignFunctions")]
+        [HttpPost]
         public async Task<MessageModel<IList<long>>> GetRoleFunctionIds([FromBody] PrimaryKey input)
             => await _permissionService.GetRoleFunctionIdsAsync(input);
     }

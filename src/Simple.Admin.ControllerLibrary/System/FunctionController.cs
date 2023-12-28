@@ -29,7 +29,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// </summary>
         /// <param name="operation"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost,AuthorizeCode("System:Function:Add")]
         public Task<MessageModel> AddFunction([FromBody] FunctionOperation operation) => _functionService.AddFunctionAsync(operation);
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Simple.Admin.ControllerLibrary.System
         /// </summary>
         /// <param name="operation"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost, AuthorizeCode("System:Function:Update")]
         public Task<MessageModel> UpdateFunction([FromBody] FunctionOperation operation) => _functionService.UpdateFunctionAsync(operation);
 
         /// <summary>
