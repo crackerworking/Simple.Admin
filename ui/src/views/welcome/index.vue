@@ -12,13 +12,19 @@ defineOptions({
           >crackerwork@outlook.com</el-descriptions-item
         >
         <el-descriptions-item label="github"
-          ><el-button link type="primary"
-            >https://github.com/yoursession/Simple.Admin</el-button
+          ><el-link
+            href="https://github.com/yoursession/Simple.Admin"
+            type="primary"
+            target="_blank"
+            >https://github.com/yoursession/Simple.Admin</el-link
           ></el-descriptions-item
         >
         <el-descriptions-item label="gitee"
-          ><el-button link type="primary"
-            >https://gitee.com/yoursession/simple-admin</el-button
+          ><el-link
+            href="https://gitee.com/yoursession/simple-admin"
+            type="primary"
+            target="blank"
+            >https://gitee.com/yoursession/simple-admin</el-link
           ></el-descriptions-item
         >
       </el-descriptions>
