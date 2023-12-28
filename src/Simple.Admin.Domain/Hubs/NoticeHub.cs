@@ -15,21 +15,23 @@ namespace Simple.Admin.Domain.Hubs
         /// <summary>
         /// 发送消息
         /// </summary>
-        /// <param name="title"></param>
-        /// <param name="content"></param>
         /// <returns></returns>
-        public async Task SendMessage(string userId, string title, string content)
+        public async Task SendMessage(string userName)
         {
             using var p = App.Provider.CreateScope();
             var dapper = p.ServiceProvider.GetRequiredService<IDapperRepository>();
-            var msg = await dapper.QueryFirstOrDefaultAsync<Option>($"select Title as Name,Content as Value from SysMessage where IsDeleted=0 and Readed=0 and ReceiveUser='{userId}' order by CreatedOn asc limit 1;");
+            var msg = await dapper.QueryFirstOrDefaultAsync<Option>(@$"select m.Title as Name,m.Content as Value from SysMessage m
+                            inner join SysUser u on m.ReceiveUser=u.Id
+                            where m.IsDeleted=0 and m.Readed=0 and lower(u.UserName)='{userName?.ToLower()}' order by m.CreatedOn asc limit 1;");
+            var title = string.Empty;
+            var content = string.Empty;
             if (msg != null)
             {
                 title = msg.Name!;
                 content = msg.Value!;
             }
             if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(content)) return;
-            await Clients.All.SendAsync("ReceiveMessage", title, content);
+            await Clients.All.SendAsync("receiveMessage", title, content);
         }
     }
 }

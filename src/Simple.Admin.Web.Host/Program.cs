@@ -20,7 +20,12 @@ using Simple.Admin.Web.Host.Middleware;
 const string CORS = "CustomCors";
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(c =>
+{
+    c.EnableDetailedErrors = true;
+    c.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+    c.KeepAliveInterval = TimeSpan.FromSeconds(15);
+});
 builder.Services.AddControllers(opt =>
 {
     opt.Filters.Add<GlobalExceptionFilter>();
@@ -49,6 +54,7 @@ app.Use((context, next) =>
     return next(context);
 });
 
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseCors(CORS);
@@ -108,6 +114,6 @@ static void ConfigureService(IServiceCollection services, IConfiguration configu
     // Cors
     services.AddCors(options =>
     {
-        options.AddPolicy(CORS, conf => conf.AllowAnyHeader().AllowAnyMethod().WithOrigins(configuration["AllowedCorsOrigins"]!.Split(',', StringSplitOptions.RemoveEmptyEntries)));
+        options.AddPolicy(CORS, conf => conf.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(configuration["AllowedCorsOrigins"]!.Split(',', StringSplitOptions.RemoveEmptyEntries)));
     });
 }

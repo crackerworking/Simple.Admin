@@ -13,7 +13,7 @@ import { EnsureSuccess } from "@/utils/http/extend";
 import { message } from "@/utils/message";
 
 export const useUserStore = defineStore({
-  id: "pure-user",
+  id: "simple-user",
   state: (): userType => ({
     // 用户名
     username:

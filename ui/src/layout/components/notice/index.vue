@@ -4,10 +4,12 @@ import { ref, onMounted } from "vue";
 import { getHeaderMsg } from "@/api/workspace/notice";
 import NoticeList from "./noticeList.vue";
 import Bell from "@iconify-icons/ep/bell";
+import { useSignalR } from "./utils/hook";
 
 const noticesNum = ref(0);
 const notices = ref([]);
 const activeKey = ref("1");
+const { initialization } = useSignalR();
 
 function initNotices() {
   getHeaderMsg().then(res => {
@@ -31,6 +33,7 @@ function initNotices() {
 
 onMounted(() => {
   initNotices();
+  initialization();
 });
 </script>
 
