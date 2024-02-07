@@ -5,10 +5,10 @@
 * 邮箱： crackerwork@outlook.com
 ## 仓库
 * 记得点个star！（非常感谢）
-* github: https://github.com/yoursession/Simple.Admin
-* gitee:  https://gitee.com/yoursession/simple-admin
+* github: https://github.com/crackerworking/Simple.Admin
+* gitee:  https://gitee.com/crackerworking/simple-admin
 ## 演示
-* 预览地址：http://www.cracker.ink 
+* 预览地址：http://admin.crackerwork.cn 
 * 账号密码：demo1 IuPyjN 
 ## 菜单
 * 工作空间/通知管理
