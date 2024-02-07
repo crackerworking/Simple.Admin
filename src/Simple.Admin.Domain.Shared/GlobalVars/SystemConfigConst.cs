@@ -10,11 +10,11 @@
         /// <summary>
         /// github地址
         /// </summary>
-        public const string GITHUB = "https://github.com/yoursession/Simple.Admin";
+        public const string GITHUB = "https://github.com/crackerworking/Simple.Admin";
 
         /// <summary>
         /// gitee地址
         /// </summary>
-        public const string GITEE = "https://gitee.com/yoursession/simple-admin";
+        public const string GITEE = "https://gitee.com/crackerworking/simple-admin";
     }
 }

@@ -13,18 +13,18 @@ defineOptions({
         >
         <el-descriptions-item label="github"
           ><el-link
-            href="https://github.com/yoursession/Simple.Admin"
+            href="https://github.com/crackerworking/Simple.Admin"
             type="primary"
             target="_blank"
-            >https://github.com/yoursession/Simple.Admin</el-link
+            >https://github.com/crackerworking/Simple.Admin</el-link
           ></el-descriptions-item
         >
         <el-descriptions-item label="gitee"
           ><el-link
-            href="https://gitee.com/yoursession/simple-admin"
+            href="https://gitee.com/crackerworking/simple-admin"
             type="primary"
             target="blank"
-            >https://gitee.com/yoursession/simple-admin</el-link
+            >https://gitee.com/crackerworking/simple-admin</el-link
           ></el-descriptions-item
         >
       </el-descriptions>

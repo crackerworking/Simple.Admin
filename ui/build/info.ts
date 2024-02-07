@@ -22,7 +22,7 @@ export function viteBuildInfo(): Plugin {
           green(
             `👏欢迎使用${blue(
               "[simple-admin]"
-            )}，如果您感觉不错，记得点击后面链接给个star哦💖 https://github.com/yoursession/Simple.Admin`
+            )}，如果您感觉不错，记得点击后面链接给个star哦💖 https://github.com/crackerworking/Simple.Admin`
           )
         )
       );
