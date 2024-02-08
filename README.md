@@ -3,13 +3,6 @@
 项目名叫做**Simple.Admin**，意为简单，简化开发。框架基于.NET8.0，使用AspNetCore+Vue.js(前端项目基于<a href='https://github.com/pure-admin/vue-pure-admin'>pure-admin</a>)构建的后台管理，实现了页面、按钮（接口）权限拦截。整体项目技术简单，非常适合作为初学项目和升级到企业后台，并且有自定义无权限页面、禁止访问错误页面、动态定时任务、内存缓存key、登录日志、右下角弹窗通知等特色功能。
 ## 作者
 * 邮箱： crackerwork@outlook.com
-## 仓库
-* 记得点个star！（非常感谢）
-* github: https://github.com/crackerworking/Simple.Admin
-* gitee:  https://gitee.com/crackerworking/simple-admin
-## 演示
-* 预览地址：http://admin.crackerwork.cn 
-* 账号密码：demo1 IuPyjN 
 ## 菜单
 * 工作空间/通知管理
 * 系统管理
@@ -35,7 +28,7 @@
 ## 开发
 1. 确保安装了.NET8 SDK
 2. 克隆项目：
-`git clone https://github.com/yoursession/Simple.Admin.git`
+`git clone https://github.com/crackerworking/Simple.Admin.git`
 3. 使用vs2022打开解决方案，找到Simple.Admin.Web.Host下的libman.json右击还原客户端库
 4. 成功启动项目
 5. 实现抽象类`Startup.cs`动态管道配置
